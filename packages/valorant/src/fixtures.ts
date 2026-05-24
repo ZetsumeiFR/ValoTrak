@@ -6,6 +6,7 @@ import type {
 	Profile,
 	RawMatchDetails,
 	RawMatchPlayer,
+	TrendPoint,
 } from "./types";
 
 /**
@@ -466,4 +467,29 @@ export function demoProfile(): Profile {
 		},
 		recentMatches,
 	};
+}
+
+const DEMO_TREND = {
+	rr: [38, 52, 67, 45, 60, 78, 64, 83, 91, 22, 40, 47],
+	tier: [23, 23, 23, 23, 23, 23, 23, 23, 23, 24, 24, 24],
+	kd: [1.05, 1.18, 1.22, 0.96, 1.1, 1.31, 1.08, 1.27, 1.4, 1.12, 1.19, 1.24],
+	acs: [210, 235, 244, 198, 221, 268, 215, 252, 281, 226, 238, 241],
+	hs: [24, 27, 29, 22, 25, 32, 24, 30, 34, 26, 27, 28],
+	wr: [50, 55, 58, 48, 53, 62, 54, 60, 66, 56, 60, 62],
+} as const;
+
+/** Sample stat-cache history for the macOS demo trends UI (oldest first). */
+export function demoSnapshots(): TrendPoint[] {
+	const day = 1000 * 60 * 60 * 24;
+	const now = Date.now();
+	const count = DEMO_TREND.rr.length;
+	return DEMO_TREND.rr.map((rr, i) => ({
+		capturedAt: now - (count - 1 - i) * day,
+		tier: DEMO_TREND.tier[i] ?? null,
+		rr,
+		kd: DEMO_TREND.kd[i] ?? null,
+		acs: DEMO_TREND.acs[i] ?? null,
+		hsPercent: DEMO_TREND.hs[i] ?? null,
+		winRate: DEMO_TREND.wr[i] ?? null,
+	}));
 }

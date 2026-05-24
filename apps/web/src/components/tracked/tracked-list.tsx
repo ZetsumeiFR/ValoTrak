@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@valorant-tracker/ui/components/button";
 import { Card, CardContent } from "@valorant-tracker/ui/components/card";
 import {
@@ -15,6 +16,7 @@ import { Star, X } from "lucide-react";
 import { Fragment, useMemo } from "react";
 
 import { RankBadge } from "@/components/match/rank-badge";
+import { TrendChart } from "@/components/trends/trend-chart";
 import { indexTiers, tiersQueryOptions } from "@/lib/valorant/queries";
 import { trpc } from "@/utils/trpc";
 
@@ -35,7 +37,7 @@ function FollowedPlayerRow({
 }) {
 	const queryClient = useQueryClient();
 	const snapshotQuery = useQuery(
-		trpc.player.getCache.queryOptions({ puuid: player.puuid, limit: 1 }),
+		trpc.player.getCache.queryOptions({ puuid: player.puuid, limit: 20 }),
 	);
 	const unfollow = useMutation(
 		trpc.player.unfollow.mutationOptions({
@@ -46,38 +48,59 @@ function FollowedPlayerRow({
 		}),
 	);
 
-	const latest = snapshotQuery.data?.[0];
+	const rows = snapshotQuery.data ?? [];
+	const latest = rows[0];
+	const rrSeries = rows
+		.map((row) => row.rr)
+		.filter((value): value is number => value != null)
+		.reverse();
+	const hasTrend = rrSeries.length >= 2;
 
 	return (
 		<div className="flex items-center gap-3 py-2">
-			<div className="flex min-w-0 flex-col">
-				<span className="truncate font-medium">
-					{player.gameName}
-					<span className="text-muted-foreground">#{player.tagLine}</span>
-				</span>
-				<span className="text-[10px] text-muted-foreground uppercase tracking-wide">
-					{player.region}
-				</span>
-			</div>
-			<div className="ml-auto flex items-center gap-4">
+			<Link
+				to="/player/$puuid"
+				params={{ puuid: player.puuid }}
+				search={{
+					name: player.gameName,
+					tag: player.tagLine,
+					region: player.region,
+				}}
+				className="group flex min-w-0 flex-1 items-center gap-4"
+			>
+				<div className="flex min-w-0 flex-col">
+					<span className="truncate font-medium transition-colors group-hover:text-brand">
+						{player.gameName}
+						<span className="text-muted-foreground">#{player.tagLine}</span>
+					</span>
+					<span className="text-[10px] text-muted-foreground uppercase tracking-wide">
+						{player.region}
+					</span>
+				</div>
+				{hasTrend ? (
+					<div className="ml-auto hidden w-24 shrink-0 sm:block">
+						<TrendChart values={rrSeries} height={28} />
+					</div>
+				) : null}
 				<RankBadge
 					tier={latest?.tier ?? undefined}
 					rr={latest?.rr ?? undefined}
 					tiersById={tiersById}
+					className={hasTrend ? undefined : "ml-auto"}
 				/>
-				<span className="text-muted-foreground tabular-nums">
+				<span className="hidden text-muted-foreground tabular-nums md:inline">
 					{latest?.kd != null ? `${latest.kd.toFixed(2)} K/D` : "—"}
 				</span>
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					onClick={() => unfollow.mutate({ puuid: player.puuid })}
-					disabled={unfollow.isPending}
-					aria-label={`Unfollow ${player.gameName}`}
-				>
-					<X />
-				</Button>
-			</div>
+			</Link>
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				onClick={() => unfollow.mutate({ puuid: player.puuid })}
+				disabled={unfollow.isPending}
+				aria-label={`Unfollow ${player.gameName}`}
+			>
+				<X />
+			</Button>
 		</div>
 	);
 }

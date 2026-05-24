@@ -13,6 +13,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as MatchRouteImport } from './routes/match'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PlayerPuuidRouteImport } from './routes/player.$puuid'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -34,18 +35,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayerPuuidRoute = PlayerPuuidRouteImport.update({
+  id: '/player/$puuid',
+  path: '/player/$puuid',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/match': typeof MatchRoute
   '/settings': typeof SettingsRoute
+  '/player/$puuid': typeof PlayerPuuidRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/match': typeof MatchRoute
   '/settings': typeof SettingsRoute
+  '/player/$puuid': typeof PlayerPuuidRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/match': typeof MatchRoute
   '/settings': typeof SettingsRoute
+  '/player/$puuid': typeof PlayerPuuidRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/match' | '/settings'
+  fullPaths: '/' | '/login' | '/match' | '/settings' | '/player/$puuid'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/match' | '/settings'
-  id: '__root__' | '/' | '/login' | '/match' | '/settings'
+  to: '/' | '/login' | '/match' | '/settings' | '/player/$puuid'
+  id: '__root__' | '/' | '/login' | '/match' | '/settings' | '/player/$puuid'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +76,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MatchRoute: typeof MatchRoute
   SettingsRoute: typeof SettingsRoute
+  PlayerPuuidRoute: typeof PlayerPuuidRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/player/$puuid': {
+      id: '/player/$puuid'
+      path: '/player/$puuid'
+      fullPath: '/player/$puuid'
+      preLoaderRoute: typeof PlayerPuuidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MatchRoute: MatchRoute,
   SettingsRoute: SettingsRoute,
+  PlayerPuuidRoute: PlayerPuuidRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
