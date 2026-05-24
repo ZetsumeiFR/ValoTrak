@@ -32,10 +32,20 @@ pub async fn get_local_tokens() -> Result<LocalTokens, AppError> {
         .send()
         .await?;
 
-    if !resp.status().is_success() {
+    let status = resp.status();
+    if !status.is_success() {
+        // The Riot Client is reachable but the entitlements token isn't
+        // provisioned yet — the normal state when VALORANT itself isn't
+        // running/logged in (this endpoint 404s until a game session exists).
+        // Report it as "not available" so the UI falls back to the demo/offline
+        // state instead of surfacing a raw error.
+        if status.as_u16() == 404 {
+            return Err(AppError::not_available(format!(
+                "Valorant isn't running yet (entitlements {status})"
+            )));
+        }
         return Err(AppError::unauthorized(format!(
-            "local entitlements returned {}",
-            resp.status()
+            "local entitlements returned {status}"
         )));
     }
 
