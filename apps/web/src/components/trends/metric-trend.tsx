@@ -1,4 +1,5 @@
 import { cn } from "@valotrak/ui/lib/utils";
+import { useTranslation } from "react-i18next";
 
 import { TrendChart } from "./trend-chart";
 
@@ -13,6 +14,7 @@ export function MetricTrend({
 	format: (value: number) => string;
 	color?: "brand" | "win" | "loss";
 }) {
+	const { t } = useTranslation();
 	const series = values.filter((value): value is number => value != null);
 	const enough = series.length >= 2;
 	const current = series.length > 0 ? series[series.length - 1] : undefined;
@@ -42,7 +44,7 @@ export function MetricTrend({
 				<TrendChart values={series} color={color} height={56} />
 			) : (
 				<p className="font-mono text-[10px] text-muted-foreground">
-					Not enough history yet.
+					{t("trends.notEnoughHistory")}
 				</p>
 			)}
 		</div>

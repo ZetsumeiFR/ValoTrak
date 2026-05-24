@@ -1,5 +1,6 @@
 import { cn } from "@valotrak/ui/lib/utils";
 import type { Agent, MapInfo, MatchSummary } from "@valotrak/valorant";
+import { useTranslation } from "react-i18next";
 
 import { AgentAvatar } from "@/components/match/agent-avatar";
 import { mapDisplayName } from "@/lib/valorant/queries";
@@ -13,6 +14,7 @@ function MatchRow({
 	agent?: Agent;
 	mapsByUrl: Map<string, MapInfo>;
 }) {
+	const { t } = useTranslation();
 	const kd = match.deaths > 0 ? match.kills / match.deaths : match.kills;
 	const mapName = mapDisplayName(mapsByUrl, match.map);
 
@@ -31,12 +33,10 @@ function MatchRow({
 					match.won ? "text-win" : "text-loss",
 				)}
 			>
-				{match.won ? "Win" : "Loss"}
+				{match.won ? t("match.resultWin") : t("match.resultLoss")}
 			</span>
 			{mapName ? (
-				<span className="hidden font-medium text-xs sm:inline">
-					{mapName}
-				</span>
+				<span className="hidden font-medium text-xs sm:inline">{mapName}</span>
 			) : null}
 			<div className="ml-auto flex items-center gap-3 font-mono text-xs tabular-nums sm:gap-5">
 				<span>
@@ -66,10 +66,11 @@ export function RecentMatches({
 	agentsById: Map<string, Agent>;
 	mapsByUrl: Map<string, MapInfo>;
 }) {
+	const { t } = useTranslation();
 	if (matches.length === 0) {
 		return (
 			<p className="font-mono text-muted-foreground text-xs">
-				No recent competitive matches.
+				{t("profile.noRecentMatches")}
 			</p>
 		);
 	}

@@ -10,6 +10,7 @@ import { Button } from "@valotrak/ui/components/button";
 import { Skeleton } from "@valotrak/ui/components/skeleton";
 import { FlaskConical, RefreshCw, TriangleAlert } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { TrackedList } from "@/components/tracked/tracked-list";
 import { authClient } from "@/lib/auth-client";
@@ -38,6 +39,7 @@ function SectionHeading({ children }: { children: ReactNode }) {
 }
 
 export function ProfilePage() {
+	const { t } = useTranslation();
 	const profile = useProfile();
 	const agentsQuery = useQuery(agentsQueryOptions());
 	const tiersQuery = useQuery(tiersQueryOptions());
@@ -57,8 +59,12 @@ export function ProfilePage() {
 	const header = (
 		<div className="flex items-center justify-between gap-2">
 			<div className="flex items-center gap-2">
-				<h1 className="font-bold text-lg tracking-tight">Profile</h1>
-				{profile.data?.isDemo ? <Badge variant="secondary">Demo</Badge> : null}
+				<h1 className="font-bold text-lg tracking-tight">
+					{t("profile.title")}
+				</h1>
+				{profile.data?.isDemo ? (
+					<Badge variant="secondary">{t("common.demo")}</Badge>
+				) : null}
 			</div>
 			<Button
 				variant="outline"
@@ -70,7 +76,7 @@ export function ProfilePage() {
 					data-icon="inline-start"
 					className={profile.isFetching ? "animate-spin" : undefined}
 				/>
-				Refresh
+				{t("common.refresh")}
 			</Button>
 		</div>
 	);
@@ -100,12 +106,10 @@ export function ProfilePage() {
 			<Alert variant="destructive">
 				<TriangleAlert />
 				<AlertTitle>
-					{needRegion ? "Region unknown" : "Couldn't load your profile"}
+					{needRegion ? t("profile.regionUnknown") : t("profile.loadError")}
 				</AlertTitle>
 				<AlertDescription>
-					{needRegion
-						? "Your region couldn't be detected from the game log. Launch Valorant, or set it in Settings."
-						: message}
+					{needRegion ? t("profile.regionUnknownDesc") : message}
 				</AlertDescription>
 			</Alert>
 		);
@@ -119,10 +123,8 @@ export function ProfilePage() {
 				{data.isDemo ? (
 					<Alert>
 						<FlaskConical />
-						<AlertTitle>Demo profile</AlertTitle>
-						<AlertDescription>
-							Sample data — launch Valorant on Windows to see your real stats.
-						</AlertDescription>
+						<AlertTitle>{t("profile.demoTitle")}</AlertTitle>
+						<AlertDescription>{t("profile.demoDesc")}</AlertDescription>
 					</Alert>
 				) : null}
 
@@ -130,44 +132,51 @@ export function ProfilePage() {
 
 				<div className="grid grid-cols-2 gap-3 md:grid-cols-4">
 					<StatTile
-						label="K / D"
+						label={t("profile.statKd")}
 						value={stats ? stats.kd.toFixed(2) : "—"}
-						sub="kills / deaths"
+						sub={t("profile.statKdSub")}
 					/>
 					<StatTile
-						label="Combat Score"
+						label={t("profile.statAcs")}
 						value={stats ? String(Math.round(stats.acs)) : "—"}
-						sub="avg per round"
+						sub={t("profile.statAcsSub")}
 					/>
 					<StatTile
-						label="Headshot %"
+						label={t("profile.statHs")}
 						value={stats ? `${Math.round(stats.hsPercent)}%` : "—"}
-						sub="last matches"
+						sub={t("profile.statHsSub")}
 					/>
 					<StatTile
-						label="Win Rate"
+						label={t("profile.statWin")}
 						value={stats ? `${Math.round(stats.winRate)}%` : "—"}
-						sub={stats ? `${stats.wins}W · ${stats.losses}L` : undefined}
+						sub={
+							stats
+								? t("profile.statWinSub", {
+										wins: stats.wins,
+										losses: stats.losses,
+									})
+								: undefined
+						}
 						accent={winAccent}
 					/>
 				</div>
 
 				<section className="flex flex-col gap-3">
-					<SectionHeading>Top agents</SectionHeading>
+					<SectionHeading>{t("profile.topAgents")}</SectionHeading>
 					<MainsRow stats={stats} agentsById={agentsById} />
 				</section>
 
 				<section className="flex flex-col gap-3">
-					<SectionHeading>Recent matches</SectionHeading>
+					<SectionHeading>{t("profile.recentMatches")}</SectionHeading>
 					<RecentMatches
-							matches={data.recentMatches}
-							agentsById={agentsById}
-							mapsByUrl={mapsByUrl}
-						/>
+						matches={data.recentMatches}
+						agentsById={agentsById}
+						mapsByUrl={mapsByUrl}
+					/>
 				</section>
 
 				<section className="flex flex-col gap-3">
-					<SectionHeading>Tracked players</SectionHeading>
+					<SectionHeading>{t("profile.trackedPlayers")}</SectionHeading>
 					{session ? (
 						<TrackedList />
 					) : (
@@ -176,9 +185,9 @@ export function ProfilePage() {
 								to="/login"
 								className="text-brand underline-offset-4 hover:underline"
 							>
-								Sign in
+								{t("profile.signIn")}
 							</Link>{" "}
-							to follow players and build their stat history.
+							{t("profile.followHint")}
 						</p>
 					)}
 				</section>

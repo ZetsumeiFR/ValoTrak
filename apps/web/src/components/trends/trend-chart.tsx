@@ -1,5 +1,6 @@
 import { cn } from "@valotrak/ui/lib/utils";
 import { useId } from "react";
+import { useTranslation } from "react-i18next";
 
 const COLOR_CLASS = {
 	brand: "text-brand",
@@ -23,6 +24,7 @@ export function TrendChart({
 	height?: number;
 	className?: string;
 }) {
+	const { t } = useTranslation();
 	const gradientId = useId();
 	const count = values.length;
 	const width = 100;
@@ -52,7 +54,7 @@ export function TrendChart({
 			className={cn("w-full", COLOR_CLASS[color], className)}
 			style={{ height }}
 			role="img"
-			aria-label="Trend chart"
+			aria-label={t("trends.chartLabel")}
 		>
 			<defs>
 				<linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">

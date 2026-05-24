@@ -32,10 +32,13 @@
     "@valotrak/valorant": "workspace:*",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
+    "i18next": "^26.2.0",
+    "i18next-browser-languagedetector": "^8.2.1",
     "lucide-react": "^1.8.0",
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-i18next": "^17.0.8",
     "sonner": "^2.0.7",
     "zod": "catalog:"
   },

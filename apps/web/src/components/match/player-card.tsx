@@ -1,12 +1,9 @@
 import { Badge } from "@valotrak/ui/components/badge";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-} from "@valotrak/ui/components/card";
+import { Card, CardContent, CardHeader } from "@valotrak/ui/components/card";
 import { Skeleton } from "@valotrak/ui/components/skeleton";
 import { cn } from "@valotrak/ui/lib/utils";
 import type { EnrichedPlayer } from "@valotrak/valorant";
+import { useTranslation } from "react-i18next";
 
 import { AgentAvatar } from "./agent-avatar";
 import { FavoriteButton } from "./favorite-button";
@@ -25,9 +22,10 @@ function StatCell({ label, value }: { label: string; value: string }) {
 }
 
 export function PlayerCard({ player }: { player: EnrichedPlayer }) {
+	const { t } = useTranslation();
 	const { agentsById, tiersById, region, isDemo } = useMatchContext();
 	const agent = player.agentId ? agentsById.get(player.agentId) : undefined;
-	const name = player.riotId?.gameName ?? "Unknown";
+	const name = player.riotId?.gameName ?? t("common.unknown");
 	const tag = player.riotId?.tagLine;
 	const stats = player.stats;
 	const isLoading = !stats && !player.error;
@@ -45,7 +43,7 @@ export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 							) : null}
 							{player.isSelf ? (
 								<Badge variant="outline" className="h-4 px-1 text-[10px]">
-									You
+									{t("match.you")}
 								</Badge>
 							) : null}
 						</div>
@@ -66,7 +64,7 @@ export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 			<CardContent>
 				{player.error ? (
 					<p className="text-muted-foreground text-xs">
-						Stats unavailable: {player.error}
+						{t("match.statsUnavailable", { error: player.error })}
 					</p>
 				) : (
 					<div className="flex flex-col gap-3">
@@ -97,7 +95,7 @@ export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 						{stats && stats.mainAgents.length > 0 ? (
 							<div className="flex items-center gap-2">
 								<span className="text-[10px] text-muted-foreground uppercase tracking-wide">
-									Mains
+									{t("match.mains")}
 								</span>
 								<div className="flex items-center gap-1">
 									{stats.mainAgents.slice(0, 3).map((usage) => (
@@ -109,7 +107,11 @@ export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 									))}
 								</div>
 								<span className="ml-auto text-muted-foreground">
-									{stats.wins}-{stats.losses} · {stats.matchesAnalyzed} games
+									{t("match.cardRecord", {
+										wins: stats.wins,
+										losses: stats.losses,
+										count: stats.matchesAnalyzed,
+									})}
 								</span>
 							</div>
 						) : null}

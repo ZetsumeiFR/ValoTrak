@@ -1,5 +1,6 @@
 import { cn } from "@valotrak/ui/lib/utils";
 import type { CompetitiveTier } from "@valotrak/valorant";
+import { useTranslation } from "react-i18next";
 
 export function RankBadge({
 	tier,
@@ -12,12 +13,13 @@ export function RankBadge({
 	tiersById: Map<number, CompetitiveTier>;
 	className?: string;
 }) {
+	const { t } = useTranslation();
 	const info = tier !== undefined ? tiersById.get(tier) : undefined;
 
 	if (!tier || !info) {
 		return (
 			<span className={cn("text-muted-foreground text-xs", className)}>
-				Unranked
+				{t("common.unranked")}
 			</span>
 		);
 	}
