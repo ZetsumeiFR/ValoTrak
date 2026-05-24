@@ -90,6 +90,7 @@ export interface MatchSummary {
 	/** Headshot percentage for this match, 0-100. */
 	hsPercent: number;
 	queue?: string;
+	/** Raw map asset path (`matchInfo.mapId`); resolve to a name via the static maps API. */
 	map?: string;
 	startedAt?: number;
 }
@@ -134,6 +135,14 @@ export interface CompetitiveTier {
 	backgroundColor: string;
 	smallIcon: string | null;
 	largeIcon: string | null;
+}
+
+/** A Valorant map from the static API (valorant-api.com), keyed by `mapUrl`. */
+export interface MapInfo {
+	uuid: string;
+	displayName: string;
+	/** Internal asset path Riot returns as `matchInfo.mapId`, e.g. `/Game/Maps/Ascent/Ascent`. */
+	mapUrl: string;
 }
 
 export interface ClientVersion {

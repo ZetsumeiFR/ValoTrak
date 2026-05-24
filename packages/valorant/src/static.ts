@@ -1,6 +1,6 @@
 import { VALORANT_API_BASE } from "./constants";
 import { fetchTransport, type RiotTransport, riotJson } from "./transport";
-import type { Agent, ClientVersion, CompetitiveTier } from "./types";
+import type { Agent, ClientVersion, CompetitiveTier, MapInfo } from "./types";
 
 /**
  * Clients for the community static-asset API (valorant-api.com).
@@ -34,6 +34,12 @@ interface RawTier {
 
 interface RawTierSet {
 	tiers: RawTier[];
+}
+
+interface RawMap {
+	uuid: string;
+	displayName: string | null;
+	mapUrl: string | null;
 }
 
 export async function getAgents(
@@ -72,6 +78,25 @@ export async function getCompetitiveTiers(
 		smallIcon: t.smallIcon,
 		largeIcon: t.largeIcon,
 	}));
+}
+
+export async function getMaps(
+	transport: RiotTransport = fetchTransport,
+): Promise<MapInfo[]> {
+	const res = await riotJson<ValorantApiEnvelope<RawMap[]>>(transport, {
+		method: "GET",
+		url: `${VALORANT_API_BASE}/maps`,
+	});
+	return res.data
+		.filter(
+			(m): m is RawMap & { displayName: string; mapUrl: string } =>
+				Boolean(m.displayName && m.mapUrl),
+		)
+		.map((m) => ({
+			uuid: m.uuid,
+			displayName: m.displayName,
+			mapUrl: m.mapUrl,
+		}));
 }
 
 export async function getVersion(

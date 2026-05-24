@@ -1,10 +1,20 @@
 import { cn } from "@valotrak/ui/lib/utils";
-import type { Agent, MatchSummary } from "@valotrak/valorant";
+import type { Agent, MapInfo, MatchSummary } from "@valotrak/valorant";
 
 import { AgentAvatar } from "@/components/match/agent-avatar";
+import { mapDisplayName } from "@/lib/valorant/queries";
 
-function MatchRow({ match, agent }: { match: MatchSummary; agent?: Agent }) {
+function MatchRow({
+	match,
+	agent,
+	mapsByUrl,
+}: {
+	match: MatchSummary;
+	agent?: Agent;
+	mapsByUrl: Map<string, MapInfo>;
+}) {
 	const kd = match.deaths > 0 ? match.kills / match.deaths : match.kills;
+	const mapName = mapDisplayName(mapsByUrl, match.map);
 
 	return (
 		<div className="clip-corner relative flex items-center gap-3 bg-card py-2 pr-3 pl-4 ring-1 ring-border">
@@ -23,9 +33,9 @@ function MatchRow({ match, agent }: { match: MatchSummary; agent?: Agent }) {
 			>
 				{match.won ? "Win" : "Loss"}
 			</span>
-			{match.map ? (
+			{mapName ? (
 				<span className="hidden font-medium text-xs sm:inline">
-					{match.map}
+					{mapName}
 				</span>
 			) : null}
 			<div className="ml-auto flex items-center gap-3 font-mono text-xs tabular-nums sm:gap-5">
@@ -50,9 +60,11 @@ function MatchRow({ match, agent }: { match: MatchSummary; agent?: Agent }) {
 export function RecentMatches({
 	matches,
 	agentsById,
+	mapsByUrl,
 }: {
 	matches: MatchSummary[];
 	agentsById: Map<string, Agent>;
+	mapsByUrl: Map<string, MapInfo>;
 }) {
 	if (matches.length === 0) {
 		return (
@@ -69,6 +81,7 @@ export function RecentMatches({
 					key={match.matchId}
 					match={match}
 					agent={agentsById.get(match.agentId)}
+					mapsByUrl={mapsByUrl}
 				/>
 			))}
 		</div>
