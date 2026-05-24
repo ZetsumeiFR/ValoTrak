@@ -1,0 +1,33 @@
+# Keep the Docker build context small & reproducible.
+# Anything listed here is NOT sent to the Docker daemon / used by COPY.
+
+# Dependencies (reinstalled inside the build stage)
+**/node_modules
+
+# Rust / Tauri desktop build output (can be several GB)
+apps/web/src-tauri/target
+apps/web/dist
+**/dist
+**/.turbo
+
+# VCS & tooling state
+.git
+.github
+.omc
+.vscode
+.idea
+
+# Build artifacts & local binaries
+**/*.exe
+**/*.msi
+**/.deploytest
+
+# Env & secrets — never bake these into an image
+**/.env
+**/.env.*
+!**/.env.example
+
+# Logs & OS cruft
+**/*.log
+.DS_Store
+Thumbs.db
