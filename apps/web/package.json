@@ -21,6 +21,8 @@
     "@tanstack/react-router": "^1.168.22",
     "@tauri-apps/api": "^2.4.0",
     "@tauri-apps/plugin-http": "^2.4.0",
+    "@tauri-apps/plugin-process": "^2.0.0",
+    "@tauri-apps/plugin-updater": "^2.0.0",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "^11.16.0",

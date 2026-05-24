@@ -38,7 +38,13 @@ async fn detect_region() -> Result<RiotShard, AppError> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_http::init())
+        .plugin(tauri_plugin_process::init())
         .setup(|app| {
+            // Desktop auto-updater (signed releases checked against GitHub).
+            #[cfg(desktop)]
+            app.handle()
+                .plugin(tauri_plugin_updater::Builder::new().build())?;
+
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()

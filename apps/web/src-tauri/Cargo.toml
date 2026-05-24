@@ -24,6 +24,8 @@ log = "0.4"
 tauri = { version = "2.11.2", features = [] }
 tauri-plugin-log = "2"
 tauri-plugin-http = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
 # Riot networking. native-tls (OS TLS: SecurityFramework/SChannel) so the
 # self-signed local cert can be accepted for both HTTPS and WSS with no OpenSSL.
 reqwest = { version = "0.12", default-features = false, features = ["json", "native-tls"] }
