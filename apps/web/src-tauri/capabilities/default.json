@@ -3,5 +3,15 @@
   "identifier": "default",
   "description": "enables the default permissions",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "permissions": [
+    "core:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        { "url": "https://*.pvp.net/*" },
+        { "url": "https://valorant-api.com/*" },
+        { "url": "https://riot-geo.pas.si.riotgames.com/*" }
+      ]
+    }
+  ]
 }

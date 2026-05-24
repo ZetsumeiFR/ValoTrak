@@ -5,34 +5,40 @@ import type { AppRouter } from "@valorant-tracker/api/routers/index";
 import { env } from "@valorant-tracker/env/web";
 import { toast } from "sonner";
 
+import { getSessionToken } from "@/lib/session-token";
+
 export const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      toast.error(error.message, {
-        action: {
-          label: "retry",
-          onClick: query.invalidate,
-        },
-      });
-    },
-  }),
+	queryCache: new QueryCache({
+		onError: (error, query) => {
+			toast.error(error.message, {
+				action: {
+					label: "retry",
+					onClick: query.invalidate,
+				},
+			});
+		},
+	}),
 });
 
 export const trpcClient = createTRPCClient<AppRouter>({
-  links: [
-    httpBatchLink({
-      url: `${env.VITE_SERVER_URL}/trpc`,
-      fetch(url, options) {
-        return fetch(url, {
-          ...options,
-          credentials: "include",
-        });
-      },
-    }),
-  ],
+	links: [
+		httpBatchLink({
+			url: `${env.VITE_SERVER_URL}/trpc`,
+			headers() {
+				const token = getSessionToken();
+				return token ? { Authorization: `Bearer ${token}` } : {};
+			},
+			fetch(url, options) {
+				return fetch(url, {
+					...options,
+					credentials: "include",
+				});
+			},
+		}),
+	],
 });
 
 export const trpc = createTRPCOptionsProxy<AppRouter>({
-  client: trpcClient,
-  queryClient,
+	client: trpcClient,
+	queryClient,
 });

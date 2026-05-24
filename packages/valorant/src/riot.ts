@@ -1,0 +1,116 @@
+import { DEFAULT_MATCH_COUNT, type QueueId, UNRANKED_TIER } from "./constants";
+import { pdBase, type RiotShard } from "./endpoints";
+import {
+	buildAuthHeaders,
+	type RiotAuth,
+	type RiotTransport,
+	riotJson,
+} from "./transport";
+import type {
+	RankInfo,
+	RawMatchDetails,
+	RawMatchHistory,
+	RawMatchHistoryEntry,
+	RawMmr,
+	RawNameServiceEntry,
+	RiotId,
+} from "./types";
+
+/**
+ * Authenticated clients for the Riot pvp.net endpoints (undocumented).
+ *
+ * Every call needs a {@link RiotAuth} obtained from the Tauri `get_local_tokens`
+ * command and a {@link RiotShard} from region detection. The `transport` must be
+ * the Rust-backed one in the app (CORS) — see {@link RiotTransport}.
+ */
+
+export async function getMmr(
+	transport: RiotTransport,
+	auth: RiotAuth,
+	shard: RiotShard,
+	puuid: string,
+): Promise<RawMmr> {
+	return riotJson<RawMmr>(transport, {
+		method: "GET",
+		url: `${pdBase(shard.shard)}/mmr/v1/players/${puuid}`,
+		headers: buildAuthHeaders(auth),
+	});
+}
+
+export interface MatchHistoryOptions {
+	startIndex?: number;
+	endIndex?: number;
+	queue?: QueueId;
+}
+
+export async function getMatchHistory(
+	transport: RiotTransport,
+	auth: RiotAuth,
+	shard: RiotShard,
+	puuid: string,
+	options: MatchHistoryOptions = {},
+): Promise<RawMatchHistoryEntry[]> {
+	const startIndex = options.startIndex ?? 0;
+	const endIndex = options.endIndex ?? DEFAULT_MATCH_COUNT;
+	const params = new URLSearchParams({
+		startIndex: String(startIndex),
+		endIndex: String(endIndex),
+	});
+	if (options.queue) {
+		params.set("queue", options.queue);
+	}
+	const res = await riotJson<RawMatchHistory>(transport, {
+		method: "GET",
+		url: `${pdBase(shard.shard)}/match-history/v1/history/${puuid}?${params}`,
+		headers: buildAuthHeaders(auth),
+	});
+	return res.History ?? [];
+}
+
+export async function getMatchDetails(
+	transport: RiotTransport,
+	auth: RiotAuth,
+	shard: RiotShard,
+	matchId: string,
+): Promise<RawMatchDetails> {
+	return riotJson<RawMatchDetails>(transport, {
+		method: "GET",
+		url: `${pdBase(shard.shard)}/match-details/v1/matches/${matchId}`,
+		headers: buildAuthHeaders(auth),
+	});
+}
+
+/** Resolve Riot IDs for a batch of puuids. Returns a puuid -> RiotId map. */
+export async function getNames(
+	transport: RiotTransport,
+	auth: RiotAuth,
+	shard: RiotShard,
+	puuids: string[],
+): Promise<Map<string, RiotId>> {
+	if (puuids.length === 0) {
+		return new Map();
+	}
+	const entries = await riotJson<RawNameServiceEntry[]>(transport, {
+		method: "PUT",
+		url: `${pdBase(shard.shard)}/name-service/v2/players`,
+		headers: { ...buildAuthHeaders(auth), "Content-Type": "application/json" },
+		body: JSON.stringify(puuids),
+	});
+	const map = new Map<string, RiotId>();
+	for (const entry of entries) {
+		map.set(entry.Subject, {
+			gameName: entry.GameName,
+			tagLine: entry.TagLine,
+		});
+	}
+	return map;
+}
+
+/** Extract the current rank + RR from an MMR response. */
+export function extractRank(mmr: RawMmr): RankInfo {
+	const update = mmr.LatestCompetitiveUpdate;
+	return {
+		tier: update?.TierAfterUpdate ?? UNRANKED_TIER,
+		rr: update?.RankedRatingAfterUpdate ?? 0,
+	};
+}

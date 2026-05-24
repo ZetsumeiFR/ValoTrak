@@ -11,29 +11,32 @@ const app = new Hono();
 
 app.use(logger());
 app.use(
-  "/*",
-  cors({
-    origin: env.CORS_ORIGIN,
-    allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  }),
+	"/*",
+	cors({
+		// Allow the web dev server and the Tauri desktop webview origins.
+		origin: [env.CORS_ORIGIN, "tauri://localhost", "http://tauri.localhost"],
+		allowMethods: ["GET", "POST", "OPTIONS"],
+		allowHeaders: ["Content-Type", "Authorization"],
+		// `set-auth-token` carries the bearer session token to the desktop client.
+		exposeHeaders: ["set-auth-token"],
+		credentials: true,
+	}),
 );
 
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
 app.use(
-  "/trpc/*",
-  trpcServer({
-    router: appRouter,
-    createContext: (_opts, context) => {
-      return createContext({ context });
-    },
-  }),
+	"/trpc/*",
+	trpcServer({
+		router: appRouter,
+		createContext: (_opts, context) => {
+			return createContext({ context });
+		},
+	}),
 );
 
 app.get("/", (c) => {
-  return c.text("OK");
+	return c.text("OK");
 });
 
 export default app;
