@@ -79,7 +79,12 @@ export function SettingsView() {
 							}
 						>
 							<SelectTrigger id="enemy-reveal-mode" className="w-full">
-								<SelectValue />
+								<SelectValue>
+									{(value) => {
+										const option = MODE_OPTIONS.find((o) => o.value === value);
+										return option ? t(option.labelKey) : null;
+									}}
+								</SelectValue>
 							</SelectTrigger>
 							<SelectContent>
 								{MODE_OPTIONS.map((option) => (
