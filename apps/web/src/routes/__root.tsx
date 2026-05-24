@@ -11,6 +11,7 @@ import { TooltipProvider } from "@valotrak/ui/components/tooltip";
 
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { useAutoUpdate } from "@/lib/updater";
 import type { trpc } from "@/utils/trpc";
 
 import "../index.css";
@@ -42,6 +43,8 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function RootComponent() {
+	useAutoUpdate();
+
 	return (
 		<>
 			<HeadContent />
