@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Button } from "@valorant-tracker/ui/components/button";
+import { Button } from "@valotrak/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -8,8 +8,8 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@valorant-tracker/ui/components/dropdown-menu";
-import { Skeleton } from "@valorant-tracker/ui/components/skeleton";
+} from "@valotrak/ui/components/dropdown-menu";
+import { Skeleton } from "@valotrak/ui/components/skeleton";
 
 import { authClient } from "@/lib/auth-client";
 import { clearSessionToken } from "@/lib/session-token";

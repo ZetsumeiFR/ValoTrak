@@ -2,7 +2,7 @@ import type {
 	AggregatedStats,
 	RankInfo,
 	RiotId,
-} from "@valorant-tracker/valorant";
+} from "@valotrak/valorant";
 import { relations } from "drizzle-orm";
 import {
 	index,

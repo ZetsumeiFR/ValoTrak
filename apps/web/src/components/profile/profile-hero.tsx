@@ -1,5 +1,5 @@
-import { cn } from "@valorant-tracker/ui/lib/utils";
-import type { CompetitiveTier, Profile } from "@valorant-tracker/valorant";
+import { cn } from "@valotrak/ui/lib/utils";
+import type { CompetitiveTier, Profile } from "@valotrak/valorant";
 
 export function ProfileHero({
 	profile,

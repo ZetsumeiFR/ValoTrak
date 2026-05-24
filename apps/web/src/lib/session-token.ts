@@ -5,7 +5,7 @@
  * bearer plugin returns the session token in a `set-auth-token` header which we
  * persist here and replay as `Authorization: Bearer <token>`.
  */
-const STORAGE_KEY = "valorant-tracker.session-token";
+const STORAGE_KEY = "valotrak.session-token";
 
 export function getSessionToken(): string | null {
 	if (typeof localStorage === "undefined") {

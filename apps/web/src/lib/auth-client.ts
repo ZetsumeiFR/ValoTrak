@@ -1,4 +1,4 @@
-import { env } from "@valorant-tracker/env/web";
+import { env } from "@valotrak/env/web";
 import { createAuthClient } from "better-auth/react";
 
 import { getSessionToken, setSessionToken } from "./session-token";

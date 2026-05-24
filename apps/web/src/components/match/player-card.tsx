@@ -1,12 +1,12 @@
-import { Badge } from "@valorant-tracker/ui/components/badge";
+import { Badge } from "@valotrak/ui/components/badge";
 import {
 	Card,
 	CardContent,
 	CardHeader,
-} from "@valorant-tracker/ui/components/card";
-import { Skeleton } from "@valorant-tracker/ui/components/skeleton";
-import { cn } from "@valorant-tracker/ui/lib/utils";
-import type { EnrichedPlayer } from "@valorant-tracker/valorant";
+} from "@valotrak/ui/components/card";
+import { Skeleton } from "@valotrak/ui/components/skeleton";
+import { cn } from "@valotrak/ui/lib/utils";
+import type { EnrichedPlayer } from "@valotrak/valorant";
 
 import { AgentAvatar } from "./agent-avatar";
 import { FavoriteButton } from "./favorite-button";

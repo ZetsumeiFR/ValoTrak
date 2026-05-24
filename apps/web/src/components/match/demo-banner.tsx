@@ -2,7 +2,7 @@ import {
 	Alert,
 	AlertDescription,
 	AlertTitle,
-} from "@valorant-tracker/ui/components/alert";
+} from "@valotrak/ui/components/alert";
 import { FlaskConical } from "lucide-react";
 
 export function DemoBanner() {

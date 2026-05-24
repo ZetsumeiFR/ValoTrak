@@ -1,5 +1,5 @@
 {
-	"name": "@valorant-tracker/db",
+	"name": "@valotrak/db",
 	"type": "module",
 	"exports": {
 		".": {
@@ -17,14 +17,14 @@
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.2",
-		"@valorant-tracker/env": "workspace:*",
-		"@valorant-tracker/valorant": "workspace:*",
+		"@valotrak/env": "workspace:*",
+		"@valotrak/valorant": "workspace:*",
 		"dotenv": "catalog:",
 		"drizzle-orm": "^0.45.1",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@valorant-tracker/config": "workspace:*",
+		"@valotrak/config": "workspace:*",
 		"drizzle-kit": "^0.31.8",
 		"typescript": "catalog:"
 	}

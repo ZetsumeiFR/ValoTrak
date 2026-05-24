@@ -1,4 +1,4 @@
-import { cn } from "@valorant-tracker/ui/lib/utils";
+import { cn } from "@valotrak/ui/lib/utils";
 import { useId } from "react";
 
 const COLOR_CLASS = {

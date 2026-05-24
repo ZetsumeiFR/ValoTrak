@@ -1,8 +1,8 @@
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
-import { Button } from "@valorant-tracker/ui/components/button";
-import { Input } from "@valorant-tracker/ui/components/input";
-import { Label } from "@valorant-tracker/ui/components/label";
+import { Button } from "@valotrak/ui/components/button";
+import { Input } from "@valotrak/ui/components/input";
+import { Label } from "@valotrak/ui/components/label";
 import { toast } from "sonner";
 import z from "zod";
 

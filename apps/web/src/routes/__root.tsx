@@ -6,8 +6,8 @@ import {
 	Outlet,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { Toaster } from "@valorant-tracker/ui/components/sonner";
-import { TooltipProvider } from "@valorant-tracker/ui/components/tooltip";
+import { Toaster } from "@valotrak/ui/components/sonner";
+import { TooltipProvider } from "@valotrak/ui/components/tooltip";
 
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -25,11 +25,11 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: () => ({
 		meta: [
 			{
-				title: "valorant-tracker",
+				title: "ValoTrak",
 			},
 			{
 				name: "description",
-				content: "valorant-tracker is a web application",
+				content: "ValoTrak is a web application",
 			},
 		],
 		links: [

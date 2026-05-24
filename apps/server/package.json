@@ -12,10 +12,10 @@
 	"dependencies": {
 		"@hono/trpc-server": "^0.4.0",
 		"@trpc/server": "catalog:",
-		"@valorant-tracker/api": "workspace:*",
-		"@valorant-tracker/auth": "workspace:*",
-		"@valorant-tracker/db": "workspace:*",
-		"@valorant-tracker/env": "workspace:*",
+		"@valotrak/api": "workspace:*",
+		"@valotrak/auth": "workspace:*",
+		"@valotrak/db": "workspace:*",
+		"@valotrak/env": "workspace:*",
 		"better-auth": "catalog:",
 		"dotenv": "catalog:",
 		"hono": "catalog:",
@@ -23,7 +23,7 @@
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",
-		"@valorant-tracker/config": "workspace:*",
+		"@valotrak/config": "workspace:*",
 		"tsdown": "^0.21.9",
 		"typescript": "catalog:"
 	}

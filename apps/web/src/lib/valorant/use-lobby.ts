@@ -6,7 +6,7 @@ import {
 	enrichLobby,
 	type MatchPhase,
 	type RiotShard,
-} from "@valorant-tracker/valorant";
+} from "@valotrak/valorant";
 import { useEffect } from "react";
 
 import {

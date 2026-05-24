@@ -4,8 +4,8 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@valorant-tracker/ui/components/empty";
-import type { TrendPoint } from "@valorant-tracker/valorant";
+} from "@valotrak/ui/components/empty";
+import type { TrendPoint } from "@valotrak/valorant";
 import { ChartLine } from "lucide-react";
 
 import { MetricTrend } from "./metric-trend";

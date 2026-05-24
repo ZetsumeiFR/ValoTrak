@@ -1,10 +1,10 @@
-import { Button } from "@valorant-tracker/ui/components/button";
+import { Button } from "@valotrak/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@valorant-tracker/ui/components/dropdown-menu";
+} from "@valotrak/ui/components/dropdown-menu";
 import { Moon, Sun } from "lucide-react";
 
 import { useTheme } from "@/components/theme-provider";

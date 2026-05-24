@@ -4,9 +4,9 @@ import {
 	Alert,
 	AlertDescription,
 	AlertTitle,
-} from "@valorant-tracker/ui/components/alert";
-import { Badge } from "@valorant-tracker/ui/components/badge";
-import { Skeleton } from "@valorant-tracker/ui/components/skeleton";
+} from "@valotrak/ui/components/alert";
+import { Badge } from "@valotrak/ui/components/badge";
+import { Skeleton } from "@valotrak/ui/components/skeleton";
 import { ArrowLeft, FlaskConical, TriangleAlert } from "lucide-react";
 import { useMemo } from "react";
 

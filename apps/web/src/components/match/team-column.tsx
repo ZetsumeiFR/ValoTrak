@@ -1,5 +1,5 @@
-import { Badge } from "@valorant-tracker/ui/components/badge";
-import type { EnrichedPlayer } from "@valorant-tracker/valorant";
+import { Badge } from "@valotrak/ui/components/badge";
+import type { EnrichedPlayer } from "@valotrak/valorant";
 import type { ReactNode } from "react";
 
 import { PlayerCard } from "./player-card";

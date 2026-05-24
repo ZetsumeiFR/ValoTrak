@@ -8,7 +8,7 @@ import type {
 	RiotResponse,
 	RiotShard,
 	RiotTransport,
-} from "@valorant-tracker/valorant";
+} from "@valotrak/valorant";
 
 /**
  * Frontend boundary to the Tauri (Rust) Valorant integration.

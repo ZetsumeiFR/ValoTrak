@@ -1,5 +1,5 @@
 {
-	"name": "@valorant-tracker/ui",
+	"name": "@valotrak/ui",
 	"version": "0.0.0",
 	"private": true,
 	"type": "module",
@@ -29,7 +29,7 @@
 	"devDependencies": {
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@valorant-tracker/config": "workspace:*",
+		"@valotrak/config": "workspace:*",
 		"tailwindcss": "^4.1.18",
 		"typescript": "catalog:"
 	}

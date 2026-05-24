@@ -1,6 +1,6 @@
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
 
-import { cn } from "@valorant-tracker/ui/lib/utils";
+import { cn } from "@valotrak/ui/lib/utils";
 
 function Switch({
 	className,

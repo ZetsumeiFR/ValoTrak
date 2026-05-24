@@ -1,5 +1,5 @@
 import { neon } from "@neondatabase/serverless";
-import { env } from "@valorant-tracker/env/server";
+import { env } from "@valotrak/env/server";
 import { drizzle } from "drizzle-orm/neon-http";
 
 import * as schema from "./schema";

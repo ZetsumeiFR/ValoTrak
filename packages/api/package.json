@@ -1,5 +1,5 @@
 {
-	"name": "@valorant-tracker/api",
+	"name": "@valotrak/api",
 	"type": "module",
 	"exports": {
 		".": {
@@ -13,15 +13,15 @@
 	"dependencies": {
 		"@trpc/client": "catalog:",
 		"@trpc/server": "catalog:",
-		"@valorant-tracker/auth": "workspace:*",
-		"@valorant-tracker/db": "workspace:*",
-		"@valorant-tracker/env": "workspace:*",
+		"@valotrak/auth": "workspace:*",
+		"@valotrak/db": "workspace:*",
+		"@valotrak/env": "workspace:*",
 		"dotenv": "catalog:",
 		"drizzle-orm": "^0.45.1",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@valorant-tracker/config": "workspace:*",
+		"@valotrak/config": "workspace:*",
 		"hono": "catalog:",
 		"typescript": "catalog:"
 	}

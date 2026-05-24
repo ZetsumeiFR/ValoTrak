@@ -1,8 +1,8 @@
 import { trpcServer } from "@hono/trpc-server";
-import { createContext } from "@valorant-tracker/api/context";
-import { appRouter } from "@valorant-tracker/api/routers/index";
-import { auth } from "@valorant-tracker/auth";
-import { env } from "@valorant-tracker/env/server";
+import { createContext } from "@valotrak/api/context";
+import { appRouter } from "@valotrak/api/routers/index";
+import { auth } from "@valotrak/auth";
+import { env } from "@valotrak/env/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";

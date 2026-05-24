@@ -1,4 +1,4 @@
-import { auth } from "@valorant-tracker/auth";
+import { auth } from "@valotrak/auth";
 import type { Context as HonoContext } from "hono";
 
 export type CreateContextOptions = {

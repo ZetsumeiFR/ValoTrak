@@ -1,8 +1,8 @@
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import type { AppRouter } from "@valorant-tracker/api/routers/index";
-import { env } from "@valorant-tracker/env/web";
+import type { AppRouter } from "@valotrak/api/routers/index";
+import { env } from "@valotrak/env/web";
 import { toast } from "sonner";
 
 import { getSessionToken } from "@/lib/session-token";

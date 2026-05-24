@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { quitPregame } from "@valorant-tracker/valorant";
+import { quitPregame } from "@valotrak/valorant";
 import { toast } from "sonner";
 
 import { tauriTransport } from "@/lib/valorant-bridge";

@@ -1,17 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Button } from "@valorant-tracker/ui/components/button";
-import { Card, CardContent } from "@valorant-tracker/ui/components/card";
+import { Button } from "@valotrak/ui/components/button";
+import { Card, CardContent } from "@valotrak/ui/components/card";
 import {
 	Empty,
 	EmptyDescription,
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@valorant-tracker/ui/components/empty";
-import { Separator } from "@valorant-tracker/ui/components/separator";
-import { Skeleton } from "@valorant-tracker/ui/components/skeleton";
-import type { CompetitiveTier } from "@valorant-tracker/valorant";
+} from "@valotrak/ui/components/empty";
+import { Separator } from "@valotrak/ui/components/separator";
+import { Skeleton } from "@valotrak/ui/components/skeleton";
+import type { CompetitiveTier } from "@valotrak/valorant";
 import { Star, X } from "lucide-react";
 import { Fragment, useMemo } from "react";
 
