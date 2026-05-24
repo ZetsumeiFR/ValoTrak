@@ -25,6 +25,8 @@ export interface LobbyData {
 	isDemo: boolean;
 	matchId?: string;
 	shard?: RiotShard;
+	/** Auth context for live actions (e.g. dodge). Absent in demo. */
+	tokens?: LocalTokens;
 }
 
 const LOBBY_KEY = ["valorant", "lobby"] as const;
@@ -69,6 +71,7 @@ async function loadLobby(): Promise<LobbyData> {
 		isDemo: false,
 		matchId: match.matchId,
 		shard: match.shard,
+		tokens,
 	};
 }
 
