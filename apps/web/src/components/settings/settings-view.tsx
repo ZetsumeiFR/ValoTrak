@@ -2,22 +2,22 @@ import {
 	Alert,
 	AlertDescription,
 	AlertTitle,
-} from "@valorant-tracker/ui/components/alert";
+} from "@valotrak/ui/components/alert";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@valorant-tracker/ui/components/card";
-import { Label } from "@valorant-tracker/ui/components/label";
+} from "@valotrak/ui/components/card";
+import { Label } from "@valotrak/ui/components/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@valorant-tracker/ui/components/select";
+} from "@valotrak/ui/components/select";
 import { TriangleAlert } from "lucide-react";
 
 import {

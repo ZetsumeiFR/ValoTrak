@@ -1,5 +1,5 @@
-import { cn } from "@valorant-tracker/ui/lib/utils";
-import type { Agent, MatchSummary } from "@valorant-tracker/valorant";
+import { cn } from "@valotrak/ui/lib/utils";
+import type { Agent, MatchSummary } from "@valotrak/valorant";
 
 import { AgentAvatar } from "@/components/match/agent-avatar";
 

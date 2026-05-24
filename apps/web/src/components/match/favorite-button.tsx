@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@valorant-tracker/ui/components/button";
-import { cn } from "@valorant-tracker/ui/lib/utils";
-import type { EnrichedPlayer } from "@valorant-tracker/valorant";
+import { Button } from "@valotrak/ui/components/button";
+import { cn } from "@valotrak/ui/lib/utils";
+import type { EnrichedPlayer } from "@valotrak/valorant";
 import { Star } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";

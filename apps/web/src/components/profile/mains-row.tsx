@@ -1,4 +1,4 @@
-import type { Agent, AggregatedStats } from "@valorant-tracker/valorant";
+import type { Agent, AggregatedStats } from "@valotrak/valorant";
 
 import { AgentAvatar } from "@/components/match/agent-avatar";
 

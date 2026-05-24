@@ -3,7 +3,7 @@ import {
 	demoProfile,
 	demoSnapshots,
 	type TrendPoint,
-} from "@valorant-tracker/valorant";
+} from "@valotrak/valorant";
 
 import { isDesktop } from "@/lib/valorant-bridge";
 import { trpcClient } from "@/utils/trpc";

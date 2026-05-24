@@ -3,16 +3,16 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "valorant-tracker",
+      "name": "valotrak",
       "dependencies": {
-        "@valorant-tracker/env": "workspace:*",
+        "@valotrak/env": "workspace:*",
         "dotenv": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.2.0",
         "@types/bun": "catalog:",
-        "@valorant-tracker/config": "workspace:*",
+        "@valotrak/config": "workspace:*",
         "turbo": "^2.8.12",
         "typescript": "catalog:",
       },
@@ -22,10 +22,10 @@
       "dependencies": {
         "@hono/trpc-server": "^0.4.0",
         "@trpc/server": "catalog:",
-        "@valorant-tracker/api": "workspace:*",
-        "@valorant-tracker/auth": "workspace:*",
-        "@valorant-tracker/db": "workspace:*",
-        "@valorant-tracker/env": "workspace:*",
+        "@valotrak/api": "workspace:*",
+        "@valotrak/auth": "workspace:*",
+        "@valotrak/db": "workspace:*",
+        "@valotrak/env": "workspace:*",
         "better-auth": "catalog:",
         "dotenv": "catalog:",
         "hono": "catalog:",
@@ -33,7 +33,7 @@
       },
       "devDependencies": {
         "@types/bun": "catalog:",
-        "@valorant-tracker/config": "workspace:*",
+        "@valotrak/config": "workspace:*",
         "tsdown": "^0.21.9",
         "typescript": "catalog:",
       },
@@ -52,10 +52,10 @@
         "@trpc/client": "catalog:",
         "@trpc/server": "catalog:",
         "@trpc/tanstack-react-query": "^11.16.0",
-        "@valorant-tracker/api": "workspace:*",
-        "@valorant-tracker/env": "workspace:*",
-        "@valorant-tracker/ui": "workspace:*",
-        "@valorant-tracker/valorant": "workspace:*",
+        "@valotrak/api": "workspace:*",
+        "@valotrak/env": "workspace:*",
+        "@valotrak/ui": "workspace:*",
+        "@valotrak/valorant": "workspace:*",
         "better-auth": "catalog:",
         "dotenv": "catalog:",
         "lucide-react": "^1.8.0",
@@ -73,7 +73,7 @@
         "@types/node": "^22.13.14",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
-        "@valorant-tracker/config": "workspace:*",
+        "@valotrak/config": "workspace:*",
         "@vitejs/plugin-react": "^6.0.1",
         "postcss": "^8.5.10",
         "tailwindcss": "^4.2.2",
@@ -82,59 +82,59 @@
       },
     },
     "packages/api": {
-      "name": "@valorant-tracker/api",
+      "name": "@valotrak/api",
       "dependencies": {
         "@trpc/client": "catalog:",
         "@trpc/server": "catalog:",
-        "@valorant-tracker/auth": "workspace:*",
-        "@valorant-tracker/db": "workspace:*",
-        "@valorant-tracker/env": "workspace:*",
+        "@valotrak/auth": "workspace:*",
+        "@valotrak/db": "workspace:*",
+        "@valotrak/env": "workspace:*",
         "dotenv": "catalog:",
         "drizzle-orm": "^0.45.1",
         "zod": "catalog:",
       },
       "devDependencies": {
-        "@valorant-tracker/config": "workspace:*",
+        "@valotrak/config": "workspace:*",
         "hono": "catalog:",
         "typescript": "catalog:",
       },
     },
     "packages/auth": {
-      "name": "@valorant-tracker/auth",
+      "name": "@valotrak/auth",
       "dependencies": {
-        "@valorant-tracker/db": "workspace:*",
-        "@valorant-tracker/env": "workspace:*",
+        "@valotrak/db": "workspace:*",
+        "@valotrak/env": "workspace:*",
         "better-auth": "catalog:",
         "dotenv": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
-        "@valorant-tracker/config": "workspace:*",
+        "@valotrak/config": "workspace:*",
         "typescript": "catalog:",
       },
     },
     "packages/config": {
-      "name": "@valorant-tracker/config",
+      "name": "@valotrak/config",
       "version": "0.0.0",
     },
     "packages/db": {
-      "name": "@valorant-tracker/db",
+      "name": "@valotrak/db",
       "dependencies": {
         "@neondatabase/serverless": "^1.0.2",
-        "@valorant-tracker/env": "workspace:*",
-        "@valorant-tracker/valorant": "workspace:*",
+        "@valotrak/env": "workspace:*",
+        "@valotrak/valorant": "workspace:*",
         "dotenv": "catalog:",
         "drizzle-orm": "^0.45.1",
         "zod": "catalog:",
       },
       "devDependencies": {
-        "@valorant-tracker/config": "workspace:*",
+        "@valotrak/config": "workspace:*",
         "drizzle-kit": "^0.31.8",
         "typescript": "catalog:",
       },
     },
     "packages/env": {
-      "name": "@valorant-tracker/env",
+      "name": "@valotrak/env",
       "version": "0.0.0",
       "dependencies": {
         "@t3-oss/env-core": "^0.13.1",
@@ -143,12 +143,12 @@
       },
       "devDependencies": {
         "@types/bun": "catalog:",
-        "@valorant-tracker/config": "workspace:*",
+        "@valotrak/config": "workspace:*",
         "typescript": "catalog:",
       },
     },
     "packages/ui": {
-      "name": "@valorant-tracker/ui",
+      "name": "@valotrak/ui",
       "version": "0.0.0",
       "dependencies": {
         "@base-ui/react": "^1.0.0",
@@ -166,20 +166,20 @@
       "devDependencies": {
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
-        "@valorant-tracker/config": "workspace:*",
+        "@valotrak/config": "workspace:*",
         "tailwindcss": "^4.1.18",
         "typescript": "catalog:",
       },
     },
     "packages/valorant": {
-      "name": "@valorant-tracker/valorant",
+      "name": "@valotrak/valorant",
       "version": "0.0.0",
       "dependencies": {
         "zod": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
-        "@valorant-tracker/config": "workspace:*",
+        "@valotrak/config": "workspace:*",
         "typescript": "catalog:",
       },
     },
@@ -612,19 +612,19 @@
 
     "@types/validate-npm-package-name": ["@types/validate-npm-package-name@4.0.2", "", {}, "sha512-lrpDziQipxCEeK5kWxvljWYhUvOiB2A9izZd9B2AFarYAkqZshb4lPbRs7zKEic6eGtH8V/2qJW+dPp9OtF6bw=="],
 
-    "@valorant-tracker/api": ["@valorant-tracker/api@workspace:packages/api"],
+    "@valotrak/api": ["@valotrak/api@workspace:packages/api"],
 
-    "@valorant-tracker/auth": ["@valorant-tracker/auth@workspace:packages/auth"],
+    "@valotrak/auth": ["@valotrak/auth@workspace:packages/auth"],
 
-    "@valorant-tracker/config": ["@valorant-tracker/config@workspace:packages/config"],
+    "@valotrak/config": ["@valotrak/config@workspace:packages/config"],
 
-    "@valorant-tracker/db": ["@valorant-tracker/db@workspace:packages/db"],
+    "@valotrak/db": ["@valotrak/db@workspace:packages/db"],
 
-    "@valorant-tracker/env": ["@valorant-tracker/env@workspace:packages/env"],
+    "@valotrak/env": ["@valotrak/env@workspace:packages/env"],
 
-    "@valorant-tracker/ui": ["@valorant-tracker/ui@workspace:packages/ui"],
+    "@valotrak/ui": ["@valotrak/ui@workspace:packages/ui"],
 
-    "@valorant-tracker/valorant": ["@valorant-tracker/valorant@workspace:packages/valorant"],
+    "@valotrak/valorant": ["@valotrak/valorant@workspace:packages/valorant"],
 
     "@vitejs/plugin-react": ["@vitejs/plugin-react@6.0.2", "", { "dependencies": { "@rolldown/pluginutils": "^1.0.0" }, "peerDependencies": { "@rolldown/plugin-babel": "^0.1.7 || ^0.2.0", "babel-plugin-react-compiler": "^1.0.0", "vite": "^8.0.0" }, "optionalPeers": ["@rolldown/plugin-babel", "babel-plugin-react-compiler"] }, "sha512-DlSMqo4WhThw4vB8Mpn0Woe9J+Jfq1geJ61AKW0QEgLzGMNwtIMdxbDUzLxcun8W7NbJO0e2Jg/Nxm3cCSVzzg=="],
 

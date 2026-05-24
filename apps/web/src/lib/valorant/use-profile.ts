@@ -3,7 +3,7 @@ import {
 	demoProfile,
 	enrichProfile,
 	type Profile,
-} from "@valorant-tracker/valorant";
+} from "@valotrak/valorant";
 
 import {
 	getLocalTokens,

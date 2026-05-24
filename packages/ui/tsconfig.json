@@ -1,10 +1,10 @@
 {
-	"extends": "@valorant-tracker/config/tsconfig.base.json",
+	"extends": "@valotrak/config/tsconfig.base.json",
 	"compilerOptions": {
 		"jsx": "react-jsx",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"paths": {
-			"@valorant-tracker/ui/*": ["./src/*"]
+			"@valotrak/ui/*": ["./src/*"]
 		}
 	},
 	"include": ["src/**/*.ts", "src/**/*.tsx"],

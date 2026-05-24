@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "valorant-tracker",
+  "productName": "ValoTrak",
   "version": "0.1.0",
   "identifier": "com.tauri.dev",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Valorant Tracker",
+        "title": "ValoTrak",
         "width": 1200,
         "height": 820,
         "minWidth": 940,

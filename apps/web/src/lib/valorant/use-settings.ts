@@ -1,4 +1,4 @@
-import type { MatchPhase } from "@valorant-tracker/valorant";
+import type { MatchPhase } from "@valotrak/valorant";
 import { useSyncExternalStore } from "react";
 
 /**
@@ -10,7 +10,7 @@ import { useSyncExternalStore } from "react";
  */
 export type EnemyRevealMode = "off" | "coregame" | "pregame";
 
-const STORAGE_KEY = "valorant-tracker.enemy-reveal-mode";
+const STORAGE_KEY = "valotrak.enemy-reveal-mode";
 const DEFAULT_MODE: EnemyRevealMode = "coregame";
 
 const listeners = new Set<() => void>();

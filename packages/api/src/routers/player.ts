@@ -1,9 +1,9 @@
-import { db } from "@valorant-tracker/db";
+import { db } from "@valotrak/db";
 import {
 	type PlayerSnapshotPayload,
 	playerStatsCache,
 	trackedPlayer,
-} from "@valorant-tracker/db/schema/valorant";
+} from "@valotrak/db/schema/valorant";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 

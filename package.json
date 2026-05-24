@@ -1,5 +1,5 @@
 {
-  "name": "valorant-tracker",
+  "name": "valotrak",
   "private": true,
   "workspaces": {
     "packages": [
@@ -29,21 +29,21 @@
     "check-types": "turbo check-types",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F server dev",
-    "db:push": "turbo -F @valorant-tracker/db db:push",
-    "db:studio": "turbo -F @valorant-tracker/db db:studio",
-    "db:generate": "turbo -F @valorant-tracker/db db:generate",
-    "db:migrate": "turbo -F @valorant-tracker/db db:migrate",
+    "db:push": "turbo -F @valotrak/db db:push",
+    "db:studio": "turbo -F @valotrak/db db:studio",
+    "db:generate": "turbo -F @valotrak/db db:generate",
+    "db:migrate": "turbo -F @valotrak/db db:migrate",
     "check": "biome check --write ."
   },
   "dependencies": {
-    "@valorant-tracker/env": "workspace:*",
+    "@valotrak/env": "workspace:*",
     "dotenv": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",
     "@types/bun": "catalog:",
-    "@valorant-tracker/config": "workspace:*",
+    "@valotrak/config": "workspace:*",
     "turbo": "^2.8.12",
     "typescript": "catalog:"
   },

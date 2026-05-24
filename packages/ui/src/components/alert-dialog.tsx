@@ -1,7 +1,7 @@
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
-import { Button } from "@valorant-tracker/ui/components/button";
+import { Button } from "@valotrak/ui/components/button";
 
-import { cn } from "@valorant-tracker/ui/lib/utils";
+import { cn } from "@valotrak/ui/lib/utils";
 import type * as React from "react";
 
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {

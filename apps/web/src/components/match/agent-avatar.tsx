@@ -2,13 +2,13 @@ import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@valorant-tracker/ui/components/avatar";
+} from "@valotrak/ui/components/avatar";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@valorant-tracker/ui/components/tooltip";
-import type { Agent } from "@valorant-tracker/valorant";
+} from "@valotrak/ui/components/tooltip";
+import type { Agent } from "@valotrak/valorant";
 
 export function AgentAvatar({
 	agent,

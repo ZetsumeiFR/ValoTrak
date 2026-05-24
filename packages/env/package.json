@@ -1,5 +1,5 @@
 {
-  "name": "@valorant-tracker/env",
+  "name": "@valotrak/env",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@types/bun": "catalog:",
-    "@valorant-tracker/config": "workspace:*",
+    "@valotrak/config": "workspace:*",
     "typescript": "catalog:"
   }
 }

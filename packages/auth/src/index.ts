@@ -1,6 +1,6 @@
-import { createDb } from "@valorant-tracker/db";
-import * as schema from "@valorant-tracker/db/schema/auth";
-import { env } from "@valorant-tracker/env/server";
+import { createDb } from "@valotrak/db";
+import * as schema from "@valotrak/db/schema/auth";
+import { env } from "@valotrak/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { bearer } from "better-auth/plugins";

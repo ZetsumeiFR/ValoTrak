@@ -8,8 +8,8 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from "@valorant-tracker/ui/components/alert-dialog";
-import { Button } from "@valorant-tracker/ui/components/button";
+} from "@valotrak/ui/components/alert-dialog";
+import { Button } from "@valotrak/ui/components/button";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
 

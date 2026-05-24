@@ -12,11 +12,11 @@
 	},
 	"iconLibrary": "lucide",
 	"aliases": {
-		"components": "@valorant-tracker/ui/components",
-		"utils": "@valorant-tracker/ui/lib/utils",
-		"hooks": "@valorant-tracker/ui/hooks",
-		"lib": "@valorant-tracker/ui/lib",
-		"ui": "@valorant-tracker/ui/components"
+		"components": "@valotrak/ui/components",
+		"utils": "@valotrak/ui/lib/utils",
+		"hooks": "@valotrak/ui/hooks",
+		"lib": "@valotrak/ui/lib",
+		"ui": "@valotrak/ui/components"
 	},
 	"menuColor": "default",
 	"menuAccent": "subtle",

@@ -4,10 +4,10 @@ import {
 	Alert,
 	AlertDescription,
 	AlertTitle,
-} from "@valorant-tracker/ui/components/alert";
-import { Badge } from "@valorant-tracker/ui/components/badge";
-import { Button } from "@valorant-tracker/ui/components/button";
-import { Skeleton } from "@valorant-tracker/ui/components/skeleton";
+} from "@valotrak/ui/components/alert";
+import { Badge } from "@valotrak/ui/components/badge";
+import { Button } from "@valotrak/ui/components/button";
+import { Skeleton } from "@valotrak/ui/components/skeleton";
 import { FlaskConical, RefreshCw, TriangleAlert } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
 

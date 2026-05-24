@@ -4,7 +4,7 @@ import {
 	type CompetitiveTier,
 	getAgents,
 	getCompetitiveTiers,
-} from "@valorant-tracker/valorant";
+} from "@valotrak/valorant";
 
 /** Static asset data from valorant-api.com — rarely changes, cache for a day. */
 const STATIC_STALE_TIME = 1000 * 60 * 60 * 24;

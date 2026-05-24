@@ -1,5 +1,5 @@
 import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
-import { cn } from "@valorant-tracker/ui/lib/utils";
+import { cn } from "@valotrak/ui/lib/utils";
 import type * as React from "react";
 
 function Avatar({

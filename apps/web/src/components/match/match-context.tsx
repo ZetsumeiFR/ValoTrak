@@ -1,4 +1,4 @@
-import type { Agent, CompetitiveTier } from "@valorant-tracker/valorant";
+import type { Agent, CompetitiveTier } from "@valotrak/valorant";
 import { createContext, useContext } from "react";
 
 /** Shared lobby data passed down to player cards without prop drilling. */
