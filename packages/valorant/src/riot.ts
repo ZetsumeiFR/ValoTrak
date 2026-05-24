@@ -1,7 +1,8 @@
 import { DEFAULT_MATCH_COUNT, type QueueId, UNRANKED_TIER } from "./constants";
-import { pdBase, type RiotShard } from "./endpoints";
+import { glzBase, pdBase, type RiotShard } from "./endpoints";
 import {
 	buildAuthHeaders,
+	RiotApiError,
 	type RiotAuth,
 	type RiotTransport,
 	riotJson,
@@ -104,6 +105,29 @@ export async function getNames(
 		});
 	}
 	return map;
+}
+
+/**
+ * Dodge the current agent-select (pregame) match without quitting the game.
+ *
+ * `POST {glz}/pregame/v1/matches/{matchId}/quit`. Only valid during pregame.
+ * Dodging incurs Riot's usual penalties (RR loss + a queue restriction).
+ */
+export async function quitPregame(
+	transport: RiotTransport,
+	auth: RiotAuth,
+	shard: RiotShard,
+	matchId: string,
+): Promise<void> {
+	const url = `${glzBase(shard)}/pregame/v1/matches/${matchId}/quit`;
+	const res = await transport({
+		method: "POST",
+		url,
+		headers: buildAuthHeaders(auth),
+	});
+	if (!res.ok) {
+		throw new RiotApiError(url, res.status, res.body);
+	}
 }
 
 /** Extract the current rank + RR from an MMR response. */

@@ -38,6 +38,7 @@ import { useFollowedSnapshots } from "@/lib/valorant/use-snapshot";
 import { isAppError } from "@/lib/valorant-bridge";
 
 import { DemoBanner } from "./demo-banner";
+import { DodgeButton } from "./dodge-button";
 import { MatchProvider } from "./match-context";
 import { TeamColumn } from "./team-column";
 
@@ -97,18 +98,23 @@ export function LobbyView() {
 				) : null}
 				{lobby.data?.isDemo ? <Badge variant="secondary">Demo</Badge> : null}
 			</div>
-			<Button
-				variant="outline"
-				size="sm"
-				onClick={() => lobby.refetch()}
-				disabled={lobby.isFetching}
-			>
-				<RefreshCw
-					data-icon="inline-start"
-					className={lobby.isFetching ? "animate-spin" : undefined}
-				/>
-				Refresh
-			</Button>
+			<div className="flex items-center gap-2">
+				{lobby.data && !lobby.data.isDemo && lobby.data.phase === "pregame" ? (
+					<DodgeButton lobby={lobby.data} />
+				) : null}
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => lobby.refetch()}
+					disabled={lobby.isFetching}
+				>
+					<RefreshCw
+						data-icon="inline-start"
+						className={lobby.isFetching ? "animate-spin" : undefined}
+					/>
+					Refresh
+				</Button>
+			</div>
 		</div>
 	);
 
