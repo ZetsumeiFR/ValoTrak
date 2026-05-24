@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import logoMark from "@/assets/logo-mark.png";
+
 import { LanguageToggle } from "./language-toggle";
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
@@ -18,12 +20,14 @@ export default function Header() {
 		<header className="border-border/80 border-b bg-background/80 backdrop-blur">
 			<div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-2.5">
 				<div className="flex items-center gap-6">
-					<Link to="/" className="group flex items-center gap-2.5">
-						<span className="clip-corner size-5 bg-brand transition-transform group-hover:rotate-12" />
-						<span className="font-extrabold font-sans text-sm uppercase tracking-[0.18em]">
-							Valorant
-							<span className="text-brand">·</span>
-							<span className="text-muted-foreground">Tracker</span>
+					<Link to="/" className="group flex items-center gap-2">
+						<img
+							src={logoMark}
+							alt=""
+							className="h-6 w-auto transition-transform group-hover:scale-110"
+						/>
+						<span className="font-extrabold font-sans text-base tracking-tight">
+							ValoTrak
 						</span>
 					</Link>
 					<nav className="flex items-center gap-5">
