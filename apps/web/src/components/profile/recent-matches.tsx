@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { cn } from "@valotrak/ui/lib/utils";
 import type { Agent, MapInfo, MatchSummary } from "@valotrak/valorant";
 import { useTranslation } from "react-i18next";
@@ -19,7 +20,11 @@ function MatchRow({
 	const mapName = mapDisplayName(mapsByUrl, match.map);
 
 	return (
-		<div className="clip-corner relative flex items-center gap-3 bg-card py-2 pr-3 pl-4 ring-1 ring-border">
+		<Link
+			to="/matches/$matchId"
+			params={{ matchId: match.matchId }}
+			className="clip-corner relative flex items-center gap-3 bg-card py-2 pr-3 pl-4 ring-1 ring-border transition-colors hover:ring-brand/50"
+		>
 			<div
 				className={cn(
 					"absolute inset-y-0 left-0 w-1",
@@ -53,7 +58,7 @@ function MatchRow({
 					{Math.round(match.hsPercent)}% HS
 				</span>
 			</div>
-		</div>
+		</Link>
 	);
 }
 

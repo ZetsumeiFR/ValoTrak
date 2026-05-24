@@ -118,6 +118,11 @@ const en = {
 		unfollow: "Unfollow player",
 		resultWin: "Win",
 		resultLoss: "Loss",
+		recapTitle: "Match recap",
+		recapUnavailable:
+			"The detailed recap needs the live game data (desktop app with Valorant running).",
+		recapError: "Couldn't load the match recap",
+		colPlayer: "Player",
 	},
 	settings: {
 		title: "Settings",
@@ -301,6 +306,11 @@ const fr = {
 		unfollow: "Ne plus suivre le joueur",
 		resultWin: "Gagné",
 		resultLoss: "Perdu",
+		recapTitle: "Récap du match",
+		recapUnavailable:
+			"Le récap détaillé nécessite les données du jeu en direct (app desktop avec Valorant lancé).",
+		recapError: "Impossible de charger le récap du match",
+		colPlayer: "Joueur",
 	},
 	settings: {
 		title: "Paramètres",
