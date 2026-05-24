@@ -16,7 +16,9 @@ import { authClient } from "@/lib/auth-client";
 import {
 	agentsQueryOptions,
 	indexAgents,
+	indexMaps,
 	indexTiers,
+	mapsQueryOptions,
 	tiersQueryOptions,
 } from "@/lib/valorant/queries";
 import { useProfile } from "@/lib/valorant/use-profile";
@@ -39,6 +41,7 @@ export function ProfilePage() {
 	const profile = useProfile();
 	const agentsQuery = useQuery(agentsQueryOptions());
 	const tiersQuery = useQuery(tiersQueryOptions());
+	const mapsQuery = useQuery(mapsQueryOptions());
 	const { data: session } = authClient.useSession();
 
 	const agentsById = useMemo(
@@ -49,6 +52,7 @@ export function ProfilePage() {
 		() => indexTiers(tiersQuery.data),
 		[tiersQuery.data],
 	);
+	const mapsByUrl = useMemo(() => indexMaps(mapsQuery.data), [mapsQuery.data]);
 
 	const header = (
 		<div className="flex items-center justify-between gap-2">
@@ -155,7 +159,11 @@ export function ProfilePage() {
 
 				<section className="flex flex-col gap-3">
 					<SectionHeading>Recent matches</SectionHeading>
-					<RecentMatches matches={data.recentMatches} agentsById={agentsById} />
+					<RecentMatches
+							matches={data.recentMatches}
+							agentsById={agentsById}
+							mapsByUrl={mapsByUrl}
+						/>
 				</section>
 
 				<section className="flex flex-col gap-3">
