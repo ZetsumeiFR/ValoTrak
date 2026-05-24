@@ -95,6 +95,44 @@ export interface MatchSummary {
 	startedAt?: number;
 }
 
+/** One player's line in a finished match's scoreboard. */
+export interface ScoreboardPlayer {
+	puuid: string;
+	teamId: TeamId;
+	agentId: string;
+	/** Competitive tier number in this match (0 = Unranked). */
+	tier: number;
+	kills: number;
+	deaths: number;
+	assists: number;
+	/** Average Combat Score for this match (score / rounds). */
+	acs: number;
+	/** Headshot percentage for this match, 0-100. */
+	hsPercent: number;
+	/** Total combat score, used for ordering the scoreboard. */
+	score: number;
+}
+
+/** A team's result in a finished match. */
+export interface ScoreboardTeam {
+	teamId: TeamId;
+	won: boolean;
+	/** Rounds won (the team's score). */
+	roundsWon: number;
+}
+
+/** A finished match's full scoreboard, for the recap view. */
+export interface MatchScoreboard {
+	matchId: string;
+	/** Raw map asset path (`matchInfo.mapId`); resolve to a name via the static maps API. */
+	map?: string;
+	queue?: string;
+	startedAt?: number;
+	teams: ScoreboardTeam[];
+	/** All players, highest combat score first. */
+	players: ScoreboardPlayer[];
+}
+
 /** The signed-in user's own Valorant profile, for the landing page. */
 export interface Profile {
 	puuid: string;
@@ -211,6 +249,8 @@ export interface RawTeam {
 	teamId: string;
 	won: boolean;
 	roundsPlayed?: number;
+	/** Rounds won by this team (the team's score). */
+	numPoints?: number;
 }
 
 export interface RawMatchInfo {

@@ -7,6 +7,7 @@ export * from "./fixtures";
 export * from "./limiter";
 export * from "./profile";
 export * from "./riot";
+export * from "./scoreboard";
 export * from "./static";
 export * from "./transport";
 export * from "./types";
