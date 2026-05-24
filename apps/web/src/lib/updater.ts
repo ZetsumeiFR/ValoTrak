@@ -2,6 +2,7 @@ import type { Update } from "@tauri-apps/plugin-updater";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
+import i18n from "@/lib/i18n";
 import { isDesktop } from "@/lib/valorant-bridge";
 
 /**
@@ -10,7 +11,9 @@ import { isDesktop } from "@/lib/valorant-bridge";
  */
 async function installUpdate(update: Update) {
 	const { relaunch } = await import("@tauri-apps/plugin-process");
-	const id = toast.loading(`Downloading v${update.version}…`);
+	const id = toast.loading(
+		i18n.t("updater.downloading", { version: update.version, pct: "" }),
+	);
 
 	try {
 		let downloaded = 0;
@@ -20,18 +23,19 @@ async function installUpdate(update: Update) {
 				total = event.data.contentLength ?? 0;
 			} else if (event.event === "Progress") {
 				downloaded += event.data.chunkLength;
-				const pct = total
-					? ` ${Math.round((downloaded / total) * 100)}%`
-					: "";
-				toast.loading(`Downloading v${update.version}…${pct}`, { id });
+				const pct = total ? ` ${Math.round((downloaded / total) * 100)}%` : "";
+				toast.loading(
+					i18n.t("updater.downloading", { version: update.version, pct }),
+					{ id },
+				);
 			} else if (event.event === "Finished") {
-				toast.loading("Installing…", { id });
+				toast.loading(i18n.t("updater.installing"), { id });
 			}
 		});
-		toast.success("Update installed — restarting…", { id });
+		toast.success(i18n.t("updater.installed"), { id });
 		await relaunch();
 	} catch (error) {
-		toast.error(`Update failed: ${String(error)}`, { id });
+		toast.error(i18n.t("updater.failed", { error: String(error) }), { id });
 	}
 }
 
@@ -41,9 +45,11 @@ async function installUpdate(update: Update) {
  */
 export async function checkForUpdates({
 	silent = false,
-}: { silent?: boolean } = {}) {
+}: {
+	silent?: boolean;
+} = {}) {
 	if (!isDesktop()) {
-		if (!silent) toast.info("Updates are only available in the desktop app.");
+		if (!silent) toast.info(i18n.t("updater.onlyDesktop"));
 		return;
 	}
 
@@ -53,20 +59,21 @@ export async function checkForUpdates({
 	try {
 		update = await check();
 	} catch (error) {
-		if (!silent) toast.error(`Update check failed: ${String(error)}`);
+		if (!silent)
+			toast.error(i18n.t("updater.checkFailed", { error: String(error) }));
 		return;
 	}
 
 	if (!update) {
-		if (!silent) toast.success("You're on the latest version.");
+		if (!silent) toast.success(i18n.t("updater.upToDate"));
 		return;
 	}
 
 	const pending = update;
-	toast.info(`Update available — v${pending.version}`, {
+	toast.info(i18n.t("updater.available", { version: pending.version }), {
 		duration: Number.POSITIVE_INFINITY,
 		action: {
-			label: "Install & restart",
+			label: i18n.t("updater.installRestart"),
 			onClick: () => {
 				void installUpdate(pending);
 			},

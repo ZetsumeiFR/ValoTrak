@@ -9,6 +9,7 @@ import { Badge } from "@valotrak/ui/components/badge";
 import { Skeleton } from "@valotrak/ui/components/skeleton";
 import { ArrowLeft, FlaskConical, TriangleAlert } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { RankBadge } from "@/components/match/rank-badge";
 import { indexTiers, tiersQueryOptions } from "@/lib/valorant/queries";
@@ -27,6 +28,7 @@ export function PlayerDetail({
 	tag?: string;
 	region?: string;
 }) {
+	const { t } = useTranslation();
 	const trends = useTrends(puuid);
 	const tiersQuery = useQuery(tiersQueryOptions());
 	const tiersById = useMemo(
@@ -35,7 +37,7 @@ export function PlayerDetail({
 	);
 
 	const identity = trends.data?.identity;
-	const displayName = name ?? identity?.gameName ?? "Player";
+	const displayName = name ?? identity?.gameName ?? t("trends.player");
 	const displayTag = tag ?? identity?.tagLine;
 	const displayRegion = (region ?? identity?.region)?.toUpperCase();
 
@@ -46,7 +48,7 @@ export function PlayerDetail({
 				className="inline-flex w-fit items-center gap-1.5 font-mono text-[11px] text-muted-foreground uppercase tracking-[0.15em] transition-colors hover:text-foreground"
 			>
 				<ArrowLeft className="size-3.5" />
-				Back
+				{t("common.back")}
 			</Link>
 
 			<div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -59,7 +61,9 @@ export function PlayerDetail({
 				{displayRegion ? (
 					<Badge variant="outline">{displayRegion}</Badge>
 				) : null}
-				{trends.data?.isDemo ? <Badge variant="secondary">Demo</Badge> : null}
+				{trends.data?.isDemo ? (
+					<Badge variant="secondary">{t("common.demo")}</Badge>
+				) : null}
 				<RankBadge
 					tier={identity?.tier}
 					rr={identity?.rr}
@@ -70,11 +74,11 @@ export function PlayerDetail({
 
 			<div className="flex items-center gap-2">
 				<h2 className="tick font-mono font-semibold text-[11px] text-muted-foreground uppercase tracking-[0.22em]">
-					Trends
+					{t("trends.trends")}
 				</h2>
 				{trends.data ? (
 					<span className="font-mono text-[10px] text-muted-foreground">
-						{trends.data.points.length} snapshots
+						{t("trends.snapshots", { count: trends.data.points.length })}
 					</span>
 				) : null}
 			</div>
@@ -88,11 +92,11 @@ export function PlayerDetail({
 			) : trends.isError ? (
 				<Alert variant="destructive">
 					<TriangleAlert />
-					<AlertTitle>Couldn't load trends</AlertTitle>
+					<AlertTitle>{t("trends.loadError")}</AlertTitle>
 					<AlertDescription>
 						{trends.error instanceof Error
 							? trends.error.message
-							: "Unknown error"}
+							: t("trends.unknownError")}
 					</AlertDescription>
 				</Alert>
 			) : (
@@ -100,11 +104,8 @@ export function PlayerDetail({
 					{trends.data.isDemo ? (
 						<Alert>
 							<FlaskConical />
-							<AlertTitle>Demo trends</AlertTitle>
-							<AlertDescription>
-								Sample history. Real snapshots are recorded for followed players
-								as you refresh the live lobby on Windows.
-							</AlertDescription>
+							<AlertTitle>{t("trends.demoTitle")}</AlertTitle>
+							<AlertDescription>{t("trends.demoDesc")}</AlertDescription>
 						</Alert>
 					) : null}
 					<PlayerTrends points={trends.data.points} />

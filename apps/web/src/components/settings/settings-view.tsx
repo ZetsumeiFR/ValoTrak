@@ -19,6 +19,7 @@ import {
 	SelectValue,
 } from "@valotrak/ui/components/select";
 import { TriangleAlert } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import {
 	type EnemyRevealMode,
@@ -28,45 +29,49 @@ import {
 
 const MODE_OPTIONS: {
 	value: EnemyRevealMode;
-	label: string;
-	description: string;
+	labelKey:
+		| "settings.optOffLabel"
+		| "settings.optCoregameLabel"
+		| "settings.optPregameLabel";
+	descriptionKey:
+		| "settings.optOffDesc"
+		| "settings.optCoregameDesc"
+		| "settings.optPregameDesc";
 }[] = [
 	{
 		value: "off",
-		label: "Off — allies only",
-		description: "Never show enemies in the live lobby.",
+		labelKey: "settings.optOffLabel",
+		descriptionKey: "settings.optOffDesc",
 	},
 	{
 		value: "coregame",
-		label: "Coregame (recommended)",
-		description: "Show enemies only once the match has loaded.",
+		labelKey: "settings.optCoregameLabel",
+		descriptionKey: "settings.optCoregameDesc",
 	},
 	{
 		value: "pregame",
-		label: "Pregame (risky)",
-		description:
-			"Also show enemies during agent select — the highest ban risk.",
+		labelKey: "settings.optPregameLabel",
+		descriptionKey: "settings.optPregameDesc",
 	},
 ];
 
 export function SettingsView() {
+	const { t } = useTranslation();
 	const mode = useEnemyRevealMode();
 	const active = MODE_OPTIONS.find((option) => option.value === mode);
 
 	return (
 		<div className="container mx-auto flex max-w-2xl flex-col gap-4 px-4 py-4">
-			<h1 className="font-semibold text-lg">Settings</h1>
+			<h1 className="font-semibold text-lg">{t("settings.title")}</h1>
 
 			<Card>
 				<CardHeader>
-					<CardTitle>Enemy reveal</CardTitle>
-					<CardDescription>
-						Controls when opponents are shown in the live lobby.
-					</CardDescription>
+					<CardTitle>{t("settings.enemyRevealTitle")}</CardTitle>
+					<CardDescription>{t("settings.enemyRevealDesc")}</CardDescription>
 				</CardHeader>
 				<CardContent className="flex flex-col gap-3">
 					<div className="flex flex-col gap-1.5">
-						<Label htmlFor="enemy-reveal-mode">Mode</Label>
+						<Label htmlFor="enemy-reveal-mode">{t("settings.modeLabel")}</Label>
 						<Select
 							value={mode}
 							onValueChange={(value) =>
@@ -79,26 +84,22 @@ export function SettingsView() {
 							<SelectContent>
 								{MODE_OPTIONS.map((option) => (
 									<SelectItem key={option.value} value={option.value}>
-										{option.label}
+										{t(option.labelKey)}
 									</SelectItem>
 								))}
 							</SelectContent>
 						</Select>
 						{active ? (
 							<p className="text-muted-foreground text-xs">
-								{active.description}
+								{t(active.descriptionKey)}
 							</p>
 						) : null}
 					</div>
 
 					<Alert variant="destructive">
 						<TriangleAlert />
-						<AlertTitle>Ban risk</AlertTitle>
-						<AlertDescription>
-							Revealing client-hidden enemy data — especially during agent
-							select (pregame) — is against Riot's policy and has led to
-							temporary bans. This feature is used entirely at your own risk.
-						</AlertDescription>
+						<AlertTitle>{t("settings.banRiskTitle")}</AlertTitle>
+						<AlertDescription>{t("settings.banRiskDesc")}</AlertDescription>
 					</Alert>
 				</CardContent>
 			</Card>

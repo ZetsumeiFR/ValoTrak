@@ -1,5 +1,6 @@
 import { cn } from "@valotrak/ui/lib/utils";
 import type { CompetitiveTier, Profile } from "@valotrak/valorant";
+import { useTranslation } from "react-i18next";
 
 export function ProfileHero({
 	profile,
@@ -8,6 +9,7 @@ export function ProfileHero({
 	profile: Profile;
 	tiersById: Map<number, CompetitiveTier>;
 }) {
+	const { t } = useTranslation();
 	const tierInfo =
 		profile.rank?.tier !== undefined
 			? tiersById.get(profile.rank.tier)
@@ -17,7 +19,7 @@ export function ProfileHero({
 			? tiersById.get(profile.rank.peakTier)
 			: undefined;
 	const rr = profile.rank?.rr ?? 0;
-	const name = profile.riotId?.gameName ?? "Unknown";
+	const name = profile.riotId?.gameName ?? t("common.unknown");
 	const tag = profile.riotId?.tagLine;
 	const form = profile.recentMatches.slice(0, 8);
 
@@ -42,7 +44,7 @@ export function ProfileHero({
 					)}
 					<div className="flex min-w-0 flex-col gap-1">
 						<span className="font-mono text-[10px] text-brand uppercase tracking-[0.35em]">
-							Operator
+							{t("profile.operator")}
 						</span>
 						<h1 className="truncate font-extrabold font-sans text-4xl leading-none tracking-tight">
 							{name}
@@ -55,12 +57,12 @@ export function ProfileHero({
 								className="font-semibold"
 								style={{ color: tierInfo ? `#${tierInfo.color}` : undefined }}
 							>
-								{tierInfo?.tierName ?? "UNRANKED"}
+								{tierInfo?.tierName ?? t("common.unranked")}
 							</span>
 							<span className="text-muted-foreground">· {rr} RR</span>
 							{peakInfo ? (
 								<span className="text-muted-foreground">
-									· peak {peakInfo.tierName}
+									· {t("profile.peak", { tier: peakInfo.tierName })}
 								</span>
 							) : null}
 						</div>
@@ -75,14 +77,14 @@ export function ProfileHero({
 
 				<div className="flex flex-col gap-2 sm:ml-auto">
 					<span className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.2em]">
-						Recent form
+						{t("profile.recentForm")}
 					</span>
 					<div className="flex gap-1">
 						{form.length > 0 ? (
 							form.map((match) => (
 								<span
 									key={match.matchId}
-									title={match.won ? "Win" : "Loss"}
+									title={match.won ? t("common.win") : t("common.loss")}
 									className={cn("size-3.5", match.won ? "bg-win" : "bg-loss")}
 								/>
 							))

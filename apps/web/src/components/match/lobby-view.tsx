@@ -23,6 +23,7 @@ import {
 	Users,
 } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
 	agentsQueryOptions,
 	indexAgents,
@@ -42,11 +43,17 @@ import { DodgeButton } from "./dodge-button";
 import { MatchProvider } from "./match-context";
 import { TeamColumn } from "./team-column";
 
-const PHASE_LABEL: Record<string, string> = {
-	menus: "In menus",
-	pregame: "Agent select",
-	coregame: "In game",
-};
+const PHASE_LABEL_KEY = {
+	menus: "match.phaseMenus",
+	pregame: "match.phasePregame",
+	coregame: "match.phaseCoregame",
+} as const;
+
+const MODE_SHORT_KEY = {
+	off: "settings.modeShortOff",
+	coregame: "settings.modeShortCoregame",
+	pregame: "settings.modeShortPregame",
+} as const;
 
 function LoadingGrid() {
 	return (
@@ -64,6 +71,7 @@ function LoadingGrid() {
 }
 
 export function LobbyView() {
+	const { t } = useTranslation();
 	const lobby = useLobby();
 	const agentsQuery = useQuery(agentsQueryOptions());
 	const tiersQuery = useQuery(tiersQueryOptions());
@@ -92,11 +100,15 @@ export function LobbyView() {
 	const header = (
 		<div className="flex items-center justify-between gap-2">
 			<div className="flex items-center gap-2">
-				<h1 className="font-semibold text-lg">Match</h1>
+				<h1 className="font-semibold text-lg">{t("match.title")}</h1>
 				{lobby.data ? (
-					<Badge variant="outline">{PHASE_LABEL[lobby.data.phase]}</Badge>
+					<Badge variant="outline">
+						{t(PHASE_LABEL_KEY[lobby.data.phase])}
+					</Badge>
 				) : null}
-				{lobby.data?.isDemo ? <Badge variant="secondary">Demo</Badge> : null}
+				{lobby.data?.isDemo ? (
+					<Badge variant="secondary">{t("common.demo")}</Badge>
+				) : null}
 			</div>
 			<div className="flex items-center gap-2">
 				{lobby.data && !lobby.data.isDemo && lobby.data.phase === "pregame" ? (
@@ -112,7 +124,7 @@ export function LobbyView() {
 						data-icon="inline-start"
 						className={lobby.isFetching ? "animate-spin" : undefined}
 					/>
-					Refresh
+					{t("common.refresh")}
 				</Button>
 			</div>
 		</div>
@@ -132,12 +144,10 @@ export function LobbyView() {
 			<Alert variant="destructive">
 				<TriangleAlert />
 				<AlertTitle>
-					{needRegion ? "Region unknown" : "Couldn't read the match"}
+					{needRegion ? t("match.regionUnknown") : t("match.readError")}
 				</AlertTitle>
 				<AlertDescription>
-					{needRegion
-						? "Your region couldn't be detected from the game log. Set it in Settings."
-						: message}
+					{needRegion ? t("match.regionUnknownDesc") : message}
 				</AlertDescription>
 			</Alert>
 		);
@@ -148,11 +158,8 @@ export function LobbyView() {
 					<EmptyMedia variant="icon">
 						<Gamepad2 />
 					</EmptyMedia>
-					<EmptyTitle>Not in a match</EmptyTitle>
-					<EmptyDescription>
-						Join an agent select or a game and players will appear here
-						automatically.
-					</EmptyDescription>
+					<EmptyTitle>{t("match.notInMatch")}</EmptyTitle>
+					<EmptyDescription>{t("match.notInMatchDesc")}</EmptyDescription>
 				</EmptyHeader>
 			</Empty>
 		);
@@ -169,24 +176,21 @@ export function LobbyView() {
 					{revealEnemies && phase === "pregame" ? (
 						<Alert variant="destructive">
 							<TriangleAlert />
-							<AlertTitle>Enemy reveal during agent select</AlertTitle>
-							<AlertDescription>
-								Showing enemy data in pregame is against Riot's policy and may
-								lead to a ban. Use at your own risk.
-							</AlertDescription>
+							<AlertTitle>{t("match.enemyRevealTitle")}</AlertTitle>
+							<AlertDescription>{t("match.enemyRevealDesc")}</AlertDescription>
 						</Alert>
 					) : null}
 
 					<div className="grid gap-4 md:grid-cols-2">
 						<TeamColumn
-							title="Allies"
+							title={t("match.allies")}
 							icon={<Users className="size-4 text-muted-foreground" />}
 							tone="ally"
 							players={allies}
 						/>
 						{revealEnemies ? (
 							<TeamColumn
-								title="Enemies"
+								title={t("match.enemies")}
 								icon={<Swords className="size-4 text-muted-foreground" />}
 								tone="enemy"
 								players={enemies}
@@ -197,10 +201,11 @@ export function LobbyView() {
 									<EmptyMedia variant="icon">
 										<EyeOff />
 									</EmptyMedia>
-									<EmptyTitle>Enemies hidden</EmptyTitle>
+									<EmptyTitle>{t("match.enemiesHidden")}</EmptyTitle>
 									<EmptyDescription>
-										Reveal mode is "{mode}". Change it in Settings to show
-										enemies.
+										{t("match.enemiesHiddenDesc", {
+											mode: t(MODE_SHORT_KEY[mode]),
+										})}
 									</EmptyDescription>
 								</EmptyHeader>
 							</Empty>

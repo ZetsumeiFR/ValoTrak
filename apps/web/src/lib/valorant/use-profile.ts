@@ -1,10 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-	demoProfile,
-	enrichProfile,
-	type Profile,
-} from "@valotrak/valorant";
+import { demoProfile, enrichProfile, type Profile } from "@valotrak/valorant";
 
+import i18n from "@/lib/i18n";
 import {
 	getLocalTokens,
 	isAppError,
@@ -36,7 +33,7 @@ async function loadProfile(): Promise<ProfileData> {
 	}
 
 	if (!tokens.region || !tokens.shard) {
-		throw Object.assign(new Error("Region not detected from the game log."), {
+		throw Object.assign(new Error(i18n.t("profileData.regionError")), {
 			kind: "needRegion" as const,
 		});
 	}

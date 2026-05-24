@@ -12,11 +12,13 @@ import {
 import { Button } from "@valotrak/ui/components/button";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { useDodge } from "@/lib/valorant/use-dodge";
 import type { LobbyData } from "@/lib/valorant/use-lobby";
 
 export function DodgeButton({ lobby }: { lobby: LobbyData }) {
+	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
 	const dodge = useDodge();
 
@@ -28,18 +30,17 @@ export function DodgeButton({ lobby }: { lobby: LobbyData }) {
 				}
 			>
 				<LogOut data-icon="inline-start" />
-				Dodge
+				{t("match.dodge")}
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Dodge agent select?</AlertDialogTitle>
+					<AlertDialogTitle>{t("match.dodgeConfirmTitle")}</AlertDialogTitle>
 					<AlertDialogDescription>
-						This leaves the current agent select without closing Valorant.
-						Dodging costs RR and triggers a temporary queue restriction.
+						{t("match.dodgeConfirmDesc")}
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel>Cancel</AlertDialogCancel>
+					<AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
 					<AlertDialogAction
 						variant="destructive"
 						onClick={() => {
@@ -47,7 +48,7 @@ export function DodgeButton({ lobby }: { lobby: LobbyData }) {
 							setOpen(false);
 						}}
 					>
-						Dodge
+						{t("match.dodge")}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

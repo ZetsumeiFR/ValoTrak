@@ -1,4 +1,5 @@
 import type { Agent, AggregatedStats } from "@valotrak/valorant";
+import { useTranslation } from "react-i18next";
 
 import { AgentAvatar } from "@/components/match/agent-avatar";
 
@@ -9,10 +10,11 @@ export function MainsRow({
 	stats: AggregatedStats | undefined;
 	agentsById: Map<string, Agent>;
 }) {
+	const { t } = useTranslation();
 	if (!stats || stats.mainAgents.length === 0) {
 		return (
 			<p className="font-mono text-muted-foreground text-xs">
-				No agent data yet.
+				{t("profile.noAgentData")}
 			</p>
 		);
 	}
@@ -29,10 +31,13 @@ export function MainsRow({
 						<AgentAvatar agent={agent} size="sm" />
 						<div className="flex flex-col">
 							<span className="font-medium text-xs">
-								{agent?.displayName ?? "Unknown"}
+								{agent?.displayName ?? t("common.unknown")}
 							</span>
 							<span className="font-mono text-[10px] text-muted-foreground tabular-nums">
-								{usage.games} games · {Math.round(usage.winRate)}% WR
+								{t("profile.agentGames", {
+									count: usage.games,
+									wr: Math.round(usage.winRate),
+								})}
 							</span>
 						</div>
 					</div>

@@ -3,6 +3,8 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 
 import Loader from "./components/loader";
+import "./lib/disable-context-menu";
+import "./lib/i18n";
 import { routeTree } from "./routeTree.gen";
 import { queryClient, trpc } from "./utils/trpc";
 

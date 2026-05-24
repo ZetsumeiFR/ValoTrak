@@ -3,6 +3,7 @@ import { Button } from "@valotrak/ui/components/button";
 import { cn } from "@valotrak/ui/lib/utils";
 import type { EnrichedPlayer } from "@valotrak/valorant";
 import { Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
@@ -18,6 +19,7 @@ export function FavoriteButton({
 	player: EnrichedPlayer;
 	region: string;
 }) {
+	const { t } = useTranslation();
 	const { data: session } = authClient.useSession();
 	const queryClient = useQueryClient();
 
@@ -68,7 +70,7 @@ export function FavoriteButton({
 			onClick={toggle}
 			disabled={pending || (!isFollowed && !canFollow)}
 			aria-pressed={isFollowed}
-			aria-label={isFollowed ? "Unfollow player" : "Follow player"}
+			aria-label={isFollowed ? t("match.unfollow") : t("match.follow")}
 		>
 			<Star className={cn(isFollowed && "fill-current text-primary")} />
 		</Button>

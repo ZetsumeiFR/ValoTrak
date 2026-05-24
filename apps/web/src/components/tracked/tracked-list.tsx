@@ -14,6 +14,7 @@ import { Skeleton } from "@valotrak/ui/components/skeleton";
 import type { CompetitiveTier } from "@valotrak/valorant";
 import { Star, X } from "lucide-react";
 import { Fragment, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { RankBadge } from "@/components/match/rank-badge";
 import { TrendChart } from "@/components/trends/trend-chart";
@@ -35,6 +36,7 @@ function FollowedPlayerRow({
 	player: TrackedPlayer;
 	tiersById: Map<number, CompetitiveTier>;
 }) {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const snapshotQuery = useQuery(
 		trpc.player.getCache.queryOptions({ puuid: player.puuid, limit: 20 }),
@@ -97,7 +99,7 @@ function FollowedPlayerRow({
 				size="icon-sm"
 				onClick={() => unfollow.mutate({ puuid: player.puuid })}
 				disabled={unfollow.isPending}
-				aria-label={`Unfollow ${player.gameName}`}
+				aria-label={t("tracked.unfollowNamed", { name: player.gameName })}
 			>
 				<X />
 			</Button>
@@ -106,6 +108,7 @@ function FollowedPlayerRow({
 }
 
 export function TrackedList() {
+	const { t } = useTranslation();
 	const followedQuery = useQuery(trpc.player.listFollowed.queryOptions());
 	const tiersQuery = useQuery(tiersQueryOptions());
 	const tiersById = useMemo(
@@ -131,11 +134,8 @@ export function TrackedList() {
 					<EmptyMedia variant="icon">
 						<Star />
 					</EmptyMedia>
-					<EmptyTitle>No tracked players yet</EmptyTitle>
-					<EmptyDescription>
-						Star a player in the Match view to follow them and build their stat
-						history.
-					</EmptyDescription>
+					<EmptyTitle>{t("tracked.noPlayersTitle")}</EmptyTitle>
+					<EmptyDescription>{t("tracked.noPlayersDesc")}</EmptyDescription>
 				</EmptyHeader>
 			</Empty>
 		);
