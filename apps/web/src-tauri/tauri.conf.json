@@ -12,9 +12,11 @@
   "app": {
     "windows": [
       {
-        "title": "valorant-tracker",
-        "width": 800,
-        "height": 600,
+        "title": "Valorant Tracker",
+        "width": 1200,
+        "height": 820,
+        "minWidth": 940,
+        "minHeight": 640,
         "resizable": true,
         "fullscreen": false
       }

@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -6,125 +7,226 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * "Tactical HUD" theme — obsidian surfaces, signature red (#FF4655) primary,
+ * cyan for positive deltas. Sharp corners (base-lyra is already rounded-none).
+ */
+
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+	--background: oklch(0.97 0.004 95);
+	--foreground: oklch(0.2 0.01 270);
+	--card: oklch(0.99 0.003 95);
+	--card-foreground: oklch(0.2 0.01 270);
+	--popover: oklch(0.99 0.003 95);
+	--popover-foreground: oklch(0.2 0.01 270);
+	--primary: oklch(0.635 0.227 19);
+	--primary-foreground: oklch(0.99 0 0);
+	--secondary: oklch(0.93 0.004 95);
+	--secondary-foreground: oklch(0.2 0.01 270);
+	--muted: oklch(0.93 0.004 95);
+	--muted-foreground: oklch(0.5 0.01 270);
+	--accent: oklch(0.92 0.006 95);
+	--accent-foreground: oklch(0.2 0.01 270);
+	--destructive: oklch(0.635 0.227 19);
+	--border: oklch(0.2 0.01 270 / 12%);
+	--input: oklch(0.2 0.01 270 / 14%);
+	--ring: oklch(0.635 0.227 19);
+	--brand: oklch(0.635 0.227 19);
+	--win: oklch(0.72 0.14 184);
+	--loss: oklch(0.635 0.227 19);
+	--chart-1: oklch(0.635 0.227 19);
+	--chart-2: oklch(0.72 0.14 184);
+	--chart-3: oklch(0.7 0.16 50);
+	--chart-4: oklch(0.6 0.18 300);
+	--chart-5: oklch(0.65 0.18 140);
+	--radius: 0rem;
+	--sidebar: oklch(0.99 0.003 95);
+	--sidebar-foreground: oklch(0.2 0.01 270);
+	--sidebar-primary: oklch(0.635 0.227 19);
+	--sidebar-primary-foreground: oklch(0.99 0 0);
+	--sidebar-accent: oklch(0.92 0.006 95);
+	--sidebar-accent-foreground: oklch(0.2 0.01 270);
+	--sidebar-border: oklch(0.2 0.01 270 / 12%);
+	--sidebar-ring: oklch(0.635 0.227 19);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.87 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.371 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+	--background: oklch(0.16 0.008 264);
+	--foreground: oklch(0.93 0.012 90);
+	--card: oklch(0.2 0.009 264);
+	--card-foreground: oklch(0.93 0.012 90);
+	--popover: oklch(0.19 0.009 264);
+	--popover-foreground: oklch(0.93 0.012 90);
+	--primary: oklch(0.635 0.227 19);
+	--primary-foreground: oklch(0.98 0.01 90);
+	--secondary: oklch(0.25 0.009 264);
+	--secondary-foreground: oklch(0.93 0.012 90);
+	--muted: oklch(0.25 0.008 264);
+	--muted-foreground: oklch(0.66 0.012 264);
+	--accent: oklch(0.29 0.01 264);
+	--accent-foreground: oklch(0.95 0.012 90);
+	--destructive: oklch(0.635 0.227 19);
+	--border: oklch(0.92 0.02 90 / 9%);
+	--input: oklch(0.92 0.02 90 / 12%);
+	--ring: oklch(0.635 0.227 19);
+	--brand: oklch(0.635 0.227 19);
+	--win: oklch(0.8 0.14 184);
+	--loss: oklch(0.66 0.23 19);
+	--chart-1: oklch(0.66 0.23 19);
+	--chart-2: oklch(0.8 0.14 184);
+	--chart-3: oklch(0.74 0.16 60);
+	--chart-4: oklch(0.66 0.17 300);
+	--chart-5: oklch(0.72 0.17 140);
+	--sidebar: oklch(0.18 0.009 264);
+	--sidebar-foreground: oklch(0.93 0.012 90);
+	--sidebar-primary: oklch(0.635 0.227 19);
+	--sidebar-primary-foreground: oklch(0.98 0.01 90);
+	--sidebar-accent: oklch(0.29 0.01 264);
+	--sidebar-accent-foreground: oklch(0.95 0.012 90);
+	--sidebar-border: oklch(0.92 0.02 90 / 9%);
+	--sidebar-ring: oklch(0.635 0.227 19);
 }
 
 @theme inline {
-  --font-sans: "Inter Variable", sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+	--font-sans: "Oxanium", ui-sans-serif, system-ui, sans-serif;
+	--font-mono: "JetBrains Mono", ui-monospace, monospace;
+	--color-brand: var(--brand);
+	--color-win: var(--win);
+	--color-loss: var(--loss);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar: var(--sidebar);
+	--color-chart-5: var(--chart-5);
+	--color-chart-4: var(--chart-4);
+	--color-chart-3: var(--chart-3);
+	--color-chart-2: var(--chart-2);
+	--color-chart-1: var(--chart-1);
+	--color-ring: var(--ring);
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive: var(--destructive);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent: var(--accent);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-secondary: var(--secondary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary: var(--primary);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-popover: var(--popover);
+	--color-card-foreground: var(--card-foreground);
+	--color-card: var(--card);
+	--color-foreground: var(--foreground);
+	--color-background: var(--background);
+	--radius-sm: 0rem;
+	--radius-md: 0rem;
+	--radius-lg: 0rem;
+	--radius-xl: 0rem;
+	--radius-2xl: 0rem;
+	--radius-3xl: 0rem;
+	--radius-4xl: 0rem;
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply font-sans bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background font-sans text-foreground;
+		font-feature-settings:
+			"tnum" 1,
+			"ss01" 1;
+	}
+	html {
+		@apply font-sans;
+	}
+}
+
+/* ---- Tactical HUD utilities ------------------------------------------- */
+
+/** Angular clipped corner (bottom-right), Valorant-style. */
+.clip-corner {
+	clip-path: polygon(
+		0 0,
+		100% 0,
+		100% calc(100% - 0.75rem),
+		calc(100% - 0.75rem) 100%,
+		0 100%
+	);
+}
+
+/** Larger diagonal cut for hero/feature surfaces (top-left + bottom-right). */
+.clip-corner-lg {
+	clip-path: polygon(
+		1.25rem 0,
+		100% 0,
+		100% calc(100% - 1.25rem),
+		calc(100% - 1.25rem) 100%,
+		0 100%,
+		0 1.25rem
+	);
+}
+
+/** Faint engineering grid. */
+.tactical-grid {
+	background-image:
+		linear-gradient(
+			to right,
+			color-mix(in oklch, var(--foreground) 4%, transparent) 1px,
+			transparent 1px
+		),
+		linear-gradient(
+			to bottom,
+			color-mix(in oklch, var(--foreground) 4%, transparent) 1px,
+			transparent 1px
+		);
+	background-size: 44px 44px;
+}
+
+/** Subtle CRT scanlines. */
+.scanlines {
+	background-image: repeating-linear-gradient(
+		0deg,
+		color-mix(in oklch, var(--foreground) 3.5%, transparent) 0 1px,
+		transparent 1px 3px
+	);
+}
+
+/** Radial brand wash, for hero backdrops. */
+.hero-glow {
+	background:
+		radial-gradient(
+			120% 120% at 12% 0%,
+			color-mix(in oklch, var(--brand) 26%, transparent) 0%,
+			transparent 55%
+		),
+		radial-gradient(
+			90% 90% at 100% 100%,
+			color-mix(in oklch, var(--win) 14%, transparent) 0%,
+			transparent 55%
+		);
+}
+
+/** Brand outline + bloom. */
+.glow-brand {
+	box-shadow:
+		inset 0 0 0 1px color-mix(in oklch, var(--brand) 45%, transparent),
+		0 0 28px -10px color-mix(in oklch, var(--brand) 70%, transparent);
+}
+
+/** Left tactical tick used on section headers. */
+.tick::before {
+	content: "";
+	display: inline-block;
+	width: 0.2rem;
+	height: 0.85em;
+	margin-right: 0.55rem;
+	translate: 0 0.08em;
+	background: var(--brand);
 }
