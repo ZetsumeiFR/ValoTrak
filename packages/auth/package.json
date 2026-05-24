@@ -1,0 +1,24 @@
+{
+  "name": "@valorant-tracker/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@valorant-tracker/db": "workspace:*",
+    "@valorant-tracker/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@valorant-tracker/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

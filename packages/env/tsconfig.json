@@ -1,0 +1,3 @@
+{
+  "extends": "@valorant-tracker/config/tsconfig.base.json"
+}
