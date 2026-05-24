@@ -103,6 +103,18 @@ export interface Profile {
 	recentMatches: MatchSummary[];
 }
 
+/** One historical data point for the trend charts (from player_stats_cache). */
+export interface TrendPoint {
+	/** Epoch milliseconds. */
+	capturedAt: number;
+	tier: number | null;
+	rr: number | null;
+	kd: number | null;
+	acs: number | null;
+	hsPercent: number | null;
+	winRate: number | null;
+}
+
 /* -------------------------------------------------------------------------- */
 /*                       Static assets (valorant-api.com)                      */
 /* -------------------------------------------------------------------------- */
