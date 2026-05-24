@@ -22,6 +22,17 @@ export interface RiotResponse {
 	status: number;
 	ok: boolean;
 	body: string;
+	/** Response headers, lowercased keys. Used to honor `Retry-After` on 429. */
+	headers?: Record<string, string>;
+}
+
+/** Collect a `Headers` object into a plain record with lowercased keys. */
+export function headersToRecord(headers: Headers): Record<string, string> {
+	const record: Record<string, string> = {};
+	headers.forEach((value, key) => {
+		record[key.toLowerCase()] = value;
+	});
+	return record;
 }
 
 export type RiotTransport = (req: RiotRequest) => Promise<RiotResponse>;
@@ -53,7 +64,12 @@ export const fetchTransport: RiotTransport = async (req) => {
 		body: req.body,
 	});
 	const body = await res.text();
-	return { status: res.status, ok: res.ok, body };
+	return {
+		status: res.status,
+		ok: res.ok,
+		body,
+		headers: headersToRecord(res.headers),
+	};
 };
 
 /** Headers required by the authenticated pvp.net endpoints. */

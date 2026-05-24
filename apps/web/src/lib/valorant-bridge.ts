@@ -1,13 +1,15 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
-import type {
-	CurrentMatch,
-	RiotAuth,
-	RiotRequest,
-	RiotResponse,
-	RiotShard,
-	RiotTransport,
+import {
+	type CurrentMatch,
+	headersToRecord,
+	type RiotAuth,
+	type RiotRequest,
+	type RiotResponse,
+	type RiotShard,
+	type RiotTransport,
+	rateLimited,
 } from "@valotrak/valorant";
 
 /**
@@ -86,8 +88,20 @@ export const tauriTransport: RiotTransport = async (
 		body: req.body,
 	});
 	const body = await res.text();
-	return { status: res.status, ok: res.ok, body };
+	return {
+		status: res.status,
+		ok: res.ok,
+		body,
+		headers: headersToRecord(res.headers),
+	};
 };
+
+/**
+ * Rate-limited transport for the fan-out enrichment calls (lobby + profile).
+ * Caps concurrency and retries 429 / 5xx with backoff so a busy lobby doesn't
+ * trip Riot's rate limit. Single-shot actions (e.g. dodge) use {@link tauriTransport}.
+ */
+export const enrichTransport: RiotTransport = rateLimited(tauriTransport);
 
 /** Subscribe to local lobby/presence changes. Returns an unlisten function. */
 export function onLobbyChanged(callback: () => void): Promise<UnlistenFn> {

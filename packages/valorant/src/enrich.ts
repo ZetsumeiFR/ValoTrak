@@ -1,12 +1,7 @@
 import { computeAggregatedStats } from "./aggregate";
+import { getMatchDetailsCached } from "./cache";
 import { DEFAULT_MATCH_COUNT, QUEUE, type QueueId } from "./constants";
-import {
-	extractRank,
-	getMatchDetails,
-	getMatchHistory,
-	getMmr,
-	getNames,
-} from "./riot";
+import { extractRank, getMatchHistory, getMmr, getNames } from "./riot";
 import type { RiotAuth, RiotTransport } from "./transport";
 import type {
 	AggregatedStats,
@@ -51,7 +46,7 @@ export async function enrichPlayerStats(
 		]);
 		const details = await Promise.all(
 			history.map((entry) =>
-				getMatchDetails(transport, auth, match.shard, entry.MatchID),
+				getMatchDetailsCached(transport, auth, match.shard, entry.MatchID),
 			),
 		);
 		return {

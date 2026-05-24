@@ -3,10 +3,10 @@ import { demoProfile, enrichProfile, type Profile } from "@valotrak/valorant";
 
 import i18n from "@/lib/i18n";
 import {
+	enrichTransport,
 	getLocalTokens,
 	isAppError,
 	isDesktop,
-	tauriTransport,
 } from "@/lib/valorant-bridge";
 
 export interface ProfileData extends Profile {
@@ -39,7 +39,7 @@ async function loadProfile(): Promise<ProfileData> {
 	}
 
 	const profile = await enrichProfile(
-		tauriTransport,
+		enrichTransport,
 		tokens,
 		{ region: tokens.region, shard: tokens.shard },
 		tokens.puuid,

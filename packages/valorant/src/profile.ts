@@ -1,13 +1,8 @@
 import { computeAggregatedStats } from "./aggregate";
+import { getMatchDetailsCached } from "./cache";
 import { DEFAULT_MATCH_COUNT, QUEUE, type QueueId } from "./constants";
 import type { RiotShard } from "./endpoints";
-import {
-	extractRank,
-	getMatchDetails,
-	getMatchHistory,
-	getMmr,
-	getNames,
-} from "./riot";
+import { extractRank, getMatchHistory, getMmr, getNames } from "./riot";
 import type { RiotAuth, RiotTransport } from "./transport";
 import type { MatchSummary, Profile, RawMatchDetails } from "./types";
 
@@ -86,7 +81,7 @@ export async function enrichProfile(
 
 	const details = await Promise.all(
 		history.map((entry) =>
-			getMatchDetails(transport, auth, shard, entry.MatchID),
+			getMatchDetailsCached(transport, auth, shard, entry.MatchID),
 		),
 	);
 

@@ -88,9 +88,8 @@ export async function getMaps(
 		url: `${VALORANT_API_BASE}/maps`,
 	});
 	return res.data
-		.filter(
-			(m): m is RawMap & { displayName: string; mapUrl: string } =>
-				Boolean(m.displayName && m.mapUrl),
+		.filter((m): m is RawMap & { displayName: string; mapUrl: string } =>
+			Boolean(m.displayName && m.mapUrl),
 		)
 		.map((m) => ({
 			uuid: m.uuid,
