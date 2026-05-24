@@ -10,13 +10,13 @@ import {
 import { useEffect } from "react";
 
 import {
+	enrichTransport,
 	getCurrentMatch,
 	getLocalTokens,
 	isAppError,
 	isDesktop,
 	type LocalTokens,
 	onLobbyChanged,
-	tauriTransport,
 } from "@/lib/valorant-bridge";
 
 export interface LobbyData {
@@ -64,7 +64,7 @@ async function loadLobby(): Promise<LobbyData> {
 		return { phase: "menus", players: [], isDemo: false, shard: match.shard };
 	}
 
-	const players = await enrichLobby(tauriTransport, tokens, match);
+	const players = await enrichLobby(enrichTransport, tokens, match);
 	return {
 		phase: match.phase,
 		players,
