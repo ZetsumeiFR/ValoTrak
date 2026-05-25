@@ -20,6 +20,7 @@ const en = {
 	nav: {
 		profile: "Profile",
 		match: "Match",
+		shop: "Shop",
 		settings: "Settings",
 	},
 	language: {
@@ -52,6 +53,17 @@ const en = {
 		errPasswordMin: "Password must be at least 8 characters",
 		errNameMin: "Name must be at least 2 characters",
 	},
+	riot: {
+		needLoginTitle: "Sign in to Riot",
+		needLoginDesc:
+			"Sign in with your Riot account to load your profile and shop without launching the game.",
+		signIn: "Sign in with Riot",
+		signingIn: "Opening Riot login…",
+		signOut: "Sign out of Riot",
+		loginFailed: "Riot sign-in failed",
+		tosWarning:
+			"You sign in on Riot's official page inside ValoTrak. This is a third-party tool; use at your own risk under Riot's Terms of Service.",
+	},
 	profile: {
 		title: "Profile",
 		regionUnknown: "Region unknown",
@@ -81,6 +93,20 @@ const en = {
 		noAgentData: "No agent data yet.",
 		agentGames_one: "{{count}} game · {{wr}}% WR",
 		agentGames_other: "{{count}} games · {{wr}}% WR",
+	},
+	shop: {
+		title: "Store",
+		dailyTitle: "Daily shop",
+		bundlesTitle: "Featured bundles",
+		nightMarketTitle: "Night Market",
+		renewsIn: "Renews in",
+		loadError: "Couldn't load your shop",
+		demoTitle: "Demo store",
+		demoDesc: "Sample offers — sign in with Riot to see your real shop.",
+		nightMarketDiscount: "-{{percent}}%",
+		bundleItems_one: "{{count}} item",
+		bundleItems_other: "{{count}} items",
+		empty: "Nothing in the shop right now.",
 	},
 	match: {
 		title: "Match",
@@ -207,6 +233,7 @@ const fr = {
 	nav: {
 		profile: "Profil",
 		match: "Match",
+		shop: "Boutique",
 		settings: "Paramètres",
 	},
 	language: {
@@ -239,6 +266,17 @@ const fr = {
 		errPasswordMin: "Le mot de passe doit contenir au moins 8 caractères",
 		errNameMin: "Le nom doit contenir au moins 2 caractères",
 	},
+	riot: {
+		needLoginTitle: "Connexion à Riot",
+		needLoginDesc:
+			"Connectez-vous avec votre compte Riot pour afficher votre profil et votre boutique sans lancer le jeu.",
+		signIn: "Se connecter avec Riot",
+		signingIn: "Ouverture de la connexion Riot…",
+		signOut: "Se déconnecter de Riot",
+		loginFailed: "Échec de la connexion Riot",
+		tosWarning:
+			"Vous vous connectez sur la page officielle de Riot à l'intérieur de ValoTrak. Il s'agit d'un outil tiers ; à utiliser à vos risques et périls selon les CGU de Riot.",
+	},
 	profile: {
 		title: "Profil",
 		regionUnknown: "Région inconnue",
@@ -269,6 +307,21 @@ const fr = {
 		noAgentData: "Pas encore de données d'agents.",
 		agentGames_one: "{{count}} partie · {{wr}}% WR",
 		agentGames_other: "{{count}} parties · {{wr}}% WR",
+	},
+	shop: {
+		title: "Boutique",
+		dailyTitle: "Boutique du jour",
+		bundlesTitle: "Packs en vedette",
+		nightMarketTitle: "Marché nocturne",
+		renewsIn: "Renouvellement dans",
+		loadError: "Impossible de charger votre boutique",
+		demoTitle: "Boutique de démonstration",
+		demoDesc:
+			"Offres d'exemple — connectez-vous avec Riot pour voir votre vraie boutique.",
+		nightMarketDiscount: "-{{percent}}%",
+		bundleItems_one: "{{count}} article",
+		bundleItems_other: "{{count}} articles",
+		empty: "Rien dans la boutique pour le moment.",
 	},
 	match: {
 		title: "Match",

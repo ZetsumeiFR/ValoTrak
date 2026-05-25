@@ -10,6 +10,7 @@ import UserMenu from "./user-menu";
 const LINKS = [
 	{ to: "/", labelKey: "nav.profile", exact: true },
 	{ to: "/match", labelKey: "nav.match", exact: false },
+	{ to: "/shop", labelKey: "nav.shop", exact: false },
 	{ to: "/settings", labelKey: "nav.settings", exact: false },
 ] as const;
 

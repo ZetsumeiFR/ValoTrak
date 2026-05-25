@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as MatchRouteImport } from './routes/match'
 import { Route as LoginRouteImport } from './routes/login'
@@ -16,6 +17,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PlayerPuuidRouteImport } from './routes/player.$puuid'
 import { Route as MatchesMatchIdRouteImport } from './routes/matches.$matchId'
 
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/match': typeof MatchRoute
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
   '/matches/$matchId': typeof MatchesMatchIdRoute
   '/player/$puuid': typeof PlayerPuuidRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/match': typeof MatchRoute
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
   '/matches/$matchId': typeof MatchesMatchIdRoute
   '/player/$puuid': typeof PlayerPuuidRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/match': typeof MatchRoute
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
   '/matches/$matchId': typeof MatchesMatchIdRoute
   '/player/$puuid': typeof PlayerPuuidRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/match'
     | '/settings'
+    | '/shop'
     | '/matches/$matchId'
     | '/player/$puuid'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/match'
     | '/settings'
+    | '/shop'
     | '/matches/$matchId'
     | '/player/$puuid'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/match'
     | '/settings'
+    | '/shop'
     | '/matches/$matchId'
     | '/player/$puuid'
   fileRoutesById: FileRoutesById
@@ -104,12 +116,20 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MatchRoute: typeof MatchRoute
   SettingsRoute: typeof SettingsRoute
+  ShopRoute: typeof ShopRoute
   MatchesMatchIdRoute: typeof MatchesMatchIdRoute
   PlayerPuuidRoute: typeof PlayerPuuidRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MatchRoute: MatchRoute,
   SettingsRoute: SettingsRoute,
+  ShopRoute: ShopRoute,
   MatchesMatchIdRoute: MatchesMatchIdRoute,
   PlayerPuuidRoute: PlayerPuuidRoute,
 }

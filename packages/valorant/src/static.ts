@@ -1,6 +1,14 @@
 import { VALORANT_API_BASE } from "./constants";
 import { fetchTransport, type RiotTransport, riotJson } from "./transport";
-import type { Agent, ClientVersion, CompetitiveTier, MapInfo } from "./types";
+import type {
+	Agent,
+	BundleInfo,
+	ClientVersion,
+	CompetitiveTier,
+	ContentTier,
+	MapInfo,
+	SkinLevel,
+} from "./types";
 
 /**
  * Clients for the community static-asset API (valorant-api.com).
@@ -106,4 +114,100 @@ export async function getVersion(
 		url: `${VALORANT_API_BASE}/version`,
 	});
 	return res.data;
+}
+
+interface RawSkinChroma {
+	uuid: string;
+	fullRender: string | null;
+}
+
+interface RawSkinLevel {
+	uuid: string;
+	displayName: string | null;
+	displayIcon: string | null;
+}
+
+interface RawSkin {
+	uuid: string;
+	displayName: string;
+	displayIcon: string | null;
+	contentTierUuid: string | null;
+	chromas: RawSkinChroma[];
+	levels: RawSkinLevel[];
+}
+
+interface RawContentTier {
+	uuid: string;
+	displayName: string;
+	highlightColor: string;
+	displayIcon: string | null;
+}
+
+/**
+ * All weapon skin *levels*, flattened to one entry per level. Used to resolve
+ * the storefront's skin-level UUIDs to a display name, icon and rarity tier.
+ */
+export async function getWeaponSkins(
+	transport: RiotTransport = fetchTransport,
+): Promise<SkinLevel[]> {
+	const res = await riotJson<ValorantApiEnvelope<RawSkin[]>>(transport, {
+		method: "GET",
+		url: `${VALORANT_API_BASE}/weapons/skins`,
+	});
+	const levels: SkinLevel[] = [];
+	for (const skin of res.data) {
+		const fallbackIcon =
+			skin.displayIcon ?? skin.chromas[0]?.fullRender ?? null;
+		for (const level of skin.levels) {
+			levels.push({
+				levelId: level.uuid,
+				skinId: skin.uuid,
+				displayName: level.displayName ?? skin.displayName,
+				displayIcon: level.displayIcon ?? fallbackIcon,
+				contentTierId: skin.contentTierUuid,
+			});
+		}
+	}
+	return levels;
+}
+
+/** Skin rarity tiers (for the colored corner + price-tier icon). */
+export async function getContentTiers(
+	transport: RiotTransport = fetchTransport,
+): Promise<ContentTier[]> {
+	const res = await riotJson<ValorantApiEnvelope<RawContentTier[]>>(transport, {
+		method: "GET",
+		url: `${VALORANT_API_BASE}/contenttiers`,
+	});
+	return res.data.map((t) => ({
+		uuid: t.uuid,
+		displayName: t.displayName,
+		highlightColor: t.highlightColor,
+		displayIcon: t.displayIcon,
+	}));
+}
+
+interface RawBundleAsset {
+	uuid: string;
+	displayName: string | null;
+	displayIcon: string | null;
+}
+
+/** Bundle display data, keyed by `uuid` (the storefront's DataAssetID). */
+export async function getBundles(
+	transport: RiotTransport = fetchTransport,
+): Promise<BundleInfo[]> {
+	const res = await riotJson<ValorantApiEnvelope<RawBundleAsset[]>>(transport, {
+		method: "GET",
+		url: `${VALORANT_API_BASE}/bundles`,
+	});
+	return res.data
+		.filter((b): b is RawBundleAsset & { displayName: string } =>
+			Boolean(b.displayName),
+		)
+		.map((b) => ({
+			uuid: b.uuid,
+			displayName: b.displayName,
+			displayIcon: b.displayIcon,
+		}));
 }

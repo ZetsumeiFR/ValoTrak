@@ -34,6 +34,24 @@ async fn detect_region() -> Result<RiotShard, AppError> {
     Ok(RiotShard { region, shard })
 }
 
+/// Interactive remote login via Riot's hosted page (no running game needed).
+#[tauri::command]
+async fn riot_login(app: tauri::AppHandle) -> Result<LocalTokens, AppError> {
+    valorant::auth::login(app).await
+}
+
+/// Silent re-auth from the persisted session cookie; `notAvailable` if none.
+#[tauri::command]
+async fn riot_silent_reauth(app: tauri::AppHandle) -> Result<LocalTokens, AppError> {
+    valorant::auth::silent_reauth(app).await
+}
+
+/// Forget the persisted Riot session (logout).
+#[tauri::command]
+async fn riot_logout(app: tauri::AppHandle) -> Result<(), AppError> {
+    valorant::auth::logout(app).await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -61,7 +79,10 @@ pub fn run() {
             read_lockfile,
             get_local_tokens,
             get_current_match,
-            detect_region
+            detect_region,
+            riot_login,
+            riot_silent_reauth,
+            riot_logout
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

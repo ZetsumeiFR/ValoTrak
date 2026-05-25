@@ -1,5 +1,6 @@
 import { DEFAULT_MATCH_COUNT, type QueueId, UNRANKED_TIER } from "./constants";
 import { glzBase, pdBase, type RiotShard } from "./endpoints";
+import type { RawStorefront } from "./storefront";
 import {
 	buildAuthHeaders,
 	RiotApiError,
@@ -128,6 +129,27 @@ export async function quitPregame(
 	if (!res.ok) {
 		throw new RiotApiError(url, res.status, res.body);
 	}
+}
+
+/**
+ * Fetch the player's storefront (daily shop, bundles, and Night Market).
+ *
+ * `POST {pd}/store/v3/storefront/{puuid}`. The v3 endpoint requires a POST with
+ * an empty JSON object body. Returns the raw parsed response — map it with
+ * `mapStorefront`.
+ */
+export async function getStorefront(
+	transport: RiotTransport,
+	auth: RiotAuth,
+	shard: RiotShard,
+	puuid: string,
+): Promise<RawStorefront> {
+	return riotJson<RawStorefront>(transport, {
+		method: "POST",
+		url: `${pdBase(shard.shard)}/store/v3/storefront/${puuid}`,
+		headers: { ...buildAuthHeaders(auth), "Content-Type": "application/json" },
+		body: "{}",
+	});
 }
 
 /** Extract the current rank + RR from an MMR response. */

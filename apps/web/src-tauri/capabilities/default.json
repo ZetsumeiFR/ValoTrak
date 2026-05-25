@@ -9,11 +9,7 @@
     "process:allow-restart",
     {
       "identifier": "http:default",
-      "allow": [
-        { "url": "https://*.pvp.net/*" },
-        { "url": "https://valorant-api.com/*" },
-        { "url": "https://riot-geo.pas.si.riotgames.com/*" }
-      ]
+      "allow": [{ "url": "https://*.pvp.net/*" }]
     }
   ]
 }
