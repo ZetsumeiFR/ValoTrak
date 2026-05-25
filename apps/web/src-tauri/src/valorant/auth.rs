@@ -139,9 +139,7 @@ async fn build_tokens(captured: CapturedTokens) -> Result<LocalTokens, AppError>
     let entitlement_token = fetch_entitlement(&captured.access_token).await?;
     let puuid = puuid_from_jwt(&captured.access_token)?;
     let (region, shard) = fetch_region(&captured.access_token, &captured.id_token).await?;
-    let client_version = client_version::fetch_client_version()
-        .await
-        .unwrap_or_default();
+    let client_version = client_version::resolve().await;
 
     Ok(LocalTokens {
         access_token: captured.access_token,

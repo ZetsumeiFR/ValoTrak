@@ -5,7 +5,7 @@ use regex::Regex;
 use super::error::AppError;
 
 /// `%LOCALAPPDATA%\VALORANT\Saved\Logs\ShooterGame.log`.
-fn log_path() -> Result<PathBuf, AppError> {
+pub(crate) fn log_path() -> Result<PathBuf, AppError> {
     let local = std::env::var("LOCALAPPDATA")
         .map_err(|_| AppError::not_available("LOCALAPPDATA unset (Windows only)"))?;
     Ok(PathBuf::from(local)
