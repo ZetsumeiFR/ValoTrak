@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-	fixtureStorefrontWithNightMarket,
 	getStorefront,
 	mapStorefront,
 	type Storefront,
@@ -14,19 +13,9 @@ import {
 	type LocalTokens,
 } from "@/lib/valorant-bridge";
 
-export interface StoreData extends Storefront {
-	isDemo: boolean;
-}
-
-function demoResult(): StoreData {
-	return { ...mapStorefront(fixtureStorefrontWithNightMarket()), isDemo: true };
-}
+export type StoreData = Storefront;
 
 async function loadStore(tokens: LocalTokens | null): Promise<StoreData> {
-	if (!isDesktop()) {
-		return demoResult();
-	}
-
 	if (!tokens) {
 		throw Object.assign(new Error(i18n.t("riot.needLoginDesc")), {
 			kind: "needLogin" as const,
@@ -45,7 +34,7 @@ async function loadStore(tokens: LocalTokens | null): Promise<StoreData> {
 		{ region: tokens.region, shard: tokens.shard },
 		tokens.puuid,
 	);
-	return { ...mapStorefront(raw), isDemo: false };
+	return mapStorefront(raw);
 }
 
 export function useStore() {

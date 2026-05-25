@@ -7,7 +7,7 @@ import {
 } from "@valotrak/ui/components/alert";
 import { Badge } from "@valotrak/ui/components/badge";
 import { Skeleton } from "@valotrak/ui/components/skeleton";
-import { ArrowLeft, FlaskConical, TriangleAlert } from "lucide-react";
+import { ArrowLeft, TriangleAlert } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -61,9 +61,6 @@ export function PlayerDetail({
 				{displayRegion ? (
 					<Badge variant="outline">{displayRegion}</Badge>
 				) : null}
-				{trends.data?.isDemo ? (
-					<Badge variant="secondary">{t("common.demo")}</Badge>
-				) : null}
 				<RankBadge
 					tier={identity?.tier}
 					rr={identity?.rr}
@@ -101,13 +98,6 @@ export function PlayerDetail({
 				</Alert>
 			) : (
 				<div className="flex flex-col gap-4">
-					{trends.data.isDemo ? (
-						<Alert>
-							<FlaskConical />
-							<AlertTitle>{t("trends.demoTitle")}</AlertTitle>
-							<AlertDescription>{t("trends.demoDesc")}</AlertDescription>
-						</Alert>
-					) : null}
 					<PlayerTrends points={trends.data.points} />
 				</div>
 			)}

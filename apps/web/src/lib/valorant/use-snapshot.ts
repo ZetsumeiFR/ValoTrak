@@ -19,7 +19,7 @@ export function useFollowedSnapshots(data: LobbyData | undefined): void {
 	const saveCache = useMutation(trpc.player.saveCache.mutationOptions());
 
 	useEffect(() => {
-		if (!data || data.isDemo || !session) {
+		if (!data || !session) {
 			return;
 		}
 		const region = data.shard?.region ?? "";

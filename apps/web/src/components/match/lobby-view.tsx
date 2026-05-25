@@ -38,7 +38,6 @@ import {
 import { useFollowedSnapshots } from "@/lib/valorant/use-snapshot";
 import { isAppError } from "@/lib/valorant-bridge";
 
-import { DemoBanner } from "./demo-banner";
 import { DodgeButton } from "./dodge-button";
 import { MatchProvider } from "./match-context";
 import { TeamColumn } from "./team-column";
@@ -92,9 +91,8 @@ export function LobbyView() {
 			agentsById,
 			tiersById,
 			region: lobby.data?.shard?.region ?? "",
-			isDemo: lobby.data?.isDemo ?? false,
 		}),
-		[agentsById, tiersById, lobby.data?.shard?.region, lobby.data?.isDemo],
+		[agentsById, tiersById, lobby.data?.shard?.region],
 	);
 
 	const header = (
@@ -106,12 +104,9 @@ export function LobbyView() {
 						{t(PHASE_LABEL_KEY[lobby.data.phase])}
 					</Badge>
 				) : null}
-				{lobby.data?.isDemo ? (
-					<Badge variant="secondary">{t("common.demo")}</Badge>
-				) : null}
 			</div>
 			<div className="flex items-center gap-2">
-				{lobby.data && !lobby.data.isDemo && lobby.data.phase === "pregame" ? (
+				{lobby.data && lobby.data.phase === "pregame" ? (
 					<DodgeButton lobby={lobby.data} />
 				) : null}
 				<Button
@@ -164,7 +159,7 @@ export function LobbyView() {
 			</Empty>
 		);
 	} else {
-		const { phase, players, isDemo } = lobby.data;
+		const { phase, players } = lobby.data;
 		const allies = players.filter((player) => player.isAlly);
 		const enemies = players.filter((player) => !player.isAlly);
 		const revealEnemies = shouldRevealEnemies(phase, mode);
@@ -172,7 +167,6 @@ export function LobbyView() {
 		body = (
 			<MatchProvider value={contextValue}>
 				<div className="flex flex-col gap-4">
-					{isDemo ? <DemoBanner /> : null}
 					{revealEnemies && phase === "pregame" ? (
 						<Alert variant="destructive">
 							<TriangleAlert />

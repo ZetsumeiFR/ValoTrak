@@ -1,7 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-	demoCurrentMatch,
-	demoLobby,
 	type EnrichedPlayer,
 	enrichLobby,
 	type MatchPhase,
@@ -22,53 +20,43 @@ import {
 export interface LobbyData {
 	phase: MatchPhase;
 	players: EnrichedPlayer[];
-	isDemo: boolean;
 	matchId?: string;
 	shard?: RiotShard;
-	/** Auth context for live actions (e.g. dodge). Absent in demo. */
+	/** Auth context for live actions (e.g. dodge). Absent outside a live match. */
 	tokens?: LocalTokens;
 }
 
 const LOBBY_KEY = ["valorant", "lobby"] as const;
 
-function demoResult(): LobbyData {
-	const match = demoCurrentMatch();
-	return {
-		phase: match.phase,
-		players: demoLobby(),
-		isDemo: true,
-		matchId: match.matchId,
-		shard: match.shard,
-	};
-}
+/** Empty "not in a match" result (browser, non-Windows, or game not running). */
+const NOT_IN_MATCH: LobbyData = { phase: "menus", players: [] };
 
 async function loadLobby(): Promise<LobbyData> {
-	// Outside the desktop shell (browser dev) there is no local API → demo.
+	// Outside the desktop shell (browser dev) there is no local API.
 	if (!isDesktop()) {
-		return demoResult();
+		return NOT_IN_MATCH;
 	}
 
 	let tokens: LocalTokens;
 	try {
 		tokens = await getLocalTokens();
 	} catch (error) {
-		// Not on Windows / game not running → show the demo lobby instead of failing.
+		// Not on Windows / game not running → simply "not in a match".
 		if (isAppError(error) && error.kind === "notAvailable") {
-			return demoResult();
+			return NOT_IN_MATCH;
 		}
 		throw error;
 	}
 
 	const match = await getCurrentMatch(tokens);
 	if (match.phase === "menus") {
-		return { phase: "menus", players: [], isDemo: false, shard: match.shard };
+		return { phase: "menus", players: [], shard: match.shard };
 	}
 
 	const players = await enrichLobby(enrichTransport, tokens, match);
 	return {
 		phase: match.phase,
 		players,
-		isDemo: false,
 		matchId: match.matchId,
 		shard: match.shard,
 		tokens,

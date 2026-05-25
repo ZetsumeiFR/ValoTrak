@@ -14,7 +14,7 @@ import type {
 	SkinLevel,
 	StoreOffer,
 } from "@valotrak/valorant";
-import { Clock, FlaskConical, RefreshCw, TriangleAlert } from "lucide-react";
+import { Clock, RefreshCw, TriangleAlert } from "lucide-react";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -243,9 +243,6 @@ export function ShopPage() {
 		<div className="flex items-center justify-between gap-2">
 			<div className="flex items-center gap-2">
 				<h1 className="font-bold text-lg tracking-tight">{t("shop.title")}</h1>
-				{store.data?.isDemo ? (
-					<Badge variant="secondary">{t("common.demo")}</Badge>
-				) : null}
 			</div>
 			<Button
 				variant="outline"
@@ -296,14 +293,6 @@ export function ShopPage() {
 		const data = store.data;
 		body = (
 			<div className="flex flex-col gap-8">
-				{data.isDemo ? (
-					<Alert>
-						<FlaskConical />
-						<AlertTitle>{t("shop.demoTitle")}</AlertTitle>
-						<AlertDescription>{t("shop.demoDesc")}</AlertDescription>
-					</Alert>
-				) : null}
-
 				<section className="flex flex-col gap-3">
 					<SectionHeading remainingSeconds={data.dailyRemainingSeconds}>
 						{t("shop.dailyTitle")}

@@ -9,7 +9,6 @@
 const en = {
 	common: {
 		refresh: "Refresh",
-		demo: "Demo",
 		back: "Back",
 		cancel: "Cancel",
 		unknown: "Unknown",
@@ -70,9 +69,6 @@ const en = {
 		loadError: "Couldn't load your profile",
 		regionUnknownDesc:
 			"Your region couldn't be detected from the game log. Launch Valorant, or set it in Settings.",
-		demoTitle: "Demo profile",
-		demoDesc:
-			"Sample data — launch Valorant on Windows to see your real stats.",
 		operator: "Operator",
 		recentForm: "Recent form",
 		peak: "peak {{tier}}",
@@ -101,8 +97,6 @@ const en = {
 		nightMarketTitle: "Night Market",
 		renewsIn: "Renews in",
 		loadError: "Couldn't load your shop",
-		demoTitle: "Demo store",
-		demoDesc: "Sample offers — sign in with Riot to see your real shop.",
 		nightMarketDiscount: "-{{percent}}%",
 		bundleItems_one: "{{count}} item",
 		bundleItems_other: "{{count}} items",
@@ -117,7 +111,7 @@ const en = {
 		readError: "Couldn't read the match",
 		regionUnknownDesc:
 			"Your region couldn't be detected from the game log. Set it in Settings.",
-		notInMatch: "Not in a match",
+		notInMatch: "You're not in a match",
 		notInMatchDesc:
 			"Join an agent select or a game and players will appear here automatically.",
 		enemyRevealTitle: "Enemy reveal during agent select",
@@ -133,9 +127,6 @@ const en = {
 		statsUnavailable: "Stats unavailable: {{error}}",
 		cardRecord_one: "{{wins}}-{{losses}} · {{count}} game",
 		cardRecord_other: "{{wins}}-{{losses}} · {{count}} games",
-		demoBannerTitle: "Demo mode",
-		demoBannerDesc:
-			"Valorant isn't running (or this isn't Windows), so sample lobby data is shown. Launch the game on Windows to see live players.",
 		dodge: "Dodge",
 		dodgeConfirmTitle: "Dodge agent select?",
 		dodgeConfirmDesc:
@@ -182,9 +173,6 @@ const en = {
 		snapshots_other: "{{count}} snapshots",
 		loadError: "Couldn't load trends",
 		unknownError: "Unknown error",
-		demoTitle: "Demo trends",
-		demoDesc:
-			"Sample history. Real snapshots are recorded for followed players as you refresh the live lobby on Windows.",
 		noHistoryTitle: "No history yet",
 		noHistoryDesc:
 			"Snapshots accumulate each time you refresh the live lobby while this player is followed.",
@@ -197,7 +185,6 @@ const en = {
 		metricWin: "Win Rate",
 	},
 	dodge: {
-		demoError: "Dodging isn't available in demo mode.",
 		phaseError: "You can only dodge during agent select.",
 		contextError: "Missing match context.",
 		success: "Dodged agent select",
@@ -222,7 +209,6 @@ const en = {
 const fr = {
 	common: {
 		refresh: "Actualiser",
-		demo: "Démo",
 		back: "Retour",
 		cancel: "Annuler",
 		unknown: "Inconnu",
@@ -283,9 +269,6 @@ const fr = {
 		loadError: "Impossible de charger votre profil",
 		regionUnknownDesc:
 			"Votre région n'a pas pu être détectée depuis le journal du jeu. Lancez Valorant ou définissez-la dans les Paramètres.",
-		demoTitle: "Profil de démonstration",
-		demoDesc:
-			"Données d'exemple — lancez Valorant sur Windows pour voir vos vraies statistiques.",
 		operator: "Opérateur",
 		recentForm: "Forme récente",
 		peak: "pic {{tier}}",
@@ -315,9 +298,6 @@ const fr = {
 		nightMarketTitle: "Marché nocturne",
 		renewsIn: "Renouvellement dans",
 		loadError: "Impossible de charger votre boutique",
-		demoTitle: "Boutique de démonstration",
-		demoDesc:
-			"Offres d'exemple — connectez-vous avec Riot pour voir votre vraie boutique.",
 		nightMarketDiscount: "-{{percent}}%",
 		bundleItems_one: "{{count}} article",
 		bundleItems_other: "{{count}} articles",
@@ -332,7 +312,7 @@ const fr = {
 		readError: "Impossible de lire le match",
 		regionUnknownDesc:
 			"Votre région n'a pas pu être détectée depuis le journal du jeu. Définissez-la dans les Paramètres.",
-		notInMatch: "Pas en match",
+		notInMatch: "Vous n'êtes pas en partie",
 		notInMatchDesc:
 			"Rejoignez une sélection d'agent ou une partie et les joueurs apparaîtront ici automatiquement.",
 		enemyRevealTitle: "Révélation des ennemis pendant la sélection d'agent",
@@ -348,9 +328,6 @@ const fr = {
 		statsUnavailable: "Statistiques indisponibles : {{error}}",
 		cardRecord_one: "{{wins}}-{{losses}} · {{count}} partie",
 		cardRecord_other: "{{wins}}-{{losses}} · {{count}} parties",
-		demoBannerTitle: "Mode démonstration",
-		demoBannerDesc:
-			"Valorant n'est pas lancé (ou ce n'est pas Windows), des données de lobby d'exemple sont affichées. Lancez le jeu sur Windows pour voir les joueurs en direct.",
 		dodge: "Dodge",
 		dodgeConfirmTitle: "Dodge la sélection d'agent ?",
 		dodgeConfirmDesc:
@@ -399,9 +376,6 @@ const fr = {
 		snapshots_other: "{{count}} relevés",
 		loadError: "Impossible de charger les tendances",
 		unknownError: "Erreur inconnue",
-		demoTitle: "Tendances de démonstration",
-		demoDesc:
-			"Historique d'exemple. Les vrais relevés sont enregistrés pour les joueurs suivis lorsque vous actualisez le lobby en direct sur Windows.",
 		noHistoryTitle: "Pas encore d'historique",
 		noHistoryDesc:
 			"Les relevés s'accumulent à chaque actualisation du lobby en direct tant que ce joueur est suivi.",
@@ -414,7 +388,6 @@ const fr = {
 		metricWin: "Taux de victoire",
 	},
 	dodge: {
-		demoError: "Le dodge n'est pas disponible en mode démonstration.",
 		phaseError: "Vous ne pouvez dodge que pendant la sélection d'agent.",
 		contextError: "Contexte de match manquant.",
 		success: "Sélection d'agent dodge",

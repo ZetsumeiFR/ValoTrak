@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { demoProfile, enrichProfile, type Profile } from "@valotrak/valorant";
+import { enrichProfile, type Profile } from "@valotrak/valorant";
 
 import i18n from "@/lib/i18n";
 import { useRiotSession } from "@/lib/valorant/use-riot-session";
@@ -9,19 +9,9 @@ import {
 	type LocalTokens,
 } from "@/lib/valorant-bridge";
 
-export interface ProfileData extends Profile {
-	isDemo: boolean;
-}
-
-function demoResult(): ProfileData {
-	return { ...demoProfile(), isDemo: true };
-}
+export type ProfileData = Profile;
 
 async function loadProfile(tokens: LocalTokens | null): Promise<ProfileData> {
-	if (!isDesktop()) {
-		return demoResult();
-	}
-
 	if (!tokens) {
 		throw Object.assign(new Error(i18n.t("riot.needLoginDesc")), {
 			kind: "needLogin" as const,
@@ -34,13 +24,12 @@ async function loadProfile(tokens: LocalTokens | null): Promise<ProfileData> {
 		});
 	}
 
-	const profile = await enrichProfile(
+	return enrichProfile(
 		enrichTransport,
 		tokens,
 		{ region: tokens.region, shard: tokens.shard },
 		tokens.puuid,
 	);
-	return { ...profile, isDemo: false };
 }
 
 export function useProfile() {

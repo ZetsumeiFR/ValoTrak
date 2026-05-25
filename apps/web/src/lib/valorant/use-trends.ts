@@ -1,11 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-	demoProfile,
-	demoSnapshots,
-	type TrendPoint,
-} from "@valotrak/valorant";
+import type { TrendPoint } from "@valotrak/valorant";
 
-import { isDesktop } from "@/lib/valorant-bridge";
 import { trpcClient } from "@/utils/trpc";
 
 export interface TrendIdentity {
@@ -19,25 +14,9 @@ export interface TrendIdentity {
 export interface TrendsData {
 	points: TrendPoint[];
 	identity: TrendIdentity;
-	isDemo: boolean;
 }
 
 async function loadTrends(puuid: string): Promise<TrendsData> {
-	if (!isDesktop()) {
-		const profile = demoProfile();
-		return {
-			points: demoSnapshots(),
-			identity: {
-				gameName: profile.riotId?.gameName,
-				tagLine: profile.riotId?.tagLine,
-				region: "eu",
-				tier: profile.rank?.tier,
-				rr: profile.rank?.rr,
-			},
-			isDemo: true,
-		};
-	}
-
 	const rows = await trpcClient.player.getCache.query({ puuid, limit: 60 });
 	const points: TrendPoint[] = rows
 		.map((row) => ({
@@ -61,7 +40,6 @@ async function loadTrends(puuid: string): Promise<TrendsData> {
 			tier: latest?.payload?.rank?.tier,
 			rr: latest?.payload?.rank?.rr,
 		},
-		isDemo: false,
 	};
 }
 
