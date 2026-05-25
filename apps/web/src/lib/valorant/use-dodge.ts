@@ -14,9 +14,6 @@ export function useDodge() {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async (lobby: LobbyData) => {
-			if (lobby.isDemo) {
-				throw new Error(i18n.t("dodge.demoError"));
-			}
 			if (lobby.phase !== "pregame") {
 				throw new Error(i18n.t("dodge.phaseError"));
 			}

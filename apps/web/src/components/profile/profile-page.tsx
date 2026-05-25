@@ -5,10 +5,9 @@ import {
 	AlertDescription,
 	AlertTitle,
 } from "@valotrak/ui/components/alert";
-import { Badge } from "@valotrak/ui/components/badge";
 import { Button } from "@valotrak/ui/components/button";
 import { Skeleton } from "@valotrak/ui/components/skeleton";
-import { FlaskConical, RefreshCw, TriangleAlert } from "lucide-react";
+import { RefreshCw, TriangleAlert } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -63,9 +62,6 @@ export function ProfilePage() {
 				<h1 className="font-bold text-lg tracking-tight">
 					{t("profile.title")}
 				</h1>
-				{profile.data?.isDemo ? (
-					<Badge variant="secondary">{t("common.demo")}</Badge>
-				) : null}
 			</div>
 			<Button
 				variant="outline"
@@ -125,14 +121,6 @@ export function ProfilePage() {
 
 		body = (
 			<div className="flex flex-col gap-8">
-				{data.isDemo ? (
-					<Alert>
-						<FlaskConical />
-						<AlertTitle>{t("profile.demoTitle")}</AlertTitle>
-						<AlertDescription>{t("profile.demoDesc")}</AlertDescription>
-					</Alert>
-				) : null}
-
 				<ProfileHero profile={data} tiersById={tiersById} />
 
 				<div className="grid grid-cols-2 gap-3 md:grid-cols-4">

@@ -7,8 +7,6 @@ export interface MatchContextValue {
 	tiersById: Map<number, CompetitiveTier>;
 	/** Region of the current lobby (used when following a player). */
 	region: string;
-	/** Demo lobby → favourites are disabled (fake puuids). */
-	isDemo: boolean;
 }
 
 const MatchContext = createContext<MatchContextValue | null>(null);

@@ -23,7 +23,7 @@ function StatCell({ label, value }: { label: string; value: string }) {
 
 export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 	const { t } = useTranslation();
-	const { agentsById, tiersById, region, isDemo } = useMatchContext();
+	const { agentsById, tiersById, region } = useMatchContext();
 	const agent = player.agentId ? agentsById.get(player.agentId) : undefined;
 	const name = player.riotId?.gameName ?? t("common.unknown");
 	const tag = player.riotId?.tagLine;
@@ -53,11 +53,9 @@ export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 							tiersById={tiersById}
 						/>
 					</div>
-					{isDemo ? null : (
-						<div className="ml-auto">
-							<FavoriteButton player={player} region={region} />
-						</div>
-					)}
+					<div className="ml-auto">
+						<FavoriteButton player={player} region={region} />
+					</div>
 				</div>
 			</CardHeader>
 
