@@ -12,6 +12,7 @@ import { FlaskConical, RefreshCw, TriangleAlert } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { RiotLoginCard } from "@/components/riot-login-card";
 import { TrackedList } from "@/components/tracked/tracked-list";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -97,22 +98,26 @@ export function ProfilePage() {
 			</div>
 		);
 	} else if (profile.isError) {
-		const needRegion =
-			isAppError(profile.error) && profile.error.kind === "needRegion";
-		const message = isAppError(profile.error)
-			? profile.error.message
-			: String(profile.error);
-		body = (
-			<Alert variant="destructive">
-				<TriangleAlert />
-				<AlertTitle>
-					{needRegion ? t("profile.regionUnknown") : t("profile.loadError")}
-				</AlertTitle>
-				<AlertDescription>
-					{needRegion ? t("profile.regionUnknownDesc") : message}
-				</AlertDescription>
-			</Alert>
-		);
+		const errorKind = isAppError(profile.error) ? profile.error.kind : null;
+		if (errorKind === "needLogin") {
+			body = <RiotLoginCard />;
+		} else {
+			const needRegion = errorKind === "needRegion";
+			const message = isAppError(profile.error)
+				? profile.error.message
+				: String(profile.error);
+			body = (
+				<Alert variant="destructive">
+					<TriangleAlert />
+					<AlertTitle>
+						{needRegion ? t("profile.regionUnknown") : t("profile.loadError")}
+					</AlertTitle>
+					<AlertDescription>
+						{needRegion ? t("profile.regionUnknownDesc") : message}
+					</AlertDescription>
+				</Alert>
+			);
+		}
 	} else {
 		const data = profile.data;
 		const stats = data.stats;

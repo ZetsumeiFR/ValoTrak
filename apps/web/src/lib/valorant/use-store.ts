@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { demoProfile, enrichProfile, type Profile } from "@valotrak/valorant";
+import {
+	fixtureStorefrontWithNightMarket,
+	getStorefront,
+	mapStorefront,
+	type Storefront,
+} from "@valotrak/valorant";
 
 import i18n from "@/lib/i18n";
 import { useRiotSession } from "@/lib/valorant/use-riot-session";
@@ -9,15 +14,15 @@ import {
 	type LocalTokens,
 } from "@/lib/valorant-bridge";
 
-export interface ProfileData extends Profile {
+export interface StoreData extends Storefront {
 	isDemo: boolean;
 }
 
-function demoResult(): ProfileData {
-	return { ...demoProfile(), isDemo: true };
+function demoResult(): StoreData {
+	return { ...mapStorefront(fixtureStorefrontWithNightMarket()), isDemo: true };
 }
 
-async function loadProfile(tokens: LocalTokens | null): Promise<ProfileData> {
+async function loadStore(tokens: LocalTokens | null): Promise<StoreData> {
 	if (!isDesktop()) {
 		return demoResult();
 	}
@@ -34,24 +39,24 @@ async function loadProfile(tokens: LocalTokens | null): Promise<ProfileData> {
 		});
 	}
 
-	const profile = await enrichProfile(
+	const raw = await getStorefront(
 		enrichTransport,
 		tokens,
 		{ region: tokens.region, shard: tokens.shard },
 		tokens.puuid,
 	);
-	return { ...profile, isDemo: false };
+	return { ...mapStorefront(raw), isDemo: false };
 }
 
-export function useProfile() {
+export function useStore() {
 	const { tokens, isResolving } = useRiotSession();
 	return useQuery({
-		queryKey: ["valorant", "profile", tokens?.puuid ?? null] as const,
-		queryFn: () => loadProfile(tokens),
-		// Wait for the session to resolve before deciding demo / login / load.
+		queryKey: ["valorant", "store", tokens?.puuid ?? null] as const,
+		queryFn: () => loadStore(tokens),
 		enabled: !isDesktop() || !isResolving,
 		retry: false,
 		refetchOnWindowFocus: false,
-		staleTime: 1000 * 60,
+		// The shop only rotates daily; a few minutes of cache is plenty.
+		staleTime: 1000 * 60 * 5,
 	});
 }

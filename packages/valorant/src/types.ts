@@ -190,6 +190,30 @@ export interface ClientVersion {
 	buildDate: string;
 }
 
+/** One purchasable skin level from the static API (valorant-api.com). */
+export interface SkinLevel {
+	levelId: string;
+	skinId: string;
+	displayName: string;
+	displayIcon: string | null;
+	contentTierId: string | null;
+}
+
+/** A skin rarity tier (e.g. Select, Deluxe, Ultra) from the static API. */
+export interface ContentTier {
+	uuid: string;
+	displayName: string;
+	highlightColor: string;
+	displayIcon: string | null;
+}
+
+/** A bundle's display data from the static API, keyed by its DataAssetID. */
+export interface BundleInfo {
+	uuid: string;
+	displayName: string;
+	displayIcon: string | null;
+}
+
 /* -------------------------------------------------------------------------- */
 /*                  Raw Riot pvp.net shapes (partial, what we use)            */
 /* -------------------------------------------------------------------------- */

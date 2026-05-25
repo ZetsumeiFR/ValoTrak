@@ -49,3 +49,6 @@ coverage
 .cache
 tmp
 temp
+
+# OMC tooling state
+.omc/

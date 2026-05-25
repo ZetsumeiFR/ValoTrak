@@ -9,5 +9,6 @@ export * from "./profile";
 export * from "./riot";
 export * from "./scoreboard";
 export * from "./static";
+export * from "./storefront";
 export * from "./transport";
 export * from "./types";

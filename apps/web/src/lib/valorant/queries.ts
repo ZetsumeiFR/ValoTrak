@@ -1,11 +1,17 @@
 import { queryOptions } from "@tanstack/react-query";
 import {
 	type Agent,
+	type BundleInfo,
 	type CompetitiveTier,
+	type ContentTier,
 	getAgents,
+	getBundles,
 	getCompetitiveTiers,
+	getContentTiers,
 	getMaps,
+	getWeaponSkins,
 	type MapInfo,
+	type SkinLevel,
 } from "@valotrak/valorant";
 
 /** Static asset data from valorant-api.com — rarely changes, cache for a day. */
@@ -47,6 +53,49 @@ export function mapsQueryOptions() {
 
 export function indexMaps(maps: MapInfo[] | undefined): Map<string, MapInfo> {
 	return new Map((maps ?? []).map((m) => [m.mapUrl, m]));
+}
+
+export function skinsQueryOptions() {
+	return queryOptions({
+		queryKey: ["valorant", "skins"] as const,
+		queryFn: () => getWeaponSkins(),
+		staleTime: STATIC_STALE_TIME,
+	});
+}
+
+export function contentTiersQueryOptions() {
+	return queryOptions({
+		queryKey: ["valorant", "contentTiers"] as const,
+		queryFn: () => getContentTiers(),
+		staleTime: STATIC_STALE_TIME,
+	});
+}
+
+export function bundlesQueryOptions() {
+	return queryOptions({
+		queryKey: ["valorant", "bundles"] as const,
+		queryFn: () => getBundles(),
+		staleTime: STATIC_STALE_TIME,
+	});
+}
+
+/** Index skin levels by their level UUID (the storefront's offer id). */
+export function indexSkins(
+	skins: SkinLevel[] | undefined,
+): Map<string, SkinLevel> {
+	return new Map((skins ?? []).map((skin) => [skin.levelId, skin]));
+}
+
+export function indexContentTiers(
+	tiers: ContentTier[] | undefined,
+): Map<string, ContentTier> {
+	return new Map((tiers ?? []).map((tier) => [tier.uuid, tier]));
+}
+
+export function indexBundles(
+	bundles: BundleInfo[] | undefined,
+): Map<string, BundleInfo> {
+	return new Map((bundles ?? []).map((bundle) => [bundle.uuid, bundle]));
 }
 
 /**

@@ -5,6 +5,7 @@
 //! per-player enrichment (mmr, match history, names) is done in TS via the
 //! Rust-backed `@tauri-apps/plugin-http` transport.
 
+pub mod auth;
 pub mod client_version;
 pub mod error;
 pub mod http;

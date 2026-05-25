@@ -23,14 +23,27 @@ pub async fn get_local_tokens() -> Result<LocalTokens, AppError> {
     let lf = lockfile::read_lockfile()?;
     let client = http::insecure_client()?;
 
-    let resp = client
+    let resp = match client
         .get(format!(
             "https://127.0.0.1:{}/entitlements/v1/token",
             lf.port
         ))
         .basic_auth("riot", Some(&lf.password))
         .send()
-        .await?;
+        .await
+    {
+        Ok(resp) => resp,
+        // A stale lockfile can survive after the Riot Client exits: the file is
+        // still readable but nothing listens on its port, so the request can't
+        // be sent. Treat that as "not running" (demo/remote-login fallback)
+        // rather than a hard error, same as a missing lockfile.
+        Err(err) if err.is_connect() || err.is_timeout() => {
+            return Err(AppError::not_available(format!(
+                "Riot Client not reachable ({err}); is it running?"
+            )));
+        }
+        Err(err) => return Err(AppError::from(err)),
+    };
 
     let status = resp.status();
     if !status.is_success() {

@@ -1,4 +1,5 @@
 import type { RiotShard } from "./endpoints";
+import type { RawStorefront } from "./storefront";
 import type {
 	CurrentMatch,
 	EnrichedPlayer,
@@ -492,4 +493,95 @@ export function demoSnapshots(): TrendPoint[] {
 		hsPercent: DEMO_TREND.hs[i] ?? null,
 		winRate: DEMO_TREND.wr[i] ?? null,
 	}));
+}
+
+/* -------------------------------------------------------------------------- */
+/*                          Storefront (shop) fixtures                         */
+/* -------------------------------------------------------------------------- */
+
+/** Plausible skin-level UUIDs for the storefront fixtures. */
+const SKIN_LEVEL = {
+	one: "skin-lvl-0001",
+	two: "skin-lvl-0002",
+	three: "skin-lvl-0003",
+	four: "skin-lvl-0004",
+} as const;
+
+const VP = "85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741";
+
+const DAILY_OFFERS = [
+	{ OfferID: SKIN_LEVEL.one, Cost: { [VP]: 1775 } },
+	{ OfferID: SKIN_LEVEL.two, Cost: { [VP]: 2175 } },
+	{ OfferID: SKIN_LEVEL.three, Cost: { [VP]: 1275 } },
+	{ OfferID: SKIN_LEVEL.four, Cost: { [VP]: 875 } },
+];
+
+const FIXTURE_BUNDLE = {
+	ID: "bundle-0001",
+	DataAssetID: "bundle-asset-0001",
+	CurrencyID: VP,
+	Items: [
+		{
+			Item: { ItemTypeID: "type-skin", ItemID: SKIN_LEVEL.one, Amount: 1 },
+			BasePrice: 2175,
+			DiscountedPrice: 1740,
+			DiscountPercent: 20,
+		},
+		{
+			Item: { ItemTypeID: "type-skin", ItemID: SKIN_LEVEL.two, Amount: 1 },
+			BasePrice: 2175,
+			DiscountedPrice: 1740,
+			DiscountPercent: 20,
+		},
+	],
+	TotalBaseCost: { [VP]: 7100 },
+	TotalDiscountedCost: { [VP]: 5680 },
+	DurationRemainingInSeconds: 200_000,
+};
+
+/** A raw v3 storefront with no Night Market (BonusStore absent). */
+export function fixtureStorefront(): RawStorefront {
+	return {
+		SkinsPanelLayout: {
+			SingleItemOffers: [
+				SKIN_LEVEL.one,
+				SKIN_LEVEL.two,
+				SKIN_LEVEL.three,
+				SKIN_LEVEL.four,
+			],
+			SingleItemStoreOffers: DAILY_OFFERS,
+			SingleItemOffersRemainingDurationInSeconds: 50_000,
+		},
+		FeaturedBundle: {
+			Bundle: FIXTURE_BUNDLE,
+			Bundles: [FIXTURE_BUNDLE],
+			BundleRemainingDurationInSeconds: 200_000,
+		},
+	};
+}
+
+/** A raw v3 storefront with an active Night Market (BonusStore present). */
+export function fixtureStorefrontWithNightMarket(): RawStorefront {
+	return {
+		...fixtureStorefront(),
+		BonusStore: {
+			BonusStoreOffers: [
+				{
+					BonusOfferID: "bonus-0001",
+					Offer: { OfferID: SKIN_LEVEL.one, Cost: { [VP]: 1775 } },
+					DiscountPercent: 47,
+					DiscountCosts: { [VP]: 940 },
+					IsSeen: false,
+				},
+				{
+					BonusOfferID: "bonus-0002",
+					Offer: { OfferID: SKIN_LEVEL.two, Cost: { [VP]: 2175 } },
+					DiscountPercent: 30,
+					DiscountCosts: { [VP]: 1522 },
+					IsSeen: true,
+				},
+			],
+			BonusStoreRemainingDurationInSeconds: 80_000,
+		},
+	};
 }

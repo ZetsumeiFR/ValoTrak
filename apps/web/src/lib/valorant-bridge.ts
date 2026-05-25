@@ -44,7 +44,10 @@ export interface AppErrorPayload {
 		| "notInMatch"
 		| "unauthorized"
 		| "http"
-		| "parse";
+		| "parse"
+		// Frontend-synthesized: no Riot session and the local client isn't
+		// running, so the user must sign in (see `use-riot-session`).
+		| "needLogin";
 	message: string;
 }
 
@@ -68,6 +71,24 @@ export function readLockfile(): Promise<LockfileInfo> {
 
 export function getLocalTokens(): Promise<LocalTokens> {
 	return invoke<LocalTokens>("get_local_tokens");
+}
+
+/**
+ * Interactive remote login via Riot's hosted page (opens a WebView window).
+ * Resolves with a full token set even when no game/launcher is running.
+ */
+export function riotLogin(): Promise<LocalTokens> {
+	return invoke<LocalTokens>("riot_login");
+}
+
+/** Silent re-auth from the persisted Riot session cookie (no UI). */
+export function riotSilentReauth(): Promise<LocalTokens> {
+	return invoke<LocalTokens>("riot_silent_reauth");
+}
+
+/** Forget the persisted Riot session (logout). */
+export function riotLogout(): Promise<void> {
+	return invoke<void>("riot_logout");
 }
 
 export function getCurrentMatch(tokens: LocalTokens): Promise<CurrentMatch> {
