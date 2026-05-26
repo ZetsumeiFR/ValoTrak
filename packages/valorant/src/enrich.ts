@@ -26,6 +26,8 @@ export interface PlayerEnrichment {
 	error?: string;
 }
 
+const DETAIL_CONCURRENCY = 3;
+
 /** Fetch a single player's rank + aggregated recent stats. */
 export async function enrichPlayerStats(
 	transport: RiotTransport,
@@ -44,10 +46,11 @@ export async function enrichPlayerStats(
 				queue,
 			}),
 		]);
-		const details = await Promise.all(
-			history.map((entry) =>
+		const details = await mapWithConcurrency(
+			history,
+			DETAIL_CONCURRENCY,
+			(entry) =>
 				getMatchDetailsCached(transport, auth, match.shard, entry.MatchID),
-			),
 		);
 		return {
 			rank: extractRank(mmr),
@@ -65,6 +68,7 @@ async function mapWithConcurrency<T, R>(
 	limit: number,
 	fn: (item: T, index: number) => Promise<R>,
 ): Promise<R[]> {
+	const safeLimit = Math.max(1, Math.floor(limit));
 	const results: R[] = new Array(items.length);
 	let cursor = 0;
 	const worker = async (): Promise<void> => {
@@ -77,7 +81,10 @@ async function mapWithConcurrency<T, R>(
 			}
 		}
 	};
-	const workers = Array.from({ length: Math.min(limit, items.length) }, worker);
+	const workers = Array.from(
+		{ length: Math.min(safeLimit, items.length) },
+		worker,
+	);
 	await Promise.all(workers);
 	return results;
 }

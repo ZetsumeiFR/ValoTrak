@@ -64,10 +64,9 @@ export function computeAggregatedStats(
 		}
 
 		const team = match.teams?.find((t) => t.teamId === player.teamId);
-		let won = false;
-		if (team) {
-			won = team.won;
-			if (team.won) {
+		const decidedResult = team ? team.won : null;
+		if (decidedResult !== null) {
+			if (decidedResult) {
 				wins += 1;
 			} else {
 				losses += 1;
@@ -75,11 +74,13 @@ export function computeAggregatedStats(
 		}
 
 		const tally = agents.get(player.characterId) ?? { games: 0, wins: 0 };
-		tally.games += 1;
-		if (won) {
-			tally.wins += 1;
+		if (decidedResult !== null) {
+			tally.games += 1;
+			if (decidedResult) {
+				tally.wins += 1;
+			}
+			agents.set(player.characterId, tally);
 		}
-		agents.set(player.characterId, tally);
 
 		for (const round of match.roundResults ?? []) {
 			const ps = round.playerStats?.find((s) => s.subject === puuid);

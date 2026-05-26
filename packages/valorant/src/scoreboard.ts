@@ -51,7 +51,15 @@ export function buildMatchScoreboard(
 			score,
 		};
 	});
-	players.sort((a, b) => b.score - a.score);
+	players.sort(
+		(a, b) =>
+			b.score - a.score ||
+			b.kills - a.kills ||
+			a.deaths - b.deaths ||
+			b.assists - a.assists ||
+			a.teamId.localeCompare(b.teamId) ||
+			a.puuid.localeCompare(b.puuid),
+	);
 
 	const teams: ScoreboardTeam[] = (details.teams ?? []).map((team) => ({
 		teamId: team.teamId,

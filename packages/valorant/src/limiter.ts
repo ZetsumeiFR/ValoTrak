@@ -50,10 +50,22 @@ export function rateLimited(
 	transport: RiotTransport,
 	options: RateLimitOptions = {},
 ): RiotTransport {
-	const concurrency = options.concurrency ?? DEFAULTS.concurrency;
-	const maxRetries = options.maxRetries ?? DEFAULTS.maxRetries;
-	const baseDelayMs = options.baseDelayMs ?? DEFAULTS.baseDelayMs;
-	const maxDelayMs = options.maxDelayMs ?? DEFAULTS.maxDelayMs;
+	const concurrency = Math.max(
+		1,
+		Math.floor(options.concurrency ?? DEFAULTS.concurrency),
+	);
+	const maxRetries = Math.max(
+		0,
+		Math.floor(options.maxRetries ?? DEFAULTS.maxRetries),
+	);
+	const baseDelayMs = Math.max(
+		0,
+		options.baseDelayMs ?? DEFAULTS.baseDelayMs,
+	);
+	const maxDelayMs = Math.max(
+		baseDelayMs,
+		options.maxDelayMs ?? DEFAULTS.maxDelayMs,
+	);
 
 	let active = 0;
 	const waiters: Array<() => void> = [];

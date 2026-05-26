@@ -53,7 +53,7 @@ export async function getMatchHistory(
 	options: MatchHistoryOptions = {},
 ): Promise<RawMatchHistoryEntry[]> {
 	const startIndex = options.startIndex ?? 0;
-	const endIndex = options.endIndex ?? DEFAULT_MATCH_COUNT;
+	const endIndex = options.endIndex ?? startIndex + DEFAULT_MATCH_COUNT;
 	const params = new URLSearchParams({
 		startIndex: String(startIndex),
 		endIndex: String(endIndex),

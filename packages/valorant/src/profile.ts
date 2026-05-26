@@ -79,11 +79,17 @@ export async function enrichProfile(
 		}),
 	]);
 
-	const details = await Promise.all(
+	const settled = await Promise.allSettled(
 		history.map((entry) =>
 			getMatchDetailsCached(transport, auth, shard, entry.MatchID),
 		),
 	);
+	const details: RawMatchDetails[] = settled
+		.filter(
+			(r): r is PromiseFulfilledResult<RawMatchDetails> =>
+				r.status === "fulfilled",
+		)
+		.map((r) => r.value);
 
 	const recentMatches = details
 		.map((match) => summarizeMatch(puuid, match))

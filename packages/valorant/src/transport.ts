@@ -56,20 +56,32 @@ export class RiotApiError extends Error {
 	}
 }
 
+const DEFAULT_FETCH_TIMEOUT_MS = 15_000;
+
 /** Default transport using the global `fetch` (valorant-api.com + tests). */
 export const fetchTransport: RiotTransport = async (req) => {
-	const res = await fetch(req.url, {
-		method: req.method,
-		headers: req.headers,
-		body: req.body,
-	});
-	const body = await res.text();
-	return {
-		status: res.status,
-		ok: res.ok,
-		body,
-		headers: headersToRecord(res.headers),
-	};
+	const controller = new AbortController();
+	const timer = setTimeout(
+		() => controller.abort(),
+		DEFAULT_FETCH_TIMEOUT_MS,
+	);
+	try {
+		const res = await fetch(req.url, {
+			method: req.method,
+			headers: req.headers,
+			body: req.body,
+			signal: controller.signal,
+		});
+		const body = await res.text();
+		return {
+			status: res.status,
+			ok: res.ok,
+			body,
+			headers: headersToRecord(res.headers),
+		};
+	} finally {
+		clearTimeout(timer);
+	}
 };
 
 /** Headers required by the authenticated pvp.net endpoints. */

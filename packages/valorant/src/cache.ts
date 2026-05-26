@@ -19,7 +19,8 @@ export function getMatchDetailsCached(
 	shard: RiotShard,
 	matchId: string,
 ): Promise<RawMatchDetails> {
-	const cached = cache.get(matchId);
+	const key = `${shard.region}:${shard.shard}:${matchId}`;
+	const cached = cache.get(key);
 	if (cached) {
 		return cached;
 	}
@@ -27,13 +28,12 @@ export function getMatchDetailsCached(
 	const pending = getMatchDetails(transport, auth, shard, matchId).catch(
 		(error) => {
 			// Drop failures so a later refresh can retry instead of caching the error.
-			cache.delete(matchId);
+			cache.delete(key);
 			throw error;
 		},
 	);
-	cache.set(matchId, pending);
+	cache.set(key, pending);
 
-	// Bounded FIFO eviction — Map preserves insertion order.
 	if (cache.size > MAX_ENTRIES) {
 		const oldest = cache.keys().next().value;
 		if (oldest !== undefined) {

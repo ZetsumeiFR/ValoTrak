@@ -121,13 +121,19 @@ export function mapStorefront(raw: RawStorefront): Storefront {
 		: null;
 
 	const featured = raw.FeaturedBundle;
+	const bundlesList = featured?.Bundles;
 	const rawBundles =
-		featured?.Bundles ?? (featured?.Bundle ? [featured.Bundle] : []);
+		bundlesList && bundlesList.length > 0
+			? bundlesList
+			: featured?.Bundle
+				? [featured.Bundle]
+				: [];
+	const topLevelRemaining = featured?.BundleRemainingDurationInSeconds;
 	const bundles: BundleSummary[] = rawBundles.map((b) => ({
 		dataAssetId: b.DataAssetID,
 		totalVp: b.TotalDiscountedCost?.[VP_CURRENCY_ID] ?? 0,
 		baseVp: b.TotalBaseCost?.[VP_CURRENCY_ID] ?? 0,
-		remainingSeconds: b.DurationRemainingInSeconds,
+		remainingSeconds: topLevelRemaining ?? b.DurationRemainingInSeconds,
 		itemCount: b.Items?.length ?? 0,
 	}));
 
