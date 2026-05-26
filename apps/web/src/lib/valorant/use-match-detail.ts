@@ -43,6 +43,12 @@ async function loadMatchDetail(matchId: string): Promise<MatchDetailData> {
 		throw error;
 	}
 
+	if (!tokens.region || !tokens.shard) {
+		throw Object.assign(new Error("recap needs region"), {
+			kind: "needRegion" as const,
+		});
+	}
+
 	const shard = { region: tokens.region, shard: tokens.shard };
 	const details = await getMatchDetailsCached(
 		enrichTransport,

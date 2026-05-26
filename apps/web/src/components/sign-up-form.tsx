@@ -43,7 +43,11 @@ export default function SignUpForm({
 						toast.success(t("auth.signUpSuccess"));
 					},
 					onError: (error) => {
-						toast.error(error.error.message || error.error.statusText);
+						const message =
+							error?.error?.message ||
+							error?.error?.statusText ||
+							t("auth.signUpError");
+						toast.error(message);
 					},
 				},
 			);

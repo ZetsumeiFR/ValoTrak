@@ -35,7 +35,13 @@ async function loadProfile(tokens: LocalTokens | null): Promise<ProfileData> {
 export function useProfile() {
 	const { tokens, isResolving } = useRiotSession();
 	return useQuery({
-		queryKey: ["valorant", "profile", tokens?.puuid ?? null] as const,
+		queryKey: [
+			"valorant",
+			"profile",
+			tokens?.puuid ?? null,
+			tokens?.region ?? null,
+			tokens?.shard ?? null,
+		] as const,
 		queryFn: () => loadProfile(tokens),
 		// Wait for the session to resolve before deciding demo / login / load.
 		enabled: !isDesktop() || !isResolving,

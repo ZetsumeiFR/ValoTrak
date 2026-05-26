@@ -125,6 +125,24 @@ export function TrackedList() {
 		);
 	}
 
+	if (followedQuery.isError) {
+		return (
+			<Empty>
+				<EmptyHeader>
+					<EmptyMedia variant="icon">
+						<Star />
+					</EmptyMedia>
+					<EmptyTitle>{t("tracked.loadError")}</EmptyTitle>
+					<EmptyDescription>
+						{followedQuery.error instanceof Error
+							? followedQuery.error.message
+							: t("trends.unknownError")}
+					</EmptyDescription>
+				</EmptyHeader>
+			</Empty>
+		);
+	}
+
 	const players = followedQuery.data ?? [];
 
 	if (players.length === 0) {

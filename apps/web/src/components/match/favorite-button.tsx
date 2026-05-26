@@ -47,8 +47,12 @@ export function FavoriteButton({
 		followedQuery.data?.some((row) => row.puuid === player.puuid) ?? false;
 	const canFollow = !!player.riotId && !!region;
 	const pending = follow.isPending || unfollow.isPending;
+	const stateUnknown = followedQuery.isPending || followedQuery.isError;
 
 	const toggle = () => {
+		if (stateUnknown) {
+			return;
+		}
 		if (isFollowed) {
 			unfollow.mutate({ puuid: player.puuid });
 			return;
@@ -68,7 +72,7 @@ export function FavoriteButton({
 			variant="ghost"
 			size="icon-sm"
 			onClick={toggle}
-			disabled={pending || (!isFollowed && !canFollow)}
+			disabled={pending || stateUnknown || (!isFollowed && !canFollow)}
 			aria-pressed={isFollowed}
 			aria-label={isFollowed ? t("match.unfollow") : t("match.follow")}
 		>

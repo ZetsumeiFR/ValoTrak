@@ -79,6 +79,7 @@ export function useLobby() {
 			return;
 		}
 		let unlisten: (() => void) | undefined;
+		let cancelled = false;
 		let timer: ReturnType<typeof setTimeout> | undefined;
 		onLobbyChanged(() => {
 			if (timer) {
@@ -88,9 +89,14 @@ export function useLobby() {
 				queryClient.invalidateQueries({ queryKey: LOBBY_KEY });
 			}, 1500);
 		}).then((fn) => {
+			if (cancelled) {
+				fn();
+				return;
+			}
 			unlisten = fn;
 		});
 		return () => {
+			cancelled = true;
 			if (timer) {
 				clearTimeout(timer);
 			}

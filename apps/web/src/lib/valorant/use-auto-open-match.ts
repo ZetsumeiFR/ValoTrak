@@ -43,14 +43,19 @@ export function useAutoOpenMatch(): void {
 		}
 
 		let cancelled = false;
+		let baselineApplied = false;
 		let timer: ReturnType<typeof setTimeout> | undefined;
 		let unlisten: (() => void) | undefined;
 
 		// Establish a baseline without navigating (handles "app opened mid-game").
+		// A late baseline must NOT clobber a phase that the lobby listener already
+		// applied, otherwise the menus -> match transition can be missed.
 		void readPhase().then((phase) => {
-			if (!cancelled && phase) {
-				prevPhase.current = phase;
+			if (cancelled || baselineApplied || !phase) {
+				return;
 			}
+			prevPhase.current = phase;
+			baselineApplied = true;
 		});
 
 		onLobbyChanged(() => {
@@ -65,11 +70,16 @@ export function useAutoOpenMatch(): void {
 				}
 				const entered = IN_MATCH.has(phase) && !IN_MATCH.has(prevPhase.current);
 				prevPhase.current = phase;
+				baselineApplied = true;
 				if (entered) {
 					navigate({ to: "/match" });
 				}
 			}, 1500);
 		}).then((fn) => {
+			if (cancelled) {
+				fn();
+				return;
+			}
 			unlisten = fn;
 		});
 

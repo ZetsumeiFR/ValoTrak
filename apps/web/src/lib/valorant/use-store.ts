@@ -40,7 +40,13 @@ async function loadStore(tokens: LocalTokens | null): Promise<StoreData> {
 export function useStore() {
 	const { tokens, isResolving } = useRiotSession();
 	return useQuery({
-		queryKey: ["valorant", "store", tokens?.puuid ?? null] as const,
+		queryKey: [
+			"valorant",
+			"store",
+			tokens?.puuid ?? null,
+			tokens?.region ?? null,
+			tokens?.shard ?? null,
+		] as const,
 		queryFn: () => loadStore(tokens),
 		enabled: !isDesktop() || !isResolving,
 		retry: false,

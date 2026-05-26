@@ -18,7 +18,8 @@ export function ProfileHero({
 		profile.rank?.peakTier !== undefined
 			? tiersById.get(profile.rank.peakTier)
 			: undefined;
-	const rr = profile.rank?.rr ?? 0;
+	const rr = profile.rank?.rr;
+	const hasRr = typeof rr === "number";
 	const name = profile.riotId?.gameName ?? t("common.unknown");
 	const tag = profile.riotId?.tagLine;
 	const form = profile.recentMatches.slice(0, 8);
@@ -59,19 +60,23 @@ export function ProfileHero({
 							>
 								{tierInfo?.tierName ?? t("common.unranked")}
 							</span>
-							<span className="text-muted-foreground">· {rr} RR</span>
+							{hasRr ? (
+								<span className="text-muted-foreground">· {rr} RR</span>
+							) : null}
 							{peakInfo ? (
 								<span className="text-muted-foreground">
 									· {t("profile.peak", { tier: peakInfo.tierName })}
 								</span>
 							) : null}
 						</div>
-						<div className="mt-2 h-1.5 w-52 max-w-full bg-muted">
-							<div
-								className="h-full bg-brand"
-								style={{ width: `${Math.min(100, Math.max(0, rr))}%` }}
-							/>
-						</div>
+						{hasRr ? (
+							<div className="mt-2 h-1.5 w-52 max-w-full bg-muted">
+								<div
+									className="h-full bg-brand"
+									style={{ width: `${Math.min(100, Math.max(0, rr))}%` }}
+								/>
+							</div>
+						) : null}
 					</div>
 				</div>
 

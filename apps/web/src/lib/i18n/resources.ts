@@ -48,6 +48,8 @@ const en = {
 		myAccount: "My Account",
 		signInSuccess: "Sign in successful",
 		signUpSuccess: "Sign up successful",
+		signInError: "Sign in failed. Please try again.",
+		signUpError: "Sign up failed. Please try again.",
 		errInvalidEmail: "Invalid email address",
 		errPasswordMin: "Password must be at least 8 characters",
 		errNameMin: "Name must be at least 2 characters",
@@ -165,6 +167,7 @@ const en = {
 		noPlayersDesc:
 			"Star a player in the Match view to follow them and build their stat history.",
 		unfollowNamed: "Unfollow {{name}}",
+		loadError: "Couldn't load your tracked players",
 	},
 	trends: {
 		player: "Player",
@@ -248,6 +251,8 @@ const fr = {
 		myAccount: "Mon compte",
 		signInSuccess: "Connexion réussie",
 		signUpSuccess: "Inscription réussie",
+		signInError: "Échec de la connexion. Veuillez réessayer.",
+		signUpError: "Échec de l'inscription. Veuillez réessayer.",
 		errInvalidEmail: "Adresse e-mail invalide",
 		errPasswordMin: "Le mot de passe doit contenir au moins 8 caractères",
 		errNameMin: "Le nom doit contenir au moins 2 caractères",
@@ -368,6 +373,7 @@ const fr = {
 		noPlayersDesc:
 			"Mettez une étoile à un joueur dans la vue Match pour le suivre et constituer son historique de statistiques.",
 		unfollowNamed: "Ne plus suivre {{name}}",
+		loadError: "Impossible de charger vos joueurs suivis",
 	},
 	trends: {
 		player: "Joueur",
