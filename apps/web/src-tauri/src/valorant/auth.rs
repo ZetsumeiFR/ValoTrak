@@ -91,7 +91,8 @@ async fn run_login(
 
     let url = Url::parse(AUTHORIZE_URL).map_err(|e| AppError::parse(e.to_string()))?;
     let data_dir = riot_session_dir(app)?;
-    let _ = std::fs::create_dir_all(&data_dir);
+    std::fs::create_dir_all(&data_dir)
+        .map_err(|e| AppError::parse(format!("create session dir: {e}")))?;
 
     let (tx, rx) = tokio::sync::oneshot::channel::<CapturedTokens>();
     let tx = Arc::new(Mutex::new(Some(tx)));
@@ -139,7 +140,7 @@ async fn build_tokens(captured: CapturedTokens) -> Result<LocalTokens, AppError>
     let entitlement_token = fetch_entitlement(&captured.access_token).await?;
     let puuid = puuid_from_jwt(&captured.access_token)?;
     let (region, shard) = fetch_region(&captured.access_token, &captured.id_token).await?;
-    let client_version = client_version::resolve().await;
+    let client_version = client_version::resolve().await?;
 
     Ok(LocalTokens {
         access_token: captured.access_token,
@@ -164,11 +165,15 @@ async fn fetch_entitlement(access_token: &str) -> Result<String, AppError> {
         .json(&json!({}))
         .send()
         .await?;
-    if !resp.status().is_success() {
-        return Err(AppError::unauthorized(format!(
-            "entitlements returned {}",
-            resp.status()
-        )));
+    let status = resp.status();
+    if !status.is_success() {
+        let msg = format!("entitlements returned {status}");
+        if status == reqwest::StatusCode::UNAUTHORIZED
+            || status == reqwest::StatusCode::FORBIDDEN
+        {
+            return Err(AppError::unauthorized(msg));
+        }
+        return Err(AppError::http(msg));
     }
     Ok(resp.json::<Resp>().await?.entitlements_token)
 }
@@ -209,10 +214,21 @@ async fn fetch_region(access_token: &str, id_token: &str) -> Result<(String, Str
         .json(&json!({ "id_token": id_token }))
         .send()
         .await?;
-    if !resp.status().is_success() {
-        return Err(AppError::need_region(format!("geo returned {}", resp.status())));
+    let status = resp.status();
+    if !status.is_success() {
+        let msg = format!("geo returned {status}");
+        if status == reqwest::StatusCode::UNAUTHORIZED
+            || status == reqwest::StatusCode::FORBIDDEN
+        {
+            return Err(AppError::unauthorized(msg));
+        }
+        return Err(AppError::http(msg));
     }
-    let region = resp.json::<Resp>().await?.affinities.live;
+    let payload = resp.json::<Resp>().await?;
+    if payload.affinities.live.is_empty() {
+        return Err(AppError::need_region("geo returned no live region"));
+    }
+    let region = payload.affinities.live;
     let shard = region_to_shard(&region).to_string();
     Ok((region, shard))
 }
@@ -252,7 +268,8 @@ pub async fn logout(app: AppHandle) -> Result<(), AppError> {
     }
 
     let data_dir = riot_session_dir(&app)?;
-    let _ = std::fs::create_dir_all(&data_dir);
+    std::fs::create_dir_all(&data_dir)
+        .map_err(|e| AppError::parse(format!("create session dir: {e}")))?;
     let blank = Url::parse("about:blank").map_err(|e| AppError::parse(e.to_string()))?;
     let window =
         WebviewWindowBuilder::new(&app, LOGOUT_WINDOW_LABEL, WebviewUrl::External(blank))

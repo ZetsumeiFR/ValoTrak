@@ -64,7 +64,7 @@ pub async fn get_local_tokens() -> Result<LocalTokens, AppError> {
 
     let body: EntitlementsResponse = resp.json().await?;
     let (region, shard) = region::detect_region().unwrap_or_default();
-    let client_version = client_version::resolve().await;
+    let client_version = client_version::resolve().await?;
 
     Ok(LocalTokens {
         access_token: body.access_token,

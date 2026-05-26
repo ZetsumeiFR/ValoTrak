@@ -10,7 +10,8 @@ fn glz_base(shard: &RiotShard) -> String {
 }
 
 /// GET a glz endpoint. Returns `Ok(None)` on 404 (player not in that phase),
-/// `Err` on any other non-success status.
+/// `Err` on any other non-success status. 401/403 surface as `Unauthorized` so
+/// the UI can prompt for re-auth instead of showing a generic transport error.
 async fn glz_get<T: DeserializeOwned>(
     client: &reqwest::Client,
     tokens: &LocalTokens,
@@ -21,11 +22,18 @@ async fn glz_get<T: DeserializeOwned>(
         .headers(http::auth_headers(tokens)?)
         .send()
         .await?;
-    if resp.status() == reqwest::StatusCode::NOT_FOUND {
+    let status = resp.status();
+    if status == reqwest::StatusCode::NOT_FOUND {
         return Ok(None);
     }
-    if !resp.status().is_success() {
-        return Err(AppError::http(format!("{} for {url}", resp.status())));
+    if !status.is_success() {
+        let msg = format!("{status} for {url}");
+        if status == reqwest::StatusCode::UNAUTHORIZED
+            || status == reqwest::StatusCode::FORBIDDEN
+        {
+            return Err(AppError::unauthorized(msg));
+        }
+        return Err(AppError::http(msg));
     }
     Ok(Some(resp.json::<T>().await?))
 }

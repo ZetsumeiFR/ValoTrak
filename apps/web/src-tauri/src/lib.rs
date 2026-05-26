@@ -85,5 +85,7 @@ pub fn run() {
             riot_logout
         ])
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .unwrap_or_else(|err| {
+            log::error!("tauri application terminated with error: {err}");
+        });
 }

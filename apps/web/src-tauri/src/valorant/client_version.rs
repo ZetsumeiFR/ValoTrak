@@ -21,12 +21,17 @@ struct VersionData {
 /// pvp.net endpoints expect in the `X-Riot-ClientVersion` header.
 pub async fn fetch_client_version() -> Result<String, AppError> {
     let client = http::client()?;
-    let envelope: VersionEnvelope = client
+    let resp = client
         .get("https://valorant-api.com/v1/version")
         .send()
-        .await?
-        .json()
         .await?;
+    if !resp.status().is_success() {
+        return Err(AppError::http(format!(
+            "valorant-api.com version returned {}",
+            resp.status()
+        )));
+    }
+    let envelope: VersionEnvelope = resp.json().await?;
     Ok(envelope.data.riot_client_version)
 }
 
@@ -54,11 +59,15 @@ fn version_from_log() -> Option<String> {
 /// available (remote login, or the game never ran here). valorant-api.com lags a
 /// patch behind on patch/hotfix day, which makes pvp.net reject the request with
 /// a `400`, so the log is the authoritative source whenever it exists.
-pub async fn resolve() -> String {
+///
+/// Returns an error rather than an empty string when both sources fail, so
+/// callers don't silently send `X-Riot-ClientVersion:` and get opaque pvp.net
+/// failures downstream.
+pub async fn resolve() -> Result<String, AppError> {
     if let Some(version) = version_from_log() {
-        return version;
+        return Ok(version);
     }
-    fetch_client_version().await.unwrap_or_default()
+    fetch_client_version().await
 }
 
 #[cfg(test)]

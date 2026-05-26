@@ -72,14 +72,32 @@ async fn connect_and_listen(app: &AppHandle) -> Result<(), AppError> {
         .map_err(|e| AppError::http(e.to_string()))?;
     log::info!("valorant ws listener connected");
 
-    while let Some(msg) = ws.next().await {
-        let msg = msg.map_err(|e| AppError::http(e.to_string()))?;
-        if msg.is_text() {
-            // We don't parse the payload; any messaging-service event is a cheap
-            // signal for the frontend to refetch the current match (debounced).
-            let _ = app.emit(LOBBY_CHANGED_EVENT, ());
+    const IDLE_TIMEOUT: Duration = Duration::from_secs(60);
+
+    loop {
+        match tokio::time::timeout(IDLE_TIMEOUT, ws.next()).await {
+            Err(_) => {
+                log::warn!("valorant ws idle for {IDLE_TIMEOUT:?}, reconnecting");
+                return Ok(());
+            }
+            Ok(None) => return Ok(()),
+            Ok(Some(msg)) => {
+                let msg = msg.map_err(|e| AppError::http(e.to_string()))?;
+                match msg {
+                    Message::Text(_) => {
+                        if let Err(err) = app.emit(LOBBY_CHANGED_EVENT, ()) {
+                            log::warn!("emit {LOBBY_CHANGED_EVENT} failed: {err}");
+                        }
+                    }
+                    Message::Ping(payload) => {
+                        if let Err(err) = ws.send(Message::Pong(payload)).await {
+                            return Err(AppError::http(format!("pong send: {err}")));
+                        }
+                    }
+                    Message::Close(_) => return Ok(()),
+                    _ => {}
+                }
+            }
         }
     }
-
-    Ok(())
 }
