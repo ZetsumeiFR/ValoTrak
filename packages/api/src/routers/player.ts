@@ -4,6 +4,7 @@ import {
 	playerStatsCache,
 	trackedPlayer,
 } from "@valotrak/db/schema/valorant";
+import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -100,7 +101,13 @@ export const playerRouter = router({
 			.orderBy(desc(trackedPlayer.createdAt));
 	}),
 
-	/** Append a stats snapshot for a player (history is kept for trends). */
+	/**
+	 * Append a stats snapshot for a player (history is kept for trends).
+	 *
+	 * Authorization: the caller MUST be following this `puuid` (i.e. have a row
+	 * in `trackedPlayer` matching `userId` + `puuid`). This prevents anyone with
+	 * a session from poisoning another user's history.
+	 */
 	saveCache: protectedProcedure
 		.input(
 			z.object({
@@ -109,7 +116,24 @@ export const playerRouter = router({
 				snapshot: snapshotSchema,
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
+			const followed = await db
+				.select({ id: trackedPlayer.id })
+				.from(trackedPlayer)
+				.where(
+					and(
+						eq(trackedPlayer.userId, ctx.session.user.id),
+						eq(trackedPlayer.puuid, input.puuid),
+					),
+				)
+				.limit(1);
+			if (followed.length === 0) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You must follow this player before saving snapshots",
+				});
+			}
+
 			const { snapshot } = input;
 			const [row] = await db
 				.insert(playerStatsCache)
@@ -129,7 +153,13 @@ export const playerRouter = router({
 			return row;
 		}),
 
-	/** Read recent snapshots for a player, newest first (for trends). */
+	/**
+	 * Read recent snapshots for a player, newest first (for trends).
+	 *
+	 * Authorization: the caller MUST be following this `puuid`. Without this
+	 * check anyone with a session could read trend history for any player
+	 * whose PUUID they guessed or learned out-of-band.
+	 */
 	getCache: protectedProcedure
 		.input(
 			z.object({
@@ -137,7 +167,24 @@ export const playerRouter = router({
 				limit: z.number().min(1).max(100).default(20),
 			}),
 		)
-		.query(async ({ input }) => {
+		.query(async ({ ctx, input }) => {
+			const followed = await db
+				.select({ id: trackedPlayer.id })
+				.from(trackedPlayer)
+				.where(
+					and(
+						eq(trackedPlayer.userId, ctx.session.user.id),
+						eq(trackedPlayer.puuid, input.puuid),
+					),
+				)
+				.limit(1);
+			if (followed.length === 0) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "You must follow this player to read their history",
+				});
+			}
+
 			return db
 				.select()
 				.from(playerStatsCache)
