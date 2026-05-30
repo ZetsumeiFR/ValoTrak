@@ -1,49 +1,53 @@
+import { TRPCError } from "@trpc/server";
 import { db } from "@valotrak/db";
 import {
 	type PlayerSnapshotPayload,
 	playerStatsCache,
 	trackedPlayer,
 } from "@valotrak/db/schema/valorant";
-import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
 
+const puuidSchema = z.string().min(1).max(80);
+const regionSchema = z.string().min(1).max(16);
+
 const riotIdSchema = z.object({
-	gameName: z.string(),
-	tagLine: z.string(),
+	gameName: z.string().min(1).max(64),
+	tagLine: z.string().min(1).max(16),
 });
 
 const rankSchema = z.object({
-	tier: z.number(),
-	rr: z.number(),
-	peakTier: z.number().optional(),
+	tier: z.number().int().min(0).max(50),
+	rr: z.number().int().min(0).max(1000),
+	peakTier: z.number().int().min(0).max(50).optional(),
 });
 
 const agentUsageSchema = z.object({
-	agentId: z.string(),
-	games: z.number(),
-	winRate: z.number(),
+	agentId: z.string().min(1).max(80),
+	games: z.number().int().min(0).max(1000),
+	winRate: z.number().min(0).max(100),
 });
 
 const aggregatedStatsSchema = z.object({
-	matchesAnalyzed: z.number(),
-	kd: z.number(),
-	avgKills: z.number(),
-	avgDeaths: z.number(),
-	avgAssists: z.number(),
-	acs: z.number(),
-	hsPercent: z.number(),
-	winRate: z.number(),
-	wins: z.number(),
-	losses: z.number(),
-	mainAgents: z.array(agentUsageSchema),
+	matchesAnalyzed: z.number().int().min(0).max(100),
+	kd: z.number().min(0).max(1000),
+	avgKills: z.number().min(0).max(100),
+	avgDeaths: z.number().min(0).max(100),
+	avgAssists: z.number().min(0).max(100),
+	acs: z.number().min(0).max(2000),
+	hsPercent: z.number().min(0).max(100),
+	winRate: z.number().min(0).max(100),
+	wins: z.number().int().min(0).max(100),
+	losses: z.number().int().min(0).max(100),
+	mainAgents: z.array(agentUsageSchema).max(20),
 });
 
 const snapshotSchema = z.object({
 	riotId: riotIdSchema.optional(),
 	rank: rankSchema.optional(),
+	level: z.number().int().min(0).max(10_000).optional(),
 	stats: aggregatedStatsSchema.optional(),
 });
 
@@ -52,10 +56,10 @@ export const playerRouter = router({
 	follow: protectedProcedure
 		.input(
 			z.object({
-				puuid: z.string().min(1),
-				gameName: z.string().min(1),
-				tagLine: z.string().min(1),
-				region: z.string().min(1),
+				puuid: puuidSchema,
+				gameName: z.string().min(1).max(64),
+				tagLine: z.string().min(1).max(16),
+				region: regionSchema,
 				note: z.string().max(500).optional(),
 			}),
 		)
@@ -79,7 +83,7 @@ export const playerRouter = router({
 
 	/** Stop following a player. */
 	unfollow: protectedProcedure
-		.input(z.object({ puuid: z.string().min(1) }))
+		.input(z.object({ puuid: puuidSchema }))
 		.mutation(async ({ ctx, input }) => {
 			await db
 				.delete(trackedPlayer)
@@ -111,8 +115,8 @@ export const playerRouter = router({
 	saveCache: protectedProcedure
 		.input(
 			z.object({
-				puuid: z.string().min(1),
-				region: z.string().min(1),
+				puuid: puuidSchema,
+				region: regionSchema,
 				snapshot: snapshotSchema,
 			}),
 		)
@@ -138,6 +142,7 @@ export const playerRouter = router({
 			const [row] = await db
 				.insert(playerStatsCache)
 				.values({
+					userId: ctx.session.user.id,
 					puuid: input.puuid,
 					region: input.region,
 					tier: snapshot.rank?.tier,
@@ -163,8 +168,8 @@ export const playerRouter = router({
 	getCache: protectedProcedure
 		.input(
 			z.object({
-				puuid: z.string().min(1),
-				limit: z.number().min(1).max(100).default(20),
+				puuid: puuidSchema,
+				limit: z.number().int().min(1).max(100).default(20),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
@@ -188,7 +193,12 @@ export const playerRouter = router({
 			return db
 				.select()
 				.from(playerStatsCache)
-				.where(eq(playerStatsCache.puuid, input.puuid))
+				.where(
+					and(
+						eq(playerStatsCache.userId, ctx.session.user.id),
+						eq(playerStatsCache.puuid, input.puuid),
+					),
+				)
 				.orderBy(desc(playerStatsCache.capturedAt))
 				.limit(input.limit);
 		}),

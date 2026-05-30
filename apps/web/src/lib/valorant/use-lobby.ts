@@ -6,7 +6,10 @@ import {
 	type RiotShard,
 } from "@valotrak/valorant";
 import { useEffect } from "react";
-
+import {
+	type EnemyRevealMode,
+	shouldRevealEnemies,
+} from "@/lib/valorant/use-settings";
 import {
 	enrichTransport,
 	getCurrentMatch,
@@ -27,11 +30,12 @@ export interface LobbyData {
 }
 
 const LOBBY_KEY = ["valorant", "lobby"] as const;
+const LOBBY_MATCH_COUNT = 5;
 
 /** Empty "not in a match" result (browser, non-Windows, or game not running). */
 const NOT_IN_MATCH: LobbyData = { phase: "menus", players: [] };
 
-async function loadLobby(): Promise<LobbyData> {
+async function loadLobby(mode: EnemyRevealMode): Promise<LobbyData> {
 	// Outside the desktop shell (browser dev) there is no local API.
 	if (!isDesktop()) {
 		return NOT_IN_MATCH;
@@ -53,7 +57,21 @@ async function loadLobby(): Promise<LobbyData> {
 		return { phase: "menus", players: [], shard: match.shard };
 	}
 
-	const players = await enrichLobby(enrichTransport, tokens, match);
+	const playersToEnrich = shouldRevealEnemies(match.phase, mode)
+		? match.players
+		: match.players.filter((player) => player.isAlly);
+	const players = await enrichLobby(
+		enrichTransport,
+		tokens,
+		{
+			...match,
+			players: playersToEnrich,
+		},
+		{
+			matchCount: LOBBY_MATCH_COUNT,
+			concurrency: 2,
+		},
+	);
 	return {
 		phase: match.phase,
 		players,
@@ -63,11 +81,11 @@ async function loadLobby(): Promise<LobbyData> {
 	};
 }
 
-export function useLobby() {
+export function useLobby(mode: EnemyRevealMode) {
 	const queryClient = useQueryClient();
 	const query = useQuery({
-		queryKey: LOBBY_KEY,
-		queryFn: loadLobby,
+		queryKey: [...LOBBY_KEY, mode] as const,
+		queryFn: () => loadLobby(mode),
 		retry: false,
 		refetchOnWindowFocus: false,
 		staleTime: 1000 * 20,

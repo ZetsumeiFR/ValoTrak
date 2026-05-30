@@ -29,6 +29,10 @@ export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 	const tag = player.riotId?.tagLine;
 	const stats = player.stats;
 	const isLoading = !stats && !player.error;
+	const peakInfo =
+		player.rank?.peakTier !== undefined
+			? tiersById.get(player.rank.peakTier)
+			: undefined;
 
 	return (
 		<Card size="sm" className={cn(player.isSelf && "ring-2 ring-primary/40")}>
@@ -52,6 +56,16 @@ export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 							rr={player.rank?.rr}
 							tiersById={tiersById}
 						/>
+						{player.level !== undefined || peakInfo ? (
+							<div className="mt-1 flex flex-wrap items-center gap-x-2 font-mono text-[10px] text-muted-foreground uppercase">
+								{player.level !== undefined ? (
+									<span>{t("match.level", { level: player.level })}</span>
+								) : null}
+								{peakInfo ? (
+									<span>{t("match.peak", { tier: peakInfo.tierName })}</span>
+								) : null}
+							</div>
+						) : null}
 					</div>
 					<div className="ml-auto">
 						<FavoriteButton player={player} region={region} />

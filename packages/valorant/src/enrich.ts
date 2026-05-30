@@ -1,7 +1,14 @@
 import { computeAggregatedStats } from "./aggregate";
 import { getMatchDetailsCached } from "./cache";
 import { DEFAULT_MATCH_COUNT, QUEUE, type QueueId } from "./constants";
-import { extractRank, getMatchHistory, getMmr, getNames } from "./riot";
+import {
+	extractAccountLevel,
+	extractRank,
+	getAccountXp,
+	getMatchHistory,
+	getMmr,
+	getNames,
+} from "./riot";
 import type { RiotAuth, RiotTransport } from "./transport";
 import type {
 	AggregatedStats,
@@ -18,15 +25,53 @@ export interface EnrichOptions {
 	queue?: QueueId;
 	/** Max players enriched in parallel (gentle on the unofficial API). */
 	concurrency?: number;
+	/** How long per-player rank + stats enrichment can be reused. */
+	cacheTtlMs?: number;
 }
 
 export interface PlayerEnrichment {
 	rank?: RankInfo;
+	level?: number;
 	stats?: AggregatedStats;
 	error?: string;
 }
 
 const DETAIL_CONCURRENCY = 3;
+const DEFAULT_ENRICHMENT_CACHE_TTL_MS = 60_000;
+const MAX_ENRICHMENT_CACHE_ENTRIES = 200;
+
+interface CachedEnrichment {
+	expiresAt: number;
+	promise: Promise<PlayerEnrichment>;
+}
+
+const enrichmentCache = new Map<string, CachedEnrichment>();
+
+function enrichmentCacheKey(
+	match: CurrentMatch,
+	puuid: string,
+	matchCount: number,
+	queue: QueueId,
+): string {
+	return [match.shard.region, match.shard.shard, puuid, matchCount, queue].join(
+		":",
+	);
+}
+
+function pruneEnrichmentCache(now: number): void {
+	for (const [key, entry] of enrichmentCache) {
+		if (entry.expiresAt <= now) {
+			enrichmentCache.delete(key);
+		}
+	}
+	while (enrichmentCache.size > MAX_ENRICHMENT_CACHE_ENTRIES) {
+		const oldest = enrichmentCache.keys().next().value;
+		if (oldest === undefined) {
+			return;
+		}
+		enrichmentCache.delete(oldest);
+	}
+}
 
 /** Fetch a single player's rank + aggregated recent stats. */
 export async function enrichPlayerStats(
@@ -38,13 +83,68 @@ export async function enrichPlayerStats(
 ): Promise<PlayerEnrichment> {
 	const matchCount = options.matchCount ?? DEFAULT_MATCH_COUNT;
 	const queue = options.queue ?? QUEUE.competitive;
+	const cacheTtlMs = options.cacheTtlMs ?? DEFAULT_ENRICHMENT_CACHE_TTL_MS;
+	if (cacheTtlMs > 0) {
+		const now = Date.now();
+		const key = enrichmentCacheKey(match, puuid, matchCount, queue);
+		const cached = enrichmentCache.get(key);
+		if (cached && cached.expiresAt > now) {
+			return cached.promise;
+		}
+
+		const promise = fetchPlayerEnrichment(
+			transport,
+			auth,
+			match,
+			puuid,
+			matchCount,
+			queue,
+		).then(
+			(result) => {
+				if (result.error) {
+					enrichmentCache.delete(key);
+				}
+				return result;
+			},
+			(error) => {
+				enrichmentCache.delete(key);
+				throw error;
+			},
+		);
+		enrichmentCache.set(key, {
+			expiresAt: now + cacheTtlMs,
+			promise,
+		});
+		pruneEnrichmentCache(now);
+		return promise;
+	}
+
+	return fetchPlayerEnrichment(
+		transport,
+		auth,
+		match,
+		puuid,
+		matchCount,
+		queue,
+	);
+}
+
+async function fetchPlayerEnrichment(
+	transport: RiotTransport,
+	auth: RiotAuth,
+	match: CurrentMatch,
+	puuid: string,
+	matchCount: number,
+	queue: QueueId,
+): Promise<PlayerEnrichment> {
 	try {
-		const [mmr, history] = await Promise.all([
+		const [mmr, history, accountXp] = await Promise.all([
 			getMmr(transport, auth, match.shard, puuid),
 			getMatchHistory(transport, auth, match.shard, puuid, {
 				endIndex: matchCount,
 				queue,
 			}),
+			getAccountXp(transport, auth, match.shard, puuid).catch(() => undefined),
 		]);
 		const details = await mapWithConcurrency(
 			history,
@@ -54,6 +154,7 @@ export async function enrichPlayerStats(
 		);
 		return {
 			rank: extractRank(mmr),
+			level: accountXp ? extractAccountLevel(accountXp) : undefined,
 			stats: computeAggregatedStats(puuid, details),
 		};
 	} catch (error) {
@@ -122,8 +223,14 @@ export async function enrichLobby(
 			...player,
 			riotId: names.get(player.puuid),
 			rank: enrichment.rank,
+			level: enrichment.level,
 			stats: enrichment.stats,
 			error: enrichment.error,
 		};
 	});
+}
+
+/** Clear cached per-player enrichment (e.g. on sign-out or for tests). */
+export function clearPlayerEnrichmentCache(): void {
+	enrichmentCache.clear();
 }

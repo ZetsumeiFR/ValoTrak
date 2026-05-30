@@ -9,6 +9,7 @@ export interface TrendIdentity {
 	region?: string;
 	tier?: number;
 	rr?: number;
+	level?: number;
 }
 
 export interface TrendsData {
@@ -39,6 +40,7 @@ async function loadTrends(puuid: string): Promise<TrendsData> {
 			region: latest?.region,
 			tier: latest?.payload?.rank?.tier,
 			rr: latest?.payload?.rank?.rr,
+			level: latest?.payload?.level,
 		},
 	};
 }

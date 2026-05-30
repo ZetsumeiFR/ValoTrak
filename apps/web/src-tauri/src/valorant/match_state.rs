@@ -1,5 +1,5 @@
-use serde::de::DeserializeOwned;
 use serde::Deserialize;
+use serde::de::DeserializeOwned;
 
 use super::error::AppError;
 use super::http;
@@ -28,9 +28,7 @@ async fn glz_get<T: DeserializeOwned>(
     }
     if !status.is_success() {
         let msg = format!("{status} for {url}");
-        if status == reqwest::StatusCode::UNAUTHORIZED
-            || status == reqwest::StatusCode::FORBIDDEN
-        {
+        if status == reqwest::StatusCode::UNAUTHORIZED || status == reqwest::StatusCode::FORBIDDEN {
             return Err(AppError::unauthorized(msg));
         }
         return Err(AppError::http(msg));
@@ -55,11 +53,11 @@ struct CoreGameMatch {
 #[derive(Deserialize)]
 struct CoreGamePlayer {
     #[serde(rename = "Subject")]
-    subject: String,
+    subject: Option<String>,
     #[serde(rename = "TeamID")]
-    team_id: String,
+    team_id: Option<String>,
     #[serde(rename = "CharacterID")]
-    character_id: String,
+    character_id: Option<String>,
 }
 
 /* ------------------------------ Pregame ------------------------------- */
@@ -87,17 +85,13 @@ struct PregameTeam {
 #[derive(Deserialize)]
 struct PregamePlayer {
     #[serde(rename = "Subject")]
-    subject: String,
+    subject: Option<String>,
     #[serde(rename = "CharacterID")]
-    character_id: String,
+    character_id: Option<String>,
 }
 
-fn opt_agent(character_id: String) -> Option<String> {
-    if character_id.is_empty() {
-        None
-    } else {
-        Some(character_id)
-    }
+fn opt_agent(character_id: Option<String>) -> Option<String> {
+    character_id.filter(|id| !id.is_empty())
 }
 
 /// Detect the current phase and the players present.
@@ -137,24 +131,29 @@ pub async fn get_current_match(tokens: &LocalTokens) -> Result<CurrentMatch, App
         let self_team = details
             .players
             .iter()
-            .find(|p| &p.subject == puuid)
-            .map(|p| p.team_id.clone());
+            .find(|p| p.subject.as_deref() == Some(puuid))
+            .and_then(|p| p.team_id.clone());
 
-        let players = details
+        let players: Vec<LobbyPlayer> = details
             .players
             .into_iter()
-            .map(|p| {
-                let is_self = &p.subject == puuid;
-                let is_ally = self_team.as_ref().is_some_and(|t| t == &p.team_id);
-                LobbyPlayer {
-                    puuid: p.subject,
+            .filter_map(|p| {
+                let subject = p.subject?;
+                let team_id = p.team_id.unwrap_or_default();
+                let is_self = subject == *puuid;
+                let is_ally = self_team.as_ref().is_some_and(|t| t == &team_id);
+                Some(LobbyPlayer {
+                    puuid: subject,
                     is_ally,
                     is_self,
                     agent_id: opt_agent(p.character_id),
-                    team_id: p.team_id,
-                }
+                    team_id,
+                })
             })
             .collect();
+        if players.is_empty() {
+            return Err(AppError::parse("coregame match contains no valid players"));
+        }
 
         return Ok(CurrentMatch {
             phase: "coregame".to_string(),
@@ -186,19 +185,25 @@ pub async fn get_current_match(tokens: &LocalTokens) -> Result<CurrentMatch, App
             .as_ref()
             .map(|t| t.team_id.clone())
             .unwrap_or_default();
-        let players = details
+        let players: Vec<LobbyPlayer> = details
             .ally_team
             .map(|t| t.players)
             .unwrap_or_default()
             .into_iter()
-            .map(|p| LobbyPlayer {
-                is_self: &p.subject == puuid,
-                puuid: p.subject,
-                team_id: team_id.clone(),
-                agent_id: opt_agent(p.character_id),
-                is_ally: true,
+            .filter_map(|p| {
+                let subject = p.subject?;
+                Some(LobbyPlayer {
+                    is_self: subject == *puuid,
+                    puuid: subject,
+                    team_id: team_id.clone(),
+                    agent_id: opt_agent(p.character_id),
+                    is_ally: true,
+                })
             })
             .collect();
+        if players.is_empty() {
+            return Err(AppError::parse("pregame match contains no valid players"));
+        }
 
         return Ok(CurrentMatch {
             phase: "pregame".to_string(),

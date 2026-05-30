@@ -10,6 +10,7 @@ import {
 } from "./transport";
 import type {
 	RankInfo,
+	RawAccountXp,
 	RawMatchDetails,
 	RawMatchHistory,
 	RawMatchHistoryEntry,
@@ -35,6 +36,19 @@ export async function getMmr(
 	return riotJson<RawMmr>(transport, {
 		method: "GET",
 		url: `${pdBase(shard.shard)}/mmr/v1/players/${puuid}`,
+		headers: buildAuthHeaders(auth),
+	});
+}
+
+export async function getAccountXp(
+	transport: RiotTransport,
+	auth: RiotAuth,
+	shard: RiotShard,
+	puuid: string,
+): Promise<RawAccountXp> {
+	return riotJson<RawAccountXp>(transport, {
+		method: "GET",
+		url: `${pdBase(shard.shard)}/account-xp/v1/players/${puuid}`,
 		headers: buildAuthHeaders(auth),
 	});
 }
@@ -158,5 +172,52 @@ export function extractRank(mmr: RawMmr): RankInfo {
 	return {
 		tier: update?.TierAfterUpdate ?? UNRANKED_TIER,
 		rr: update?.RankedRatingAfterUpdate ?? 0,
+		peakTier: extractPeakTier(mmr),
 	};
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function numberField(value: unknown, key: string): number | undefined {
+	if (!isRecord(value)) {
+		return undefined;
+	}
+	const field = value[key];
+	return typeof field === "number" && Number.isFinite(field)
+		? field
+		: undefined;
+}
+
+function extractPeakTier(mmr: RawMmr): number | undefined {
+	const seasonalInfo = mmr.QueueSkills?.competitive;
+	if (!isRecord(seasonalInfo)) {
+		return undefined;
+	}
+
+	const bySeason = seasonalInfo.SeasonalInfoBySeasonID;
+	if (!isRecord(bySeason)) {
+		return undefined;
+	}
+
+	let peak: number | undefined;
+	for (const season of Object.values(bySeason)) {
+		const tier = numberField(season, "CompetitiveTier");
+		if (tier === undefined || tier <= UNRANKED_TIER) {
+			continue;
+		}
+		peak = peak === undefined ? tier : Math.max(peak, tier);
+	}
+	return peak;
+}
+
+export function extractAccountLevel(
+	accountXp: RawAccountXp,
+): number | undefined {
+	const level =
+		accountXp.Progress?.Level ?? accountXp.Level ?? accountXp.AccountLevel;
+	return typeof level === "number" && Number.isFinite(level) && level >= 0
+		? Math.floor(level)
+		: undefined;
 }

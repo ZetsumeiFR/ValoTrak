@@ -72,6 +72,8 @@ export interface CurrentMatch {
 export interface EnrichedPlayer extends LobbyPlayer {
 	riotId?: RiotId;
 	rank?: RankInfo;
+	/** Account level, when Riot's account XP endpoint is available. */
+	level?: number;
 	stats?: AggregatedStats;
 	/** Set when enrichment failed for this player (display a fallback card). */
 	error?: string;
@@ -138,6 +140,8 @@ export interface Profile {
 	puuid: string;
 	riotId?: RiotId;
 	rank?: RankInfo;
+	/** Account level, when Riot's account XP endpoint is available. */
+	level?: number;
 	stats?: AggregatedStats;
 	recentMatches: MatchSummary[];
 }
@@ -226,6 +230,15 @@ export interface RawCompetitiveUpdate {
 export interface RawMmr {
 	LatestCompetitiveUpdate?: RawCompetitiveUpdate;
 	QueueSkills?: Record<string, unknown>;
+}
+
+export interface RawAccountXp {
+	Progress?: {
+		Level?: number;
+		XP?: number;
+	};
+	Level?: number;
+	AccountLevel?: number;
 }
 
 export interface RawMatchHistoryEntry {

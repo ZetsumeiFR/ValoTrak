@@ -71,10 +71,10 @@ function LoadingGrid() {
 
 export function LobbyView() {
 	const { t } = useTranslation();
-	const lobby = useLobby();
+	const mode = useEnemyRevealMode();
+	const lobby = useLobby(mode);
 	const agentsQuery = useQuery(agentsQueryOptions());
 	const tiersQuery = useQuery(tiersQueryOptions());
-	const mode = useEnemyRevealMode();
 	useFollowedSnapshots(lobby.data);
 
 	const agentsById = useMemo(

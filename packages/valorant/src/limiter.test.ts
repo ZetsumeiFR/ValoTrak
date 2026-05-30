@@ -94,6 +94,26 @@ describe("rateLimited", () => {
 		expect(max).toBeLessThanOrEqual(2);
 	});
 
+	it("paces request starts when minIntervalMs is configured", async () => {
+		const starts: number[] = [];
+		const transport = rateLimited(
+			async () => {
+				starts.push(Date.now());
+				return ok();
+			},
+			{ concurrency: 3, minIntervalMs: 5 },
+		);
+
+		await Promise.all(Array.from({ length: 3 }, () => transport(req)));
+
+		const [first, second, third] = starts;
+		expect(first).toBeDefined();
+		expect(second).toBeDefined();
+		expect(third).toBeDefined();
+		expect((second ?? 0) - (first ?? 0)).toBeGreaterThanOrEqual(4);
+		expect((third ?? 0) - (second ?? 0)).toBeGreaterThanOrEqual(4);
+	});
+
 	it("retries a thrown network error then succeeds", async () => {
 		let calls = 0;
 		const transport = rateLimited(async () => {

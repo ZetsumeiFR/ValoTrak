@@ -10,6 +10,8 @@ import type { RiotResponse, RiotTransport } from "./transport";
 export interface RateLimitOptions {
 	/** Max requests in flight at once. */
 	concurrency?: number;
+	/** Minimum delay between request starts. Prevents short bursts that trigger 429. */
+	minIntervalMs?: number;
 	/** Retry attempts for 429 / 5xx responses and network errors. */
 	maxRetries?: number;
 	/** Base backoff delay in ms; grows exponentially per attempt. */
@@ -20,6 +22,7 @@ export interface RateLimitOptions {
 
 const DEFAULTS = {
 	concurrency: 4,
+	minIntervalMs: 0,
 	maxRetries: 4,
 	baseDelayMs: 600,
 	maxDelayMs: 10_000,
@@ -58,16 +61,18 @@ export function rateLimited(
 		0,
 		Math.floor(options.maxRetries ?? DEFAULTS.maxRetries),
 	);
-	const baseDelayMs = Math.max(
+	const minIntervalMs = Math.max(
 		0,
-		options.baseDelayMs ?? DEFAULTS.baseDelayMs,
+		Math.floor(options.minIntervalMs ?? DEFAULTS.minIntervalMs),
 	);
+	const baseDelayMs = Math.max(0, options.baseDelayMs ?? DEFAULTS.baseDelayMs);
 	const maxDelayMs = Math.max(
 		baseDelayMs,
 		options.maxDelayMs ?? DEFAULTS.maxDelayMs,
 	);
 
 	let active = 0;
+	let nextStartAt = 0;
 	const waiters: Array<() => void> = [];
 
 	const acquire = (): Promise<void> => {
@@ -95,6 +100,18 @@ export function rateLimited(
 		const exp = Math.min(baseDelayMs * 2 ** attempt, maxDelayMs);
 		return exp / 2 + Math.random() * (exp / 2);
 	};
+	const waitForRequestTurn = async (): Promise<void> => {
+		if (minIntervalMs === 0) {
+			return;
+		}
+		const now = Date.now();
+		const startAt = Math.max(now, nextStartAt);
+		nextStartAt = startAt + minIntervalMs;
+		const waitMs = startAt - now;
+		if (waitMs > 0) {
+			await sleep(waitMs);
+		}
+	};
 
 	return async (req) => {
 		await acquire();
@@ -103,6 +120,7 @@ export function rateLimited(
 			let lastError: unknown;
 			for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
 				try {
+					await waitForRequestTurn();
 					const res = await transport(req);
 					if (res.ok || !isRetryable(res.status)) {
 						return res;

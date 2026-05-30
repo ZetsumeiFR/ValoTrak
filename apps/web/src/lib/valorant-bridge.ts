@@ -122,7 +122,13 @@ export const tauriTransport: RiotTransport = async (
  * Caps concurrency and retries 429 / 5xx with backoff so a busy lobby doesn't
  * trip Riot's rate limit. Single-shot actions (e.g. dodge) use {@link tauriTransport}.
  */
-export const enrichTransport: RiotTransport = rateLimited(tauriTransport);
+export const enrichTransport: RiotTransport = rateLimited(tauriTransport, {
+	concurrency: 2,
+	minIntervalMs: 350,
+	maxRetries: 5,
+	baseDelayMs: 1000,
+	maxDelayMs: 30_000,
+});
 
 /** Subscribe to local lobby/presence changes. Returns an unlisten function. */
 export function onLobbyChanged(callback: () => void): Promise<UnlistenFn> {

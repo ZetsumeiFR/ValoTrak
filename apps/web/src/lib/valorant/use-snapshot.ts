@@ -52,6 +52,7 @@ export function useFollowedSnapshots(data: LobbyData | undefined): void {
 				snapshot: {
 					riotId: player.riotId,
 					rank: player.rank,
+					level: player.level,
 					stats: player.stats,
 				},
 			});

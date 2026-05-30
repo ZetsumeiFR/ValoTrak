@@ -1,13 +1,12 @@
 import type { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
 	createRootRouteWithContext,
 	HeadContent,
 	Outlet,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Toaster } from "@valotrak/ui/components/sonner";
 import { TooltipProvider } from "@valotrak/ui/components/tooltip";
+import { lazy, Suspense } from "react";
 
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -43,6 +42,30 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 	}),
 });
 
+const Devtools = import.meta.env.DEV
+	? lazy(async () => {
+			const [{ ReactQueryDevtools }, { TanStackRouterDevtools }] =
+				await Promise.all([
+					import("@tanstack/react-query-devtools"),
+					import("@tanstack/react-router-devtools"),
+				]);
+
+			return {
+				default: function DevtoolsPanel() {
+					return (
+						<>
+							<TanStackRouterDevtools position="bottom-left" />
+							<ReactQueryDevtools
+								position="bottom"
+								buttonPosition="bottom-right"
+							/>
+						</>
+					);
+				},
+			};
+		})
+	: null;
+
 function RootComponent() {
 	useAutoUpdate();
 	useAutoOpenMatch();
@@ -67,8 +90,11 @@ function RootComponent() {
 				</TooltipProvider>
 				<Toaster richColors />
 			</ThemeProvider>
-			<TanStackRouterDevtools position="bottom-left" />
-			<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+			{Devtools ? (
+				<Suspense fallback={null}>
+					<Devtools />
+				</Suspense>
+			) : null}
 		</>
 	);
 }

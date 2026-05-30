@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 
 import type { RiotShard } from "./endpoints";
-import { quitPregame } from "./riot";
+import { extractAccountLevel, extractRank, quitPregame } from "./riot";
 import type { RiotAuth, RiotRequest } from "./transport";
 
 const auth: RiotAuth = {
@@ -40,5 +40,39 @@ describe("quitPregame", () => {
 				"m",
 			),
 		).rejects.toThrow();
+	});
+});
+
+describe("rank and account extraction", () => {
+	it("extracts current rank, RR, and peak tier from seasonal MMR", () => {
+		const rank = extractRank({
+			LatestCompetitiveUpdate: {
+				TierAfterUpdate: 15,
+				RankedRatingAfterUpdate: 42,
+			},
+			QueueSkills: {
+				competitive: {
+					SeasonalInfoBySeasonID: {
+						old: { CompetitiveTier: 14 },
+						current: { CompetitiveTier: 18 },
+						unrated: { CompetitiveTier: 0 },
+					},
+				},
+			},
+		});
+
+		expect(rank).toEqual({ tier: 15, rr: 42, peakTier: 18 });
+	});
+
+	it("keeps peak tier undefined when seasonal MMR is unavailable", () => {
+		expect(extractRank({})).toEqual({ tier: 0, rr: 0, peakTier: undefined });
+	});
+
+	it("extracts account level from account XP progress", () => {
+		expect(extractAccountLevel({ Progress: { Level: 312, XP: 1200 } })).toBe(
+			312,
+		);
+		expect(extractAccountLevel({ AccountLevel: 99 })).toBe(99);
+		expect(extractAccountLevel({ Progress: { Level: -1 } })).toBeUndefined();
 	});
 });

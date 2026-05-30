@@ -1,12 +1,11 @@
-use std::time::Duration;
-
 use base64::Engine;
 use futures_util::{SinkExt, StreamExt};
 use tauri::{AppHandle, Emitter};
+use tokio::time::{Duration, Instant};
+use tokio_tungstenite::Connector;
+use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::tungstenite::client::IntoClientRequest;
 use tokio_tungstenite::tungstenite::http::header::AUTHORIZATION;
-use tokio_tungstenite::tungstenite::Message;
-use tokio_tungstenite::Connector;
 
 use super::error::AppError;
 use super::lockfile;
@@ -73,6 +72,8 @@ async fn connect_and_listen(app: &AppHandle) -> Result<(), AppError> {
     log::info!("valorant ws listener connected");
 
     const IDLE_TIMEOUT: Duration = Duration::from_secs(60);
+    const EMIT_THROTTLE: Duration = Duration::from_millis(1000);
+    let mut last_emit = Instant::now() - EMIT_THROTTLE;
 
     loop {
         match tokio::time::timeout(IDLE_TIMEOUT, ws.next()).await {
@@ -85,8 +86,12 @@ async fn connect_and_listen(app: &AppHandle) -> Result<(), AppError> {
                 let msg = msg.map_err(|e| AppError::http(e.to_string()))?;
                 match msg {
                     Message::Text(_) => {
-                        if let Err(err) = app.emit(LOBBY_CHANGED_EVENT, ()) {
-                            log::warn!("emit {LOBBY_CHANGED_EVENT} failed: {err}");
+                        let now = Instant::now();
+                        if now.duration_since(last_emit) >= EMIT_THROTTLE {
+                            last_emit = now;
+                            if let Err(err) = app.emit(LOBBY_CHANGED_EVENT, ()) {
+                                log::warn!("emit {LOBBY_CHANGED_EVENT} failed: {err}");
+                            }
                         }
                     }
                     Message::Ping(payload) => {

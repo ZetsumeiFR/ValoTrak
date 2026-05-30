@@ -68,6 +68,11 @@ export function ProfileHero({
 									· {t("profile.peak", { tier: peakInfo.tierName })}
 								</span>
 							) : null}
+							{profile.level !== undefined ? (
+								<span className="text-muted-foreground">
+									· {t("profile.level", { level: profile.level })}
+								</span>
+							) : null}
 						</div>
 						{hasRr ? (
 							<div className="mt-2 h-1.5 w-52 max-w-full bg-muted">

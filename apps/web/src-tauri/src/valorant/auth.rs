@@ -43,6 +43,7 @@ const LOGOUT_WINDOW_LABEL: &str = "riot-logout";
 const LOGIN_TIMEOUT: Duration = Duration::from_secs(300);
 /// How long to wait for a hidden cookie-based re-auth before giving up.
 const REAUTH_TIMEOUT: Duration = Duration::from_secs(20);
+const ALLOWED_LOGIN_HOSTS: &[&str] = &["riotgames.com", "playvalorant.com"];
 
 struct CapturedTokens {
     access_token: String,
@@ -66,6 +67,18 @@ fn parse_token_fragment(fragment: &str) -> Option<CapturedTokens> {
         access_token: access_token?,
         id_token: id_token?,
     })
+}
+
+fn is_allowed_login_navigation(url: &Url) -> bool {
+    if url.scheme() != "https" {
+        return false;
+    }
+    let Some(host) = url.host_str() else {
+        return false;
+    };
+    ALLOWED_LOGIN_HOSTS
+        .iter()
+        .any(|allowed| host == *allowed || host.ends_with(&format!(".{allowed}")))
 }
 
 /// Dedicated WebView data dir for the Riot session (cookies live here).
@@ -118,7 +131,7 @@ async fn run_login(
                 // external redirect target.
                 return false;
             }
-            true
+            is_allowed_login_navigation(target)
         })
         .build()
         .map_err(|e| AppError::http(format!("login window: {e}")))?;
@@ -168,9 +181,7 @@ async fn fetch_entitlement(access_token: &str) -> Result<String, AppError> {
     let status = resp.status();
     if !status.is_success() {
         let msg = format!("entitlements returned {status}");
-        if status == reqwest::StatusCode::UNAUTHORIZED
-            || status == reqwest::StatusCode::FORBIDDEN
-        {
+        if status == reqwest::StatusCode::UNAUTHORIZED || status == reqwest::StatusCode::FORBIDDEN {
             return Err(AppError::unauthorized(msg));
         }
         return Err(AppError::http(msg));
@@ -217,9 +228,7 @@ async fn fetch_region(access_token: &str, id_token: &str) -> Result<(String, Str
     let status = resp.status();
     if !status.is_success() {
         let msg = format!("geo returned {status}");
-        if status == reqwest::StatusCode::UNAUTHORIZED
-            || status == reqwest::StatusCode::FORBIDDEN
-        {
+        if status == reqwest::StatusCode::UNAUTHORIZED || status == reqwest::StatusCode::FORBIDDEN {
             return Err(AppError::unauthorized(msg));
         }
         return Err(AppError::http(msg));
@@ -271,12 +280,11 @@ pub async fn logout(app: AppHandle) -> Result<(), AppError> {
     std::fs::create_dir_all(&data_dir)
         .map_err(|e| AppError::parse(format!("create session dir: {e}")))?;
     let blank = Url::parse("about:blank").map_err(|e| AppError::parse(e.to_string()))?;
-    let window =
-        WebviewWindowBuilder::new(&app, LOGOUT_WINDOW_LABEL, WebviewUrl::External(blank))
-            .visible(false)
-            .data_directory(data_dir)
-            .build()
-            .map_err(|e| AppError::http(format!("logout window: {e}")))?;
+    let window = WebviewWindowBuilder::new(&app, LOGOUT_WINDOW_LABEL, WebviewUrl::External(blank))
+        .visible(false)
+        .data_directory(data_dir)
+        .build()
+        .map_err(|e| AppError::http(format!("logout window: {e}")))?;
 
     let result = window
         .clear_all_browsing_data()
@@ -287,7 +295,8 @@ pub async fn logout(app: AppHandle) -> Result<(), AppError> {
 
 #[cfg(test)]
 mod tests {
-    use super::{parse_token_fragment, region_to_shard};
+    use super::{is_allowed_login_navigation, parse_token_fragment, region_to_shard};
+    use tauri::Url;
 
     #[test]
     fn parses_access_and_id_tokens_from_fragment() {
@@ -309,5 +318,18 @@ mod tests {
         assert_eq!(region_to_shard("br"), "na");
         assert_eq!(region_to_shard("eu"), "eu");
         assert_eq!(region_to_shard("ap"), "ap");
+    }
+
+    #[test]
+    fn allows_only_riot_login_navigation_hosts() {
+        let riot = Url::parse("https://auth.riotgames.com/authorize").unwrap();
+        let valorant = Url::parse("https://playvalorant.com/opt_in").unwrap();
+        let attacker = Url::parse("https://riotgames.com.example.com/phish").unwrap();
+        let insecure = Url::parse("http://auth.riotgames.com/authorize").unwrap();
+
+        assert!(is_allowed_login_navigation(&riot));
+        assert!(is_allowed_login_navigation(&valorant));
+        assert!(!is_allowed_login_navigation(&attacker));
+        assert!(!is_allowed_login_navigation(&insecure));
     }
 }

@@ -74,6 +74,7 @@ const en = {
 		operator: "Operator",
 		recentForm: "Recent form",
 		peak: "peak {{tier}}",
+		level: "level {{level}}",
 		statKd: "K / D",
 		statKdSub: "kills / deaths",
 		statAcs: "Combat Score",
@@ -125,6 +126,8 @@ const en = {
 		enemiesHiddenDesc:
 			'Reveal mode is "{{mode}}". Change it in Settings to show enemies.',
 		you: "You",
+		level: "Lvl {{level}}",
+		peak: "Peak {{tier}}",
 		mains: "Mains",
 		statsUnavailable: "Stats unavailable: {{error}}",
 		cardRecord_one: "{{wins}}-{{losses}} · {{count}} game",
@@ -277,6 +280,7 @@ const fr = {
 		operator: "Opérateur",
 		recentForm: "Forme récente",
 		peak: "pic {{tier}}",
+		level: "niveau {{level}}",
 		statKd: "K / D",
 		statKdSub: "kills / morts",
 		statAcs: "Score de combat",
@@ -329,6 +333,8 @@ const fr = {
 		enemiesHiddenDesc:
 			"Le mode de révélation est « {{mode}} ». Modifiez-le dans les Paramètres pour afficher les ennemis.",
 		you: "Vous",
+		level: "Niv. {{level}}",
+		peak: "Pic {{tier}}",
 		mains: "Mains",
 		statsUnavailable: "Statistiques indisponibles : {{error}}",
 		cardRecord_one: "{{wins}}-{{losses}} · {{count}} partie",

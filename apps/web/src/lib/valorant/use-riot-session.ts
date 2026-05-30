@@ -1,4 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	clearMatchDetailsCache,
+	clearPlayerEnrichmentCache,
+} from "@valotrak/valorant";
 
 import {
 	getLocalTokens,
@@ -82,6 +86,7 @@ export function useRiotSession() {
 	const login = useMutation({
 		mutationFn: riotLogin,
 		onSuccess: (tokens) => {
+			clearPlayerEnrichmentCache();
 			queryClient.setQueryData<LocalTokens | null>(SESSION_QUERY_KEY, tokens);
 			// Re-run dependent loaders (profile, storefront) with the new session.
 			queryClient.invalidateQueries({ queryKey: ["valorant", "profile"] });
@@ -92,6 +97,8 @@ export function useRiotSession() {
 	const logout = useMutation({
 		mutationFn: riotLogout,
 		onSuccess: () => {
+			clearMatchDetailsCache();
+			clearPlayerEnrichmentCache();
 			queryClient.setQueryData<LocalTokens | null>(SESSION_QUERY_KEY, null);
 			queryClient.invalidateQueries({ queryKey: ["valorant", "profile"] });
 			queryClient.invalidateQueries({ queryKey: ["valorant", "store"] });

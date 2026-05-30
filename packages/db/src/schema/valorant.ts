@@ -1,8 +1,4 @@
-import type {
-	AggregatedStats,
-	RankInfo,
-	RiotId,
-} from "@valotrak/valorant";
+import type { AggregatedStats, RankInfo, RiotId } from "@valotrak/valorant";
 import { relations } from "drizzle-orm";
 import {
 	index,
@@ -24,9 +20,7 @@ export const trackedPlayer = pgTable(
 		id: text("id")
 			.primaryKey()
 			.$defaultFn(() => crypto.randomUUID()),
-		userId: text("user_id")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
+		userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
 		puuid: text("puuid").notNull(),
 		gameName: text("game_name").notNull(),
 		tagLine: text("tag_line").notNull(),
@@ -48,6 +42,7 @@ export const trackedPlayer = pgTable(
 export interface PlayerSnapshotPayload {
 	riotId?: RiotId;
 	rank?: RankInfo;
+	level?: number;
 	stats?: AggregatedStats;
 }
 
@@ -62,6 +57,7 @@ export const playerStatsCache = pgTable(
 		id: text("id")
 			.primaryKey()
 			.$defaultFn(() => crypto.randomUUID()),
+		userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
 		puuid: text("puuid").notNull(),
 		region: text("region").notNull(),
 		capturedAt: timestamp("captured_at").defaultNow().notNull(),
@@ -75,6 +71,11 @@ export const playerStatsCache = pgTable(
 		payload: jsonb("payload").$type<PlayerSnapshotPayload>().notNull(),
 	},
 	(table) => [
+		index("player_stats_cache_user_puuid_captured_idx").on(
+			table.userId,
+			table.puuid,
+			table.capturedAt,
+		),
 		index("player_stats_cache_puuid_captured_idx").on(
 			table.puuid,
 			table.capturedAt,

@@ -2,7 +2,14 @@ import { computeAggregatedStats } from "./aggregate";
 import { getMatchDetailsCached } from "./cache";
 import { DEFAULT_MATCH_COUNT, QUEUE, type QueueId } from "./constants";
 import type { RiotShard } from "./endpoints";
-import { extractRank, getMatchHistory, getMmr, getNames } from "./riot";
+import {
+	extractAccountLevel,
+	extractRank,
+	getAccountXp,
+	getMatchHistory,
+	getMmr,
+	getNames,
+} from "./riot";
 import type { RiotAuth, RiotTransport } from "./transport";
 import type { MatchSummary, Profile, RawMatchDetails } from "./types";
 
@@ -70,13 +77,14 @@ export async function enrichProfile(
 	const matchCount = options.matchCount ?? DEFAULT_MATCH_COUNT;
 	const queue = options.queue ?? QUEUE.competitive;
 
-	const [mmr, names, history] = await Promise.all([
+	const [mmr, names, history, accountXp] = await Promise.all([
 		getMmr(transport, auth, shard, puuid),
 		getNames(transport, auth, shard, [puuid]),
 		getMatchHistory(transport, auth, shard, puuid, {
 			endIndex: matchCount,
 			queue,
 		}),
+		getAccountXp(transport, auth, shard, puuid).catch(() => undefined),
 	]);
 
 	const settled = await Promise.allSettled(
@@ -99,6 +107,7 @@ export async function enrichProfile(
 		puuid,
 		riotId: names.get(puuid),
 		rank: extractRank(mmr),
+		level: accountXp ? extractAccountLevel(accountXp) : undefined,
 		stats: computeAggregatedStats(puuid, details),
 		recentMatches,
 	};
