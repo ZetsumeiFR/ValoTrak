@@ -8,6 +8,12 @@ export const en = {
 	nightMarketDiscount: "-{{percent}}%",
 	bundleItems_one: "{{count}} item",
 	bundleItems_other: "{{count}} items",
+	watchlistTitle: "Watchlist",
+	watchlistHint: "Get notified when one of these skins shows up in your shop.",
+	watchlistSearch: "Search a skin…",
+	watchlistEmpty: "No skin watched yet.",
+	watchlistRemove: "Stop watching",
+	alertTitle: "A watched skin is in your shop",
 	empty: "Nothing in the shop right now.",
 } as const;
 
@@ -21,5 +27,12 @@ export const fr = {
 	nightMarketDiscount: "-{{percent}}%",
 	bundleItems_one: "{{count}} article",
 	bundleItems_other: "{{count}} articles",
+	watchlistTitle: "Liste de surveillance",
+	watchlistHint:
+		"Soyez notifié quand un de ces skins apparaît dans votre boutique.",
+	watchlistSearch: "Rechercher un skin…",
+	watchlistEmpty: "Aucun skin surveillé.",
+	watchlistRemove: "Ne plus surveiller",
+	alertTitle: "Un skin surveillé est en boutique",
 	empty: "Rien dans la boutique pour le moment.",
 } as const;

@@ -2,6 +2,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import {
+	isPermissionGranted,
+	requestPermission,
+	sendNotification,
+} from "@tauri-apps/plugin-notification";
+import {
 	type CurrentMatch,
 	headersToRecord,
 	type RiotRequest,
@@ -120,6 +125,23 @@ export const enrichTransport: RiotTransport = rateLimited(tauriTransport, {
 	baseDelayMs: 1000,
 	maxDelayMs: 30_000,
 });
+
+/**
+ * Desktop notification. No-op in the browser, where there is no Tauri shell and
+ * the in-app toast is the only channel.
+ */
+export async function notify(title: string, body: string): Promise<void> {
+	if (!isDesktop()) {
+		return;
+	}
+	let granted = await isPermissionGranted();
+	if (!granted) {
+		granted = (await requestPermission()) === "granted";
+	}
+	if (granted) {
+		sendNotification({ title, body });
+	}
+}
 
 /** Subscribe to local lobby/presence changes. Returns an unlisten function. */
 export function onLobbyChanged(callback: () => void): Promise<UnlistenFn> {

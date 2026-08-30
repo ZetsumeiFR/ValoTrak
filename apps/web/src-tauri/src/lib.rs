@@ -56,6 +56,7 @@ async fn riot_logout(app: tauri::AppHandle) -> Result<(), AppError> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_http::init())
+        .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_process::init())
         .setup(|app| {
             // Desktop auto-updater (signed releases checked against GitHub).

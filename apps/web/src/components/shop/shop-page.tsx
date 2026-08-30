@@ -7,7 +7,7 @@ import {
 import { Button } from "@valotrak/ui/components/button";
 import { Skeleton } from "@valotrak/ui/components/skeleton";
 import { RefreshCw, TriangleAlert } from "lucide-react";
-import { type ReactNode, useMemo } from "react";
+import { type ReactNode, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { RiotLoginCard } from "@/components/riot-login-card";
@@ -15,6 +15,7 @@ import { BundleCard } from "@/components/shop/shop-bundle-card";
 import { DailyOfferCard } from "@/components/shop/shop-daily-offer-card";
 import { NightMarketCard } from "@/components/shop/shop-night-market-card";
 import { SectionHeading } from "@/components/shop/shop-section-heading";
+import { ShopWatchlist } from "@/components/shop/shop-watchlist";
 import {
 	bundlesQueryOptions,
 	contentTiersQueryOptions,
@@ -23,6 +24,7 @@ import {
 	indexSkins,
 	skinsQueryOptions,
 } from "@/lib/valorant/queries";
+import { useShopAlerts } from "@/lib/valorant/use-shop-alerts";
 import { useStore } from "@/lib/valorant/use-store";
 import { isAppError } from "@/lib/valorant-bridge";
 
@@ -45,6 +47,13 @@ export function ShopPage() {
 		() => indexBundles(bundlesQuery.data),
 		[bundlesQuery.data],
 	);
+
+	const skinName = useCallback(
+		(skinLevelId: string) =>
+			skinsById.get(skinLevelId)?.displayName ?? skinLevelId,
+		[skinsById],
+	);
+	useShopAlerts(store.data, skinName);
 
 	const header = (
 		<div className="flex items-center justify-between gap-2">
@@ -170,6 +179,7 @@ export function ShopPage() {
 		<div className="container mx-auto flex max-w-5xl flex-col gap-6 px-4 py-6">
 			{header}
 			{body}
+			<ShopWatchlist skinsById={skinsById} />
 		</div>
 	);
 }
