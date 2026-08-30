@@ -5,6 +5,14 @@ export interface RateLimitOptions {
 	max: number;
 	/** Injectable clock (tests drive the window without sleeping). */
 	now?: () => number;
+	/**
+	 * Read `X-Forwarded-For`. Only enable it behind a proxy that overwrites the
+	 * header: it is attacker-controlled otherwise, and rotating it would hand
+	 * out an unlimited number of fresh quotas.
+	 */
+	trustProxy?: boolean;
+	/** Socket-level peer address (runtime specific, injected by the caller). */
+	socketIp?: (c: Context) => string;
 }
 
 interface Bucket {
@@ -12,17 +20,19 @@ interface Bucket {
 	resetAt: number;
 }
 
-/** Best-effort client identity: proxy header first, then the socket address. */
-function clientId(c: Context): string {
-	const forwarded = c.req.header("x-forwarded-for");
-	if (forwarded) {
-		return forwarded.split(",")[0]?.trim() || "unknown";
+function clientId(c: Context, options: RateLimitOptions): string {
+	if (options.trustProxy) {
+		const forwarded = c.req.header("x-forwarded-for");
+		const first = forwarded?.split(",")[0]?.trim();
+		if (first) {
+			return first;
+		}
 	}
-	return c.req.header("x-real-ip") ?? "unknown";
+	return options.socketIp?.(c) ?? "unknown";
 }
 
 /**
- * Fixed-window limiter keyed by client IP.
+ * Fixed-window limiter keyed by client address.
  *
  * Sits in front of the auth routes, which are public, unauthenticated and
  * otherwise a free credential-stuffing endpoint. Deliberately in-process: it
@@ -35,7 +45,7 @@ export function createRateLimit(options: RateLimitOptions): MiddlewareHandler {
 	const retryAfter = String(Math.ceil(options.windowMs / 1000));
 
 	return async (c, next) => {
-		const key = clientId(c);
+		const key = clientId(c, options);
 		const current = now();
 		const bucket = buckets.get(key);
 

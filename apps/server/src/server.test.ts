@@ -39,9 +39,21 @@ describe("GET /health", () => {
 });
 
 describe("rate limit", () => {
-	function limitedApp(now: () => number) {
+	function limitedApp(
+		now: () => number,
+		options: { trustProxy?: boolean; socketIp?: string } = {},
+	) {
 		const app = new Hono();
-		app.use("/api/auth/*", createRateLimit({ windowMs: 60_000, max: 3, now }));
+		app.use(
+			"/api/auth/*",
+			createRateLimit({
+				windowMs: 60_000,
+				max: 3,
+				now,
+				trustProxy: options.trustProxy ?? true,
+				socketIp: () => options.socketIp ?? "10.0.0.1",
+			}),
+		);
 		app.post("/api/auth/sign-in/email", (c) => c.json({ ok: true }));
 		return app;
 	}
@@ -77,6 +89,21 @@ describe("rate limit", () => {
 
 		expect((await signIn(app, "1.2.3.4")).status).toBe(429);
 		expect((await signIn(app, "5.6.7.8")).status).toBe(200);
+	});
+
+	it("ignores a spoofed X-Forwarded-For when no proxy is trusted", async () => {
+		// Without a trusted proxy the header is attacker-controlled: rotating it
+		// must not hand out a fresh quota.
+		const app = limitedApp(() => 1_000, {
+			trustProxy: false,
+			socketIp: "10.0.0.1",
+		});
+
+		await signIn(app, "1.1.1.1");
+		await signIn(app, "2.2.2.2");
+		await signIn(app, "3.3.3.3");
+
+		expect((await signIn(app, "4.4.4.4")).status).toBe(429);
 	});
 
 	it("lets the client through again once the window rolls over", async () => {

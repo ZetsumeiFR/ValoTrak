@@ -20,6 +20,15 @@ export const env = createEnv({
 		NODE_ENV: z
 			.enum(["development", "production", "test"])
 			.default("development"),
+		/**
+		 * Set only when the server sits behind a proxy that overwrites
+		 * `X-Forwarded-For`; otherwise the header is client-controlled and the
+		 * auth rate limit becomes trivially bypassable.
+		 */
+		TRUST_PROXY: z
+			.enum(["true", "false"])
+			.default("false")
+			.transform((value) => value === "true"),
 		/** Retention window for the append-only snapshot history. */
 		SNAPSHOT_RETENTION_DAYS: z.coerce
 			.number()

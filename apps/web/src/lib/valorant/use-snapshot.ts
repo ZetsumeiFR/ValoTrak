@@ -3,6 +3,10 @@ import { useEffect, useRef } from "react";
 
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
+import {
+	selectSnapshotEntries,
+	snapshotBatchSignature,
+} from "./snapshot-entries";
 import type { LobbyData } from "./use-lobby";
 
 /**
@@ -13,7 +17,7 @@ import type { LobbyData } from "./use-lobby";
  * `matchId`. Duplicates are rejected by the database (unique index on
  * `user_id, puuid, match_id`), so a remount, token refresh or follow-list
  * invalidation cannot skew trend history. The local ref only avoids redundant
- * round trips: it re-sends when enrichment adds more players to the lobby.
+ * round trips: it re-sends whenever the set of covered players changes.
  */
 export function useFollowedSnapshots(data: LobbyData | undefined): void {
 	const { data: session } = authClient.useSession();
@@ -24,7 +28,7 @@ export function useFollowedSnapshots(data: LobbyData | undefined): void {
 	const saveCacheMany = useMutation(
 		trpc.player.saveCacheMany.mutationOptions(),
 	);
-	const sentCounts = useRef<Map<string, number>>(new Map());
+	const sentSignatures = useRef<Map<string, string>>(new Map());
 
 	useEffect(() => {
 		if (!data || !session) {
@@ -36,27 +40,18 @@ export function useFollowedSnapshots(data: LobbyData | undefined): void {
 		if (!region || !matchId || !followed || followed.length === 0) {
 			return;
 		}
-		const followedPuuids = new Set(followed.map((row) => row.puuid));
-		const entries = data.players
-			.filter(
-				(player) =>
-					followedPuuids.has(player.puuid) && (player.rank || player.stats),
-			)
-			.map((player) => ({
-				puuid: player.puuid,
-				snapshot: {
-					riotId: player.riotId,
-					rank: player.rank,
-					level: player.level,
-					stats: player.stats,
-				},
-			}));
-
-		// Nothing new since the last send for this lobby.
-		if (entries.length <= (sentCounts.current.get(matchId) ?? 0)) {
+		const entries = selectSnapshotEntries(
+			data.players,
+			new Set(followed.map((row) => row.puuid)),
+		);
+		if (entries.length === 0) {
 			return;
 		}
-		sentCounts.current.set(matchId, entries.length);
+		const signature = snapshotBatchSignature(entries);
+		if (sentSignatures.current.get(matchId) === signature) {
+			return;
+		}
+		sentSignatures.current.set(matchId, signature);
 		saveCacheMany.mutate({ region, matchId, entries });
 	}, [data, session, followedQuery.data, saveCacheMany]);
 }

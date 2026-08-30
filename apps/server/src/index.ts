@@ -7,6 +7,7 @@ import { db } from "@valotrak/db";
 import { env } from "@valotrak/env/server";
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
+import { getConnInfo } from "hono/bun";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
@@ -35,7 +36,15 @@ app.use(
 // Edge limiter: runs before the auth handler touches the database, so it still
 // protects the endpoint when the database is unavailable. better-auth's own
 // rate limiting stays enabled behind it as a second layer.
-app.use("/api/auth/*", createRateLimit({ windowMs: 60_000, max: 20 }));
+app.use(
+	"/api/auth/*",
+	createRateLimit({
+		windowMs: 60_000,
+		max: 20,
+		trustProxy: env.TRUST_PROXY,
+		socketIp: (c) => getConnInfo(c).remote.address ?? "unknown",
+	}),
+);
 
 app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
