@@ -49,16 +49,29 @@ export function pendingShopAlerts(
  * offers the first level, so anything else would be unwatchable noise.
  */
 const MIN_QUERY_LENGTH = 2;
+const DEFAULT_SEARCH_LIMIT = 8;
+
+export interface SkinSearchOptions {
+	limit?: number;
+	/**
+	 * Ids the player already owns. Matched against both the level id and the
+	 * skin id, because entitlements are expressed in terms of one or the other
+	 * depending on the category.
+	 */
+	owned?: ReadonlySet<string>;
+}
 
 export function searchWatchableSkins(
 	levels: SkinLevel[],
 	query: string,
-	limit = 8,
+	options: SkinSearchOptions = {},
 ): SkinLevel[] {
 	const needle = query.trim().toLowerCase();
 	if (needle.length < MIN_QUERY_LENGTH) {
 		return [];
 	}
+	const limit = options.limit ?? DEFAULT_SEARCH_LIMIT;
+	const owned = options.owned;
 	const firstLevelBySkin = new Map<string, SkinLevel>();
 	for (const level of levels) {
 		if (!firstLevelBySkin.has(level.skinId)) {
@@ -68,6 +81,10 @@ export function searchWatchableSkins(
 	const found: SkinLevel[] = [];
 	for (const skin of firstLevelBySkin.values()) {
 		if (!skin.displayName.toLowerCase().includes(needle)) {
+			continue;
+		}
+		// Watching a skin you own would only ever produce noise.
+		if (owned?.has(skin.levelId) || owned?.has(skin.skinId)) {
 			continue;
 		}
 		found.push(skin);

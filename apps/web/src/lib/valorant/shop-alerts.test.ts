@@ -137,6 +137,32 @@ describe("searchWatchableSkins", () => {
 	});
 
 	it("caps the number of suggestions", () => {
-		expect(searchWatchableSkins(catalogue, "va", 1)).toHaveLength(1);
+		expect(searchWatchableSkins(catalogue, "va", { limit: 1 })).toHaveLength(1);
+	});
+});
+
+describe("searchWatchableSkins and owned skins", () => {
+	it("hides a skin the player already owns, matched on the level id", () => {
+		const found = searchWatchableSkins(catalogue, "vandal", {
+			owned: new Set(["prime-1"]),
+		});
+
+		expect(found.map((skin) => skin.skinId)).toEqual(["reaver"]);
+	});
+
+	it("hides it when the entitlement is expressed as the skin id", () => {
+		const found = searchWatchableSkins(catalogue, "vandal", {
+			owned: new Set(["reaver"]),
+		});
+
+		expect(found.map((skin) => skin.skinId)).toEqual(["prime"]);
+	});
+
+	it("still honours the result cap", () => {
+		expect(searchWatchableSkins(catalogue, "va", { limit: 1 })).toHaveLength(1);
+	});
+
+	it("returns everything matching when nothing is owned", () => {
+		expect(searchWatchableSkins(catalogue, "vandal", {})).toHaveLength(2);
 	});
 });

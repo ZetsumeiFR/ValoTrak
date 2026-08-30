@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 
 import { SectionHeading } from "@/components/shop/shop-section-heading";
 import { searchWatchableSkins } from "@/lib/valorant/shop-alerts";
+import { useOwnedSkins, useVpPrices } from "@/lib/valorant/use-inventory";
 import {
 	toggleWatchedSkin,
 	useWatchedSkins,
@@ -20,11 +21,13 @@ export function ShopWatchlist({
 }) {
 	const { t } = useTranslation();
 	const watched = useWatchedSkins();
+	const owned = useOwnedSkins();
+	const prices = useVpPrices();
 	const [query, setQuery] = useState("");
 
 	const results = useMemo(
-		() => searchWatchableSkins([...skinsById.values()], query),
-		[skinsById, query],
+		() => searchWatchableSkins([...skinsById.values()], query, { owned }),
+		[skinsById, query, owned],
 	);
 
 	const watchedSkins = useMemo(
@@ -32,8 +35,9 @@ export function ShopWatchlist({
 			[...watched].map((skinLevelId) => ({
 				skinLevelId,
 				name: skinsById.get(skinLevelId)?.displayName,
+				vp: prices.get(skinLevelId),
 			})),
-		[watched, skinsById],
+		[watched, skinsById, prices],
 	);
 
 	return (
@@ -77,6 +81,11 @@ export function ShopWatchlist({
 					{watchedSkins.map((skin) => (
 						<Badge className="gap-1" key={skin.skinLevelId} variant="outline">
 							{skin.name ?? skin.skinLevelId}
+							{skin.vp === undefined ? null : (
+								<span className="text-muted-foreground">
+									{t("shop.priceVp", { vp: skin.vp })}
+								</span>
+							)}
 							<button
 								aria-label={t("shop.watchlistRemove")}
 								onClick={() => toggleWatchedSkin(skin.skinLevelId)}

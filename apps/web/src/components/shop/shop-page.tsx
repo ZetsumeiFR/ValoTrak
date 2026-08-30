@@ -24,6 +24,7 @@ import {
 	indexSkins,
 	skinsQueryOptions,
 } from "@/lib/valorant/queries";
+import { useWallet } from "@/lib/valorant/use-inventory";
 import { useShopAlerts } from "@/lib/valorant/use-shop-alerts";
 import { useStore } from "@/lib/valorant/use-store";
 import { isAppError } from "@/lib/valorant-bridge";
@@ -34,6 +35,7 @@ export function ShopPage() {
 	const skinsQuery = useQuery(skinsQueryOptions());
 	const tiersQuery = useQuery(contentTiersQueryOptions());
 	const bundlesQuery = useQuery(bundlesQueryOptions());
+	const wallet = useWallet();
 
 	const skinsById = useMemo(
 		() => indexSkins(skinsQuery.data),
@@ -60,6 +62,14 @@ export function ShopPage() {
 			<div className="flex items-center gap-2">
 				<h1 className="font-bold text-lg tracking-tight">{t("shop.title")}</h1>
 			</div>
+			{wallet.data ? (
+				<span className="ml-auto font-mono text-[11px] text-muted-foreground tabular-nums">
+					{t("shop.balance", {
+						vp: wallet.data.valorantPoints,
+						rp: wallet.data.radianitePoints,
+					})}
+				</span>
+			) : null}
 			<Button
 				variant="outline"
 				size="sm"
