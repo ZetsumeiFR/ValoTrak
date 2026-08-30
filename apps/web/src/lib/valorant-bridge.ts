@@ -17,6 +17,8 @@ import {
 } from "@valotrak/valorant";
 
 import type { AppError } from "./valorant/bindings/AppError";
+import type { Friend } from "./valorant/bindings/Friend";
+import type { FriendPresence } from "./valorant/bindings/FriendPresence";
 import type { LocalTokens } from "./valorant/bindings/LocalTokens";
 import type { LockfileInfo } from "./valorant/bindings/LockfileInfo";
 import "./valorant/bindings-compat";
@@ -31,6 +33,8 @@ import "./valorant/bindings-compat";
  * - Lobby changes are pushed from the local websocket via a Tauri event.
  */
 
+export type { Friend } from "./valorant/bindings/Friend";
+export type { FriendPresence } from "./valorant/bindings/FriendPresence";
 /**
  * Auth context returned by `get_local_tokens`, and the lockfile/error payloads:
  * all three are generated from the Rust structs by ts-rs (`cargo test` in
@@ -141,6 +145,16 @@ export async function notify(title: string, body: string): Promise<void> {
 	if (granted) {
 		sendNotification({ title, body });
 	}
+}
+
+/** Friend list from the running Riot Client. Desktop only. */
+export function getFriends(): Promise<Friend[]> {
+	return invoke<Friend[]>("get_friends");
+}
+
+/** Presences of friends currently in Valorant. Desktop only. */
+export function getPresences(): Promise<FriendPresence[]> {
+	return invoke<FriendPresence[]>("get_presences");
 }
 
 /** Subscribe to local lobby/presence changes. Returns an unlisten function. */

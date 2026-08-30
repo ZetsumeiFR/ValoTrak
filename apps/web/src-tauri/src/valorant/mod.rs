@@ -13,5 +13,6 @@ pub mod lockfile;
 pub mod match_state;
 pub mod models;
 pub mod region;
+pub mod social;
 pub mod tokens;
 pub mod ws;

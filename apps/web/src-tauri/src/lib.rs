@@ -2,6 +2,7 @@ mod valorant;
 
 use valorant::error::AppError;
 use valorant::models::{CurrentMatch, LocalTokens, LockfileInfo, RiotShard};
+use valorant::social::{Friend, FriendPresence};
 
 /// Read the Riot Client lockfile metadata (password excluded).
 #[tauri::command]
@@ -46,6 +47,18 @@ async fn riot_silent_reauth(app: tauri::AppHandle) -> Result<LocalTokens, AppErr
     valorant::auth::silent_reauth(app).await
 }
 
+/// List the signed-in player's friends (local chat API).
+#[tauri::command]
+async fn get_friends() -> Result<Vec<Friend>, AppError> {
+    valorant::social::get_friends().await
+}
+
+/// Presences of friends currently in Valorant (local chat API).
+#[tauri::command]
+async fn get_presences() -> Result<Vec<FriendPresence>, AppError> {
+    valorant::social::get_presences().await
+}
+
 /// Forget the persisted Riot session (logout).
 #[tauri::command]
 async fn riot_logout(app: tauri::AppHandle) -> Result<(), AppError> {
@@ -83,7 +96,9 @@ pub fn run() {
             detect_region,
             riot_login,
             riot_silent_reauth,
-            riot_logout
+            riot_logout,
+            get_friends,
+            get_presences
         ])
         .run(tauri::generate_context!())
         .unwrap_or_else(|err| {
