@@ -77,6 +77,11 @@ export interface EnrichedPlayer extends LobbyPlayer {
 	stats?: AggregatedStats;
 	/** Set when enrichment failed for this player (display a fallback card). */
 	error?: string;
+	/**
+	 * Players this one shared a team with in the analysed matches. Used to
+	 * infer probable parties; empty when enrichment failed.
+	 */
+	recentTeammates?: string[];
 }
 
 /** Compact per-match line for the profile timeline. */

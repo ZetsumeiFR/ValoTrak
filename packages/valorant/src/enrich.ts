@@ -1,6 +1,7 @@
 import { computeAggregatedStats } from "./aggregate";
 import { getMatchDetailsCached } from "./cache";
 import { DEFAULT_MATCH_COUNT, QUEUE, type QueueId } from "./constants";
+import { extractRecentTeammates } from "./premade";
 import {
 	extractAccountLevel,
 	extractRank,
@@ -34,6 +35,8 @@ export interface PlayerEnrichment {
 	level?: number;
 	stats?: AggregatedStats;
 	error?: string;
+	/** Same-team players from the analysed matches (party heuristic input). */
+	recentTeammates?: string[];
 }
 
 const DETAIL_CONCURRENCY = 3;
@@ -156,6 +159,8 @@ async function fetchPlayerEnrichment(
 			rank: extractRank(mmr),
 			level: accountXp ? extractAccountLevel(accountXp) : undefined,
 			stats: computeAggregatedStats(puuid, details),
+			// Free: these details are already downloaded for the stats.
+			recentTeammates: extractRecentTeammates(puuid, details),
 		};
 	} catch (error) {
 		return {
@@ -225,6 +230,7 @@ export async function enrichLobby(
 			rank: enrichment.rank,
 			level: enrichment.level,
 			stats: enrichment.stats,
+			recentTeammates: enrichment.recentTeammates,
 			error: enrichment.error,
 		};
 	});
