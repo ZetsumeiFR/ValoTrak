@@ -1,10 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import {
 	getOwnedItems,
-	getPrices,
 	getWallet,
 	ITEM_TYPE,
-	mapVpPrices,
 	mapWallet,
 	type RiotShard,
 	type Wallet,
@@ -18,7 +16,6 @@ import {
 import { useRiotSession } from "./use-riot-session";
 
 const EMPTY_OWNED: ReadonlySet<string> = new Set();
-const EMPTY_PRICES: ReadonlyMap<string, number> = new Map();
 
 function shardOf(tokens: LocalTokens | null): RiotShard | null {
 	return tokens?.region && tokens.shard
@@ -77,24 +74,4 @@ export function useOwnedSkins(): ReadonlySet<string> {
 		staleTime: 1000 * 60 * 60,
 	});
 	return query.data ?? EMPTY_OWNED;
-}
-
-/** Catalogue prices in Valorant Points, by offer id and by granted item id. */
-export function useVpPrices(): ReadonlyMap<string, number> {
-	const { tokens, isResolving } = useRiotSession();
-	const query = useQuery({
-		queryKey: ["valorant", "prices", tokens?.shard ?? null] as const,
-		queryFn: async (): Promise<ReadonlyMap<string, number>> => {
-			const shard = shardOf(tokens);
-			if (!shard || !tokens) {
-				return EMPTY_PRICES;
-			}
-			return mapVpPrices(await getPrices(enrichTransport, tokens, shard));
-		},
-		enabled: !isDesktop() || !isResolving,
-		retry: false,
-		refetchOnWindowFocus: false,
-		staleTime: 1000 * 60 * 60 * 24,
-	});
-	return query.data ?? EMPTY_PRICES;
 }

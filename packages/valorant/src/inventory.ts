@@ -50,17 +50,6 @@ export interface RawEntitlements {
 	EntitlementsByTypes?: RawEntitlementsByType[];
 }
 
-export interface RawPriceOffer {
-	OfferID?: string;
-	Cost?: Record<string, number>;
-	Rewards?: { ItemTypeID?: string; ItemID?: string; Quantity?: number }[];
-}
-
-export interface RawPrices {
-	Offers?: RawPriceOffer[];
-}
-
-/** Current balance of the three spendable currencies. */
 export async function getWallet(
 	transport: RiotTransport,
 	auth: RiotAuth,
@@ -116,40 +105,4 @@ export function mapOwnedItemIds(raw: RawEntitlements): string[] {
 		}
 	}
 	return ids;
-}
-
-/** Catalogue-wide prices, independent of what is in the shop today. */
-export async function getPrices(
-	transport: RiotTransport,
-	auth: RiotAuth,
-	shard: RiotShard,
-): Promise<RawPrices> {
-	return riotJson<RawPrices>(transport, {
-		method: "GET",
-		url: `${pdBase(shard.shard)}/store/v1/offers/`,
-		headers: buildAuthHeaders(auth),
-	});
-}
-
-/**
- * Valorant Point prices, reachable by offer id and by granted item id: the
- * shop refers to offers, the watchlist to the items they grant.
- */
-export function mapVpPrices(raw: RawPrices): Map<string, number> {
-	const prices = new Map<string, number>();
-	for (const offer of raw.Offers ?? []) {
-		const cost = offer.Cost?.[VP_CURRENCY_ID];
-		if (cost === undefined) {
-			continue;
-		}
-		if (offer.OfferID) {
-			prices.set(offer.OfferID, cost);
-		}
-		for (const reward of offer.Rewards ?? []) {
-			if (reward.ItemID) {
-				prices.set(reward.ItemID, cost);
-			}
-		}
-	}
-	return prices;
 }

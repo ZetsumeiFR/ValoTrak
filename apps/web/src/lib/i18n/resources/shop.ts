@@ -9,7 +9,6 @@ export const en = {
 	bundleItems_one: "{{count}} item",
 	bundleItems_other: "{{count}} items",
 	balance: "{{vp}} VP · {{rp}} RP",
-	priceVp: "{{vp}} VP",
 	watchlistTitle: "Watchlist",
 	watchlistHint: "Get notified when one of these skins shows up in your shop.",
 	watchlistSearch: "Search a skin…",
@@ -30,7 +29,6 @@ export const fr = {
 	bundleItems_one: "{{count}} article",
 	bundleItems_other: "{{count}} articles",
 	balance: "{{vp}} VP · {{rp}} RP",
-	priceVp: "{{vp}} VP",
 	watchlistTitle: "Liste de surveillance",
 	watchlistHint:
 		"Soyez notifié quand un de ces skins apparaît dans votre boutique.",

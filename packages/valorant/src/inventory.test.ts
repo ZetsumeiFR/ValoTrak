@@ -4,7 +4,6 @@ import {
 	getOwnedItems,
 	ITEM_TYPE,
 	mapOwnedItemIds,
-	mapVpPrices,
 	mapWallet,
 } from "./inventory";
 import type { RiotRequest, RiotResponse, RiotTransport } from "./transport";
@@ -94,30 +93,5 @@ describe("getOwnedItems", () => {
 			`https://pd.eu.a.pvp.net/store/v1/entitlements/puuid-1/${ITEM_TYPE.skins}`,
 		);
 		expect(owned).toEqual(["skin-a"]);
-	});
-});
-
-describe("mapVpPrices", () => {
-	it("indexes a price by the offer id and by every reward it grants", () => {
-		const prices = mapVpPrices({
-			Offers: [
-				{
-					OfferID: "offer-1",
-					Cost: { [VP]: 1775 },
-					Rewards: [{ ItemID: "skin-level-1", Quantity: 1 }],
-				},
-			],
-		});
-
-		expect(prices.get("offer-1")).toBe(1775);
-		expect(prices.get("skin-level-1")).toBe(1775);
-	});
-
-	it("skips offers that are not priced in Valorant Points", () => {
-		const prices = mapVpPrices({
-			Offers: [{ OfferID: "offer-kc", Cost: { [KC]: 5000 } }],
-		});
-
-		expect(prices.size).toBe(0);
 	});
 });
