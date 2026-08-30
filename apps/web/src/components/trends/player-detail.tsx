@@ -13,6 +13,8 @@ import { useTranslation } from "react-i18next";
 
 import { RankBadge } from "@/components/match/rank-badge";
 import { indexTiers, tiersQueryOptions } from "@/lib/valorant/queries";
+import { useRankedHistory } from "@/lib/valorant/use-ranked-history";
+import { useActiveAct } from "@/lib/valorant/use-seasons";
 import { useTrends } from "@/lib/valorant/use-trends";
 
 import { PlayerTrends } from "./player-trends";
@@ -31,6 +33,8 @@ export function PlayerDetail({
 }) {
 	const { t } = useTranslation();
 	const trends = useTrends(puuid);
+	const rankedHistory = useRankedHistory(puuid);
+	const activeAct = useActiveAct();
 	const tiersQuery = useQuery(tiersQueryOptions());
 	const tiersById = useMemo(
 		() => indexTiers(tiersQuery.data),
@@ -74,6 +78,7 @@ export function PlayerDetail({
 				<h2 className="tick font-mono font-semibold text-[11px] text-muted-foreground uppercase tracking-[0.22em]">
 					{t("trends.trends")}
 				</h2>
+				{activeAct ? <Badge variant="outline">{activeAct.name}</Badge> : null}
 				{trends.data ? (
 					<span className="font-mono text-[10px] text-muted-foreground">
 						{t("trends.snapshots", { count: trends.data.points.length })}
@@ -110,7 +115,10 @@ export function PlayerDetail({
 				</Alert>
 			) : (
 				<div className="flex flex-col gap-4">
-					<PlayerTrends points={trends.data.points} />
+					<PlayerTrends
+						points={trends.data.points}
+						rankedMatches={rankedHistory.data ?? []}
+					/>
 				</div>
 			)}
 		</div>

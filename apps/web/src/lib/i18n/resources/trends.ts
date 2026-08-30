@@ -13,6 +13,8 @@ export const en = {
 	exportPng: "Export PNG",
 	exportFailed: "Export failed",
 	exportSubtitle: "{{points}} snapshots · exported from ValoTrak",
+	rankedSource: "Rating from Riot ranked history ({{count}} matches)",
+	lastMatchRr: "last match {{change}} RR",
 	chartLabel: "Trend chart",
 	metricRr: "Rank Rating",
 	metricKd: "K/D",
@@ -36,6 +38,9 @@ export const fr = {
 	exportPng: "Exporter PNG",
 	exportFailed: "Échec de l'export",
 	exportSubtitle: "{{points}} relevés · exporté depuis ValoTrak",
+	rankedSource:
+		"Points de rang issus de l'historique classé Riot ({{count}} matchs)",
+	lastMatchRr: "dernier match {{change}} RR",
 	chartLabel: "Graphique de tendance",
 	metricRr: "Points de rang",
 	metricKd: "K/D",
