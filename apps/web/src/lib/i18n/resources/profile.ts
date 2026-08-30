@@ -21,6 +21,8 @@ export const en = {
 	trackedPlayers: "Tracked players",
 	signIn: "Sign in",
 	followHint: "to follow players and build their stat history.",
+	cachedNotice:
+		"Offline copy saved on {{date}} — live Riot data is unavailable right now.",
 	noRecentMatches: "No recent competitive matches.",
 	noAgentData: "No agent data yet.",
 	agentGames_one: "{{count}} game · {{wr}}% WR",
@@ -51,6 +53,8 @@ export const fr = {
 	signIn: "Connectez-vous",
 	followHint:
 		"pour suivre des joueurs et constituer leur historique de statistiques.",
+	cachedNotice:
+		"Copie hors ligne enregistrée le {{date}} — les données Riot en direct sont indisponibles.",
 	noRecentMatches: "Aucun match compétitif récent.",
 	noAgentData: "Pas encore de données d'agents.",
 	agentGames_one: "{{count}} partie · {{wr}}% WR",

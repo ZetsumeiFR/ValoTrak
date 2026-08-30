@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { enrichProfile, type Profile } from "@valotrak/valorant";
 
 import i18n from "@/lib/i18n";
+import { writeCachedMatches } from "@/lib/valorant/match-history-cache";
 import { useRiotSession } from "@/lib/valorant/use-riot-session";
 import {
 	enrichTransport,
@@ -24,12 +25,16 @@ async function loadProfile(tokens: LocalTokens | null): Promise<ProfileData> {
 		});
 	}
 
-	return enrichProfile(
+	const profile = await enrichProfile(
 		enrichTransport,
 		tokens,
 		{ region: tokens.region, shard: tokens.shard },
 		tokens.puuid,
 	);
+	// Keep a local copy: match history needs a live Riot session, so without it
+	// the screen would have nothing to show once that session expires.
+	writeCachedMatches(tokens.puuid, profile.recentMatches);
+	return profile;
 }
 
 export function useProfile() {

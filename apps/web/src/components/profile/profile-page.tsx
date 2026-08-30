@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { RiotLoginCard } from "@/components/riot-login-card";
 import { TrackedList } from "@/components/tracked/tracked-list";
 import { authClient } from "@/lib/auth-client";
+import { readLatestCachedMatches } from "@/lib/valorant/match-history-cache";
 import {
 	agentsQueryOptions,
 	indexAgents,
@@ -39,7 +40,7 @@ function SectionHeading({ children }: { children: ReactNode }) {
 }
 
 export function ProfilePage() {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const profile = useProfile();
 	const agentsQuery = useQuery(agentsQueryOptions());
 	const tiersQuery = useQuery(tiersQueryOptions());
@@ -55,6 +56,32 @@ export function ProfilePage() {
 		[tiersQuery.data],
 	);
 	const mapsByUrl = useMemo(() => indexMaps(mapsQuery.data), [mapsQuery.data]);
+	const cachedHistory = useMemo(
+		() => (profile.isError ? readLatestCachedMatches() : undefined),
+		[profile.isError],
+	);
+
+	/** Last known matches, shown only when the live load failed. */
+	function cachedSection(): ReactNode {
+		if (!cachedHistory || cachedHistory.matches.length === 0) {
+			return null;
+		}
+		return (
+			<section className="flex flex-col gap-3">
+				<SectionHeading>{t("profile.recentMatches")}</SectionHeading>
+				<p className="font-mono text-[10px] text-muted-foreground">
+					{t("profile.cachedNotice", {
+						date: new Date(cachedHistory.savedAt).toLocaleString(i18n.language),
+					})}
+				</p>
+				<RecentMatches
+					matches={cachedHistory.matches}
+					agentsById={agentsById}
+					mapsByUrl={mapsByUrl}
+				/>
+			</section>
+		);
+	}
 
 	const header = (
 		<div className="flex items-center justify-between gap-2">
@@ -96,22 +123,30 @@ export function ProfilePage() {
 	} else if (profile.isError) {
 		const errorKind = isAppError(profile.error) ? profile.error.kind : null;
 		if (errorKind === "needLogin") {
-			body = <RiotLoginCard />;
+			body = (
+				<div className="flex flex-col gap-8">
+					<RiotLoginCard />
+					{cachedSection()}
+				</div>
+			);
 		} else {
 			const needRegion = errorKind === "needRegion";
 			const message = isAppError(profile.error)
 				? profile.error.message
 				: String(profile.error);
 			body = (
-				<Alert variant="destructive">
-					<TriangleAlert />
-					<AlertTitle>
-						{needRegion ? t("profile.regionUnknown") : t("profile.loadError")}
-					</AlertTitle>
-					<AlertDescription>
-						{needRegion ? t("profile.regionUnknownDesc") : message}
-					</AlertDescription>
-				</Alert>
+				<div className="flex flex-col gap-8">
+					<Alert variant="destructive">
+						<TriangleAlert />
+						<AlertTitle>
+							{needRegion ? t("profile.regionUnknown") : t("profile.loadError")}
+						</AlertTitle>
+						<AlertDescription>
+							{needRegion ? t("profile.regionUnknownDesc") : message}
+						</AlertDescription>
+					</Alert>
+					{cachedSection()}
+				</div>
 			);
 		}
 	} else {
