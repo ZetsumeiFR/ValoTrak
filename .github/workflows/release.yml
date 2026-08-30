@@ -12,7 +12,12 @@ permissions:
   contents: write
 
 jobs:
+  # A tag must not publish anything the CI has not verified.
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   release:
+    needs: ci
     runs-on: windows-2025
     steps:
       - uses: actions/checkout@v6
