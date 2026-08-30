@@ -16,6 +16,7 @@ import { indexTiers, tiersQueryOptions } from "@/lib/valorant/queries";
 import { useTrends } from "@/lib/valorant/use-trends";
 
 import { PlayerTrends } from "./player-trends";
+import { TrendExportButtons } from "./trend-export-buttons";
 
 export function PlayerDetail({
 	puuid,
@@ -77,6 +78,17 @@ export function PlayerDetail({
 					<span className="font-mono text-[10px] text-muted-foreground">
 						{t("trends.snapshots", { count: trends.data.points.length })}
 					</span>
+				) : null}
+				{trends.data ? (
+					<TrendExportButtons
+						identity={{
+							gameName: displayName,
+							tagLine: displayTag,
+							region: displayRegion,
+						}}
+						points={trends.data.points}
+						title={displayTag ? `${displayName}#${displayTag}` : displayName}
+					/>
 				) : null}
 			</div>
 

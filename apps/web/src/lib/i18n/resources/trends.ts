@@ -9,6 +9,10 @@ export const en = {
 	noHistoryDesc:
 		"Snapshots accumulate each time you refresh the live lobby while this player is followed.",
 	notEnoughHistory: "Not enough history yet.",
+	exportCsv: "Export CSV",
+	exportPng: "Export PNG",
+	exportFailed: "Export failed",
+	exportSubtitle: "{{points}} snapshots · exported from ValoTrak",
 	chartLabel: "Trend chart",
 	metricRr: "Rank Rating",
 	metricKd: "K/D",
@@ -28,6 +32,10 @@ export const fr = {
 	noHistoryDesc:
 		"Les relevés s'accumulent à chaque actualisation du lobby en direct tant que ce joueur est suivi.",
 	notEnoughHistory: "Pas encore assez d'historique.",
+	exportCsv: "Exporter CSV",
+	exportPng: "Exporter PNG",
+	exportFailed: "Échec de l'export",
+	exportSubtitle: "{{points}} relevés · exporté depuis ValoTrak",
 	chartLabel: "Graphique de tendance",
 	metricRr: "Points de rang",
 	metricKd: "K/D",
