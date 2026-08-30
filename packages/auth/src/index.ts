@@ -23,6 +23,21 @@ export function createAuth() {
 		trustedOrigins: [env.CORS_ORIGIN, ...TAURI_ORIGINS],
 		emailAndPassword: {
 			enabled: true,
+			// better-auth defaults to 8; short passwords are the realistic attack
+			// surface here since there is no second factor.
+			minPasswordLength: 12,
+			maxPasswordLength: 128,
+		},
+		// The auth routes are public and unauthenticated: without a limit they
+		// are a free credential-stuffing endpoint.
+		rateLimit: {
+			enabled: true,
+			window: 60,
+			max: 60,
+			customRules: {
+				"/sign-in/email": { window: 60, max: 5 },
+				"/sign-up/email": { window: 3600, max: 5 },
+			},
 		},
 		secret: env.BETTER_AUTH_SECRET,
 		baseURL: env.BETTER_AUTH_URL,

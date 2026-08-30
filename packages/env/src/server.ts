@@ -2,16 +2,14 @@ import "dotenv/config";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
-const origin = z
-	.url()
-	.refine((v) => {
-		try {
-			const u = new URL(v);
-			return `${u.protocol}//${u.host}` === v.replace(/\/$/, "");
-		} catch {
-			return false;
-		}
-	}, "must be a bare origin (scheme://host[:port]) with no path");
+const origin = z.url().refine((v) => {
+	try {
+		const u = new URL(v);
+		return `${u.protocol}//${u.host}` === v.replace(/\/$/, "");
+	} catch {
+		return false;
+	}
+}, "must be a bare origin (scheme://host[:port]) with no path");
 
 export const env = createEnv({
 	server: {
@@ -22,6 +20,13 @@ export const env = createEnv({
 		NODE_ENV: z
 			.enum(["development", "production", "test"])
 			.default("development"),
+		/** Retention window for the append-only snapshot history. */
+		SNAPSHOT_RETENTION_DAYS: z.coerce
+			.number()
+			.int()
+			.min(1)
+			.max(3650)
+			.default(180),
 	},
 	runtimeEnv: process.env,
 	emptyStringAsUndefined: true,
