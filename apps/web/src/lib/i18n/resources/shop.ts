@@ -1,0 +1,25 @@
+export const en = {
+	title: "Store",
+	dailyTitle: "Daily shop",
+	bundlesTitle: "Featured bundles",
+	nightMarketTitle: "Night Market",
+	renewsIn: "Renews in",
+	loadError: "Couldn't load your shop",
+	nightMarketDiscount: "-{{percent}}%",
+	bundleItems_one: "{{count}} item",
+	bundleItems_other: "{{count}} items",
+	empty: "Nothing in the shop right now.",
+} as const;
+
+export const fr = {
+	title: "Boutique",
+	dailyTitle: "Boutique du jour",
+	bundlesTitle: "Packs en vedette",
+	nightMarketTitle: "Marché nocturne",
+	renewsIn: "Renouvellement dans",
+	loadError: "Impossible de charger votre boutique",
+	nightMarketDiscount: "-{{percent}}%",
+	bundleItems_one: "{{count}} article",
+	bundleItems_other: "{{count}} articles",
+	empty: "Rien dans la boutique pour le moment.",
+} as const;
