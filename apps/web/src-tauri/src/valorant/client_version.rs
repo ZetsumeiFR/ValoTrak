@@ -39,9 +39,7 @@ pub async fn fetch_client_version() -> Result<String, AppError> {
 /// `CI server version: release-XX.YY-shipping-N-NNNNNNN` line (most recent wins).
 fn parse_ci_version(log: &str) -> Option<String> {
     let re = Regex::new(r"CI server version:\s*(\S+)").ok()?;
-    re.captures_iter(log)
-        .last()
-        .map(|caps| caps[1].to_string())
+    re.captures_iter(log).last().map(|caps| caps[1].to_string())
 }
 
 /// The running client's exact version, read from the local game log. `None` when

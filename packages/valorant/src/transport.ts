@@ -61,10 +61,7 @@ const DEFAULT_FETCH_TIMEOUT_MS = 15_000;
 /** Default transport using the global `fetch` (valorant-api.com + tests). */
 export const fetchTransport: RiotTransport = async (req) => {
 	const controller = new AbortController();
-	const timer = setTimeout(
-		() => controller.abort(),
-		DEFAULT_FETCH_TIMEOUT_MS,
-	);
+	const timer = setTimeout(() => controller.abort(), DEFAULT_FETCH_TIMEOUT_MS);
 	try {
 		const res = await fetch(req.url, {
 			method: req.method,
