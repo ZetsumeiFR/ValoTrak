@@ -28,10 +28,14 @@ import { useTranslation } from "react-i18next";
 import {
 	agentsQueryOptions,
 	indexAgents,
+	indexSkins,
 	indexTiers,
+	skinsQueryOptions,
 	tiersQueryOptions,
 } from "@/lib/valorant/queries";
 import { useLobby } from "@/lib/valorant/use-lobby";
+import { useLobbyLoadouts } from "@/lib/valorant/use-lobby-loadouts";
+import { usePenalties } from "@/lib/valorant/use-penalties";
 import {
 	shouldRevealEnemies,
 	useEnemyRevealMode,
@@ -76,6 +80,9 @@ export function LobbyView() {
 	const lobby = useLobby(mode);
 	const agentsQuery = useQuery(agentsQueryOptions());
 	const tiersQuery = useQuery(tiersQueryOptions());
+	const skinsQuery = useQuery(skinsQueryOptions());
+	const loadoutsByPuuid = useLobbyLoadouts(lobby.data);
+	const penalties = usePenalties();
 	useFollowedSnapshots(lobby.data);
 
 	const agentsById = useMemo(
@@ -85,6 +92,10 @@ export function LobbyView() {
 	const tiersById = useMemo(
 		() => indexTiers(tiersQuery.data),
 		[tiersQuery.data],
+	);
+	const skinsById = useMemo(
+		() => indexSkins(skinsQuery.data),
+		[skinsQuery.data],
 	);
 
 	// Reference values every player card is compared against. Undefined until
@@ -105,6 +116,8 @@ export function LobbyView() {
 			tiersById,
 			lobbyBaseline,
 			premadeGroups,
+			skinsById,
+			loadoutsByPuuid,
 			region: lobby.data?.shard?.region ?? "",
 		}),
 		[
@@ -112,6 +125,8 @@ export function LobbyView() {
 			tiersById,
 			lobbyBaseline,
 			premadeGroups,
+			skinsById,
+			loadoutsByPuuid,
 			lobby.data?.shard?.region,
 		],
 	);
@@ -127,6 +142,11 @@ export function LobbyView() {
 				) : null}
 			</div>
 			<div className="flex items-center gap-2">
+				{penalties.active ? (
+					<Badge title={t("match.penaltyTitle")} variant="destructive">
+						{t("match.penaltyActive", { count: penalties.count })}
+					</Badge>
+				) : null}
 				{lobby.data && lobby.data.phase === "pregame" ? (
 					<DodgeButton lobby={lobby.data} />
 				) : null}

@@ -4,6 +4,7 @@ import { Skeleton } from "@valotrak/ui/components/skeleton";
 import { cn } from "@valotrak/ui/lib/utils";
 import { comparePlayerToLobby, type EnrichedPlayer } from "@valotrak/valorant";
 import { Users } from "lucide-react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AgentAvatar } from "./agent-avatar";
@@ -70,8 +71,15 @@ function StatCell({
 
 export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 	const { t } = useTranslation();
-	const { agentsById, tiersById, region, lobbyBaseline, premadeGroups } =
-		useMatchContext();
+	const {
+		agentsById,
+		tiersById,
+		region,
+		lobbyBaseline,
+		premadeGroups,
+		skinsById,
+		loadoutsByPuuid,
+	} = useMatchContext();
 	const premadeGroup = premadeGroups.get(player.puuid);
 	const agent = player.agentId ? agentsById.get(player.agentId) : undefined;
 	const name = player.riotId?.gameName ?? t("common.unknown");
@@ -82,6 +90,19 @@ export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 		player.rank?.peakTier !== undefined
 			? tiersById.get(player.rank.peakTier)
 			: undefined;
+	// Default weapon skins carry no content tier, which is exactly how they are
+	// told apart from the ones worth showing.
+	const equippedSkins = useMemo(() => {
+		const names: string[] = [];
+		for (const itemId of loadoutsByPuuid.get(player.puuid) ?? []) {
+			const skin = skinsById.get(itemId);
+			if (skin?.contentTierId && !names.includes(skin.displayName)) {
+				names.push(skin.displayName);
+			}
+		}
+		return names;
+	}, [loadoutsByPuuid, skinsById, player.puuid]);
+
 	const deltas =
 		stats && lobbyBaseline
 			? comparePlayerToLobby(stats, lobbyBaseline)
@@ -183,6 +204,27 @@ export function PlayerCard({ player }: { player: EnrichedPlayer }) {
 							<span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wide">
 								{t("match.vsLobby", { players: lobbyBaseline.sampleSize })}
 							</span>
+						) : null}
+
+						{equippedSkins.length > 0 ? (
+							<div
+								className="flex items-center gap-2"
+								title={equippedSkins.join(" · ")}
+							>
+								<span className="text-[10px] text-muted-foreground uppercase tracking-wide">
+									{t("match.loadout")}
+								</span>
+								<span className="truncate text-muted-foreground text-xs">
+									{equippedSkins.slice(0, 2).join(" · ")}
+								</span>
+								{equippedSkins.length > 2 ? (
+									<span className="ml-auto text-muted-foreground text-xs">
+										{t("match.loadoutMore", {
+											count: equippedSkins.length - 2,
+										})}
+									</span>
+								) : null}
+							</div>
 						) : null}
 
 						{stats && stats.mainAgents.length > 0 ? (

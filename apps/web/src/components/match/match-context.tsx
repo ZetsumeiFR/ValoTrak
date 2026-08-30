@@ -1,4 +1,9 @@
-import type { Agent, CompetitiveTier, LobbyBaseline } from "@valotrak/valorant";
+import type {
+	Agent,
+	CompetitiveTier,
+	LobbyBaseline,
+	SkinLevel,
+} from "@valotrak/valorant";
 import { createContext, useContext } from "react";
 
 /** Shared lobby data passed down to player cards without prop drilling. */
@@ -17,6 +22,10 @@ export interface MatchContextValue {
 	 * from recent co-play, so it is a hint and the UI must say so.
 	 */
 	premadeGroups: Map<string, number>;
+	/** Static skin catalogue, used to name the equipped cosmetics. */
+	skinsById: Map<string, SkinLevel>;
+	/** Cosmetic ids equipped by each player, keyed by puuid. */
+	loadoutsByPuuid: ReadonlyMap<string, string[]>;
 }
 
 const MatchContext = createContext<MatchContextValue | null>(null);

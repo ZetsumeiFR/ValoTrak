@@ -22,6 +22,9 @@ export const en = {
 	level: "Lvl {{level}}",
 	peak: "Peak {{tier}}",
 	mains: "Mains",
+	loadout: "Skins",
+	loadoutMore_one: "+{{count}} more",
+	loadoutMore_other: "+{{count}} more",
 	premadeGroup: "Group {{group}}",
 	premadeTitle:
 		"Recently queued with another player in this lobby, so probably a party. Riot exposes no party data: this is inferred from recent matches.",
@@ -29,6 +32,10 @@ export const en = {
 	statsUnavailable: "Stats unavailable: {{error}}",
 	cardRecord_one: "{{wins}}-{{losses}} · {{count}} game",
 	cardRecord_other: "{{wins}}-{{losses}} · {{count}} games",
+	penaltyActive_one: "{{count}} restriction",
+	penaltyActive_other: "{{count}} restrictions",
+	penaltyTitle:
+		"Riot reports matchmaking restrictions on this account. It does not publish their nature or duration.",
 	dodge: "Dodge",
 	dodgeConfirmTitle: "Dodge agent select?",
 	dodgeConfirmDesc:
@@ -68,6 +75,9 @@ export const fr = {
 	level: "Niv. {{level}}",
 	peak: "Pic {{tier}}",
 	mains: "Mains",
+	loadout: "Skins",
+	loadoutMore_one: "+{{count}} autre",
+	loadoutMore_other: "+{{count}} autres",
 	premadeGroup: "Groupe {{group}}",
 	premadeTitle:
 		"A récemment joué avec un autre joueur de ce lobby, donc probablement un groupe. Riot n'expose aucune donnée de groupe : c'est déduit des matchs récents.",
@@ -75,6 +85,10 @@ export const fr = {
 	statsUnavailable: "Statistiques indisponibles : {{error}}",
 	cardRecord_one: "{{wins}}-{{losses}} · {{count}} partie",
 	cardRecord_other: "{{wins}}-{{losses}} · {{count}} parties",
+	penaltyActive_one: "{{count}} restriction",
+	penaltyActive_other: "{{count}} restrictions",
+	penaltyTitle:
+		"Riot signale des restrictions de matchmaking sur ce compte. Leur nature et leur durée ne sont pas publiées.",
 	dodge: "Dodge",
 	dodgeConfirmTitle: "Dodge la sélection d'agent ?",
 	dodgeConfirmDesc:
