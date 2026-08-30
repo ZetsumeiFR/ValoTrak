@@ -14,6 +14,7 @@ import {
 	EmptyTitle,
 } from "@valotrak/ui/components/empty";
 import { Skeleton } from "@valotrak/ui/components/skeleton";
+import { computeLobbyBaseline, inferPremadeGroups } from "@valotrak/valorant";
 import {
 	EyeOff,
 	Gamepad2,
@@ -86,13 +87,33 @@ export function LobbyView() {
 		[tiersQuery.data],
 	);
 
+	// Reference values every player card is compared against. Undefined until
+	// enough players are enriched, in which case cards fall back to raw numbers.
+	const lobbyBaseline = useMemo(
+		() => computeLobbyBaseline(lobby.data?.players ?? []),
+		[lobby.data?.players],
+	);
+
+	const premadeGroups = useMemo(
+		() => inferPremadeGroups(lobby.data?.players ?? []),
+		[lobby.data?.players],
+	);
+
 	const contextValue = useMemo(
 		() => ({
 			agentsById,
 			tiersById,
+			lobbyBaseline,
+			premadeGroups,
 			region: lobby.data?.shard?.region ?? "",
 		}),
-		[agentsById, tiersById, lobby.data?.shard?.region],
+		[
+			agentsById,
+			tiersById,
+			lobbyBaseline,
+			premadeGroups,
+			lobby.data?.shard?.region,
+		],
 	);
 
 	const header = (

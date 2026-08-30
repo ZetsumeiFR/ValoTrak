@@ -22,6 +22,10 @@ export const en = {
 	level: "Lvl {{level}}",
 	peak: "Peak {{tier}}",
 	mains: "Mains",
+	premadeGroup: "Group {{group}}",
+	premadeTitle:
+		"Recently queued with another player in this lobby, so probably a party. Riot exposes no party data: this is inferred from recent matches.",
+	vsLobby: "vs lobby median · {{players}} players analysed",
 	statsUnavailable: "Stats unavailable: {{error}}",
 	cardRecord_one: "{{wins}}-{{losses}} · {{count}} game",
 	cardRecord_other: "{{wins}}-{{losses}} · {{count}} games",
@@ -64,6 +68,10 @@ export const fr = {
 	level: "Niv. {{level}}",
 	peak: "Pic {{tier}}",
 	mains: "Mains",
+	premadeGroup: "Groupe {{group}}",
+	premadeTitle:
+		"A récemment joué avec un autre joueur de ce lobby, donc probablement un groupe. Riot n'expose aucune donnée de groupe : c'est déduit des matchs récents.",
+	vsLobby: "vs médiane du lobby · {{players}} joueurs analysés",
 	statsUnavailable: "Statistiques indisponibles : {{error}}",
 	cardRecord_one: "{{wins}}-{{losses}} · {{count}} partie",
 	cardRecord_other: "{{wins}}-{{losses}} · {{count}} parties",
