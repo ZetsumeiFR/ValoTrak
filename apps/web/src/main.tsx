@@ -3,6 +3,7 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 
 import Loader from "./components/loader";
+import { RouteErrorComponent, RouteNotFound } from "./components/route-error";
 import "./lib/disable-context-menu";
 import "./lib/i18n";
 import { routeTree } from "./routeTree.gen";
@@ -13,6 +14,9 @@ const router = createRouter({
 	defaultPreload: "intent",
 	scrollRestoration: true,
 	defaultPendingComponent: () => <Loader />,
+	// Every route falls back to these instead of unmounting to a blank window.
+	defaultErrorComponent: RouteErrorComponent,
+	defaultNotFoundComponent: RouteNotFound,
 	context: { trpc, queryClient },
 	Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
 		return (

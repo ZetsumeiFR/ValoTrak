@@ -12,6 +12,7 @@
 import * as auth from "./resources/auth";
 import * as common from "./resources/common";
 import * as dodge from "./resources/dodge";
+import * as error from "./resources/error";
 import * as language from "./resources/language";
 import * as match from "./resources/match";
 import * as nav from "./resources/nav";
@@ -39,6 +40,7 @@ const en = {
 	tracked: tracked.en,
 	trends: trends.en,
 	dodge: dodge.en,
+	error: error.en,
 	profileData: profileData.en,
 	updater: updater.en,
 } as const;
@@ -57,6 +59,7 @@ const fr = {
 	tracked: tracked.fr,
 	trends: trends.fr,
 	dodge: dodge.fr,
+	error: error.fr,
 	profileData: profileData.fr,
 	updater: updater.fr,
 } as const;

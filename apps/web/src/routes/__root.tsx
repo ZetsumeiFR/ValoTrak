@@ -9,6 +9,7 @@ import { TooltipProvider } from "@valotrak/ui/components/tooltip";
 import { lazy, Suspense } from "react";
 
 import Header from "@/components/header";
+import { RouteErrorComponent, RouteNotFound } from "@/components/route-error";
 import { ThemeProvider } from "@/components/theme-provider";
 import { useAutoUpdate } from "@/lib/updater";
 import { useAutoOpenMatch } from "@/lib/valorant/use-auto-open-match";
@@ -23,6 +24,8 @@ export interface RouterAppContext {
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	component: RootComponent,
+	errorComponent: RouteErrorComponent,
+	notFoundComponent: RouteNotFound,
 	head: () => ({
 		meta: [
 			{
@@ -30,7 +33,8 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 			},
 			{
 				name: "description",
-				content: "ValoTrak is a web application",
+				content:
+					"ValoTrak — live Valorant lobby, profile, shop and rank-trend tracker.",
 			},
 		],
 		links: [
