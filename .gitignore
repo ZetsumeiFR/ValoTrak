@@ -52,3 +52,6 @@ temp
 
 # OMC tooling state
 .omc/
+
+# OMO tooling state
+.omo/

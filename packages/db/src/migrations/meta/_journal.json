@@ -8,6 +8,13 @@
 			"when": 1780143596732,
 			"tag": "0000_slim_lorna_dane",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1788097924002,
+			"tag": "0001_slippery_pixie",
+			"breakpoints": true
 		}
 	]
 }

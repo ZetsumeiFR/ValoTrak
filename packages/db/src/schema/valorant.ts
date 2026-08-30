@@ -20,7 +20,9 @@ export const trackedPlayer = pgTable(
 		id: text("id")
 			.primaryKey()
 			.$defaultFn(() => crypto.randomUUID()),
-		userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 		puuid: text("puuid").notNull(),
 		gameName: text("game_name").notNull(),
 		tagLine: text("tag_line").notNull(),
@@ -57,9 +59,13 @@ export const playerStatsCache = pgTable(
 		id: text("id")
 			.primaryKey()
 			.$defaultFn(() => crypto.randomUUID()),
-		userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 		puuid: text("puuid").notNull(),
 		region: text("region").notNull(),
+		/** Lobby the snapshot was taken in — the idempotency key. */
+		matchId: text("match_id").notNull(),
 		capturedAt: timestamp("captured_at").defaultNow().notNull(),
 		tier: integer("tier"),
 		rr: integer("rr"),
@@ -71,6 +77,13 @@ export const playerStatsCache = pgTable(
 		payload: jsonb("payload").$type<PlayerSnapshotPayload>().notNull(),
 	},
 	(table) => [
+		// One snapshot per (user, player, lobby): a remount, token refresh or
+		// follow-list invalidation must not append a duplicate trend point.
+		uniqueIndex("player_stats_cache_user_puuid_match_idx").on(
+			table.userId,
+			table.puuid,
+			table.matchId,
+		),
 		index("player_stats_cache_user_puuid_captured_idx").on(
 			table.userId,
 			table.puuid,

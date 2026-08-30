@@ -1,13 +1,13 @@
 import { TRPCError } from "@trpc/server";
-import { db } from "@valotrak/db";
 import {
 	type PlayerSnapshotPayload,
 	playerStatsCache,
 	trackedPlayer,
 } from "@valotrak/db/schema/valorant";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
+import type { Context } from "../context";
 import { protectedProcedure, router } from "../index";
 
 const puuidSchema = z.string().min(1).max(80);
@@ -44,12 +44,62 @@ const aggregatedStatsSchema = z.object({
 	mainAgents: z.array(agentUsageSchema).max(20),
 });
 
+const matchIdSchema = z.string().min(1).max(80);
+
 const snapshotSchema = z.object({
 	riotId: riotIdSchema.optional(),
 	rank: rankSchema.optional(),
 	level: z.number().int().min(0).max(10_000).optional(),
 	stats: aggregatedStatsSchema.optional(),
 });
+
+type SnapshotInput = z.infer<typeof snapshotSchema>;
+
+/** Flatten a snapshot into an insertable row (trend columns + JSONB payload). */
+function snapshotRow(args: {
+	userId: string;
+	puuid: string;
+	region: string;
+	matchId: string;
+	snapshot: SnapshotInput;
+}) {
+	const { snapshot } = args;
+	return {
+		userId: args.userId,
+		puuid: args.puuid,
+		region: args.region,
+		matchId: args.matchId,
+		tier: snapshot.rank?.tier,
+		rr: snapshot.rank?.rr,
+		kd: snapshot.stats?.kd,
+		acs: snapshot.stats?.acs,
+		hsPercent: snapshot.stats?.hsPercent,
+		winRate: snapshot.stats?.winRate,
+		matchesAnalyzed: snapshot.stats?.matchesAnalyzed,
+		payload: snapshot satisfies PlayerSnapshotPayload,
+	};
+}
+
+/** PUUIDs among `puuids` that the user actually follows. */
+async function followedPuuids(
+	db: Context["db"],
+	userId: string,
+	puuids: string[],
+): Promise<Set<string>> {
+	if (puuids.length === 0) {
+		return new Set();
+	}
+	const rows = await db
+		.select({ puuid: trackedPlayer.puuid })
+		.from(trackedPlayer)
+		.where(
+			and(
+				eq(trackedPlayer.userId, userId),
+				inArray(trackedPlayer.puuid, puuids),
+			),
+		);
+	return new Set(rows.map((row) => row.puuid));
+}
 
 export const playerRouter = router({
 	/** Follow (or update) a player for the current user. */
@@ -64,7 +114,7 @@ export const playerRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const [row] = await db
+			const [row] = await ctx.db
 				.insert(trackedPlayer)
 				.values({ userId: ctx.session.user.id, ...input })
 				.onConflictDoUpdate({
@@ -85,7 +135,7 @@ export const playerRouter = router({
 	unfollow: protectedProcedure
 		.input(z.object({ puuid: puuidSchema }))
 		.mutation(async ({ ctx, input }) => {
-			await db
+			await ctx.db
 				.delete(trackedPlayer)
 				.where(
 					and(
@@ -98,7 +148,7 @@ export const playerRouter = router({
 
 	/** List the current user's followed players. */
 	listFollowed: protectedProcedure.query(async ({ ctx }) => {
-		return db
+		return ctx.db
 			.select()
 			.from(trackedPlayer)
 			.where(eq(trackedPlayer.userId, ctx.session.user.id))
@@ -117,11 +167,12 @@ export const playerRouter = router({
 			z.object({
 				puuid: puuidSchema,
 				region: regionSchema,
+				matchId: matchIdSchema,
 				snapshot: snapshotSchema,
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const followed = await db
+			const followed = await ctx.db
 				.select({ id: trackedPlayer.id })
 				.from(trackedPlayer)
 				.where(
@@ -138,24 +189,94 @@ export const playerRouter = router({
 				});
 			}
 
-			const { snapshot } = input;
-			const [row] = await db
+			// One snapshot per lobby: a replayed refresh must not append a
+			// duplicate trend point (enforced by the unique index).
+			const [row] = await ctx.db
 				.insert(playerStatsCache)
-				.values({
-					userId: ctx.session.user.id,
-					puuid: input.puuid,
-					region: input.region,
-					tier: snapshot.rank?.tier,
-					rr: snapshot.rank?.rr,
-					kd: snapshot.stats?.kd,
-					acs: snapshot.stats?.acs,
-					hsPercent: snapshot.stats?.hsPercent,
-					winRate: snapshot.stats?.winRate,
-					matchesAnalyzed: snapshot.stats?.matchesAnalyzed,
-					payload: snapshot satisfies PlayerSnapshotPayload,
+				.values(
+					snapshotRow({
+						userId: ctx.session.user.id,
+						puuid: input.puuid,
+						region: input.region,
+						matchId: input.matchId,
+						snapshot: input.snapshot,
+					}),
+				)
+				.onConflictDoNothing({
+					target: [
+						playerStatsCache.userId,
+						playerStatsCache.puuid,
+						playerStatsCache.matchId,
+					],
 				})
 				.returning();
-			return row;
+			if (row) {
+				return row;
+			}
+			const [existing] = await ctx.db
+				.select()
+				.from(playerStatsCache)
+				.where(
+					and(
+						eq(playerStatsCache.userId, ctx.session.user.id),
+						eq(playerStatsCache.puuid, input.puuid),
+						eq(playerStatsCache.matchId, input.matchId),
+					),
+				)
+				.limit(1);
+			return existing;
+		}),
+
+	/**
+	 * Append snapshots for a whole lobby in one round trip.
+	 *
+	 * Entries for players the caller does not follow are skipped rather than
+	 * rejected: a lobby legitimately mixes followed and unfollowed players.
+	 */
+	saveCacheMany: protectedProcedure
+		.input(
+			z.object({
+				region: regionSchema,
+				matchId: matchIdSchema,
+				entries: z
+					.array(z.object({ puuid: puuidSchema, snapshot: snapshotSchema }))
+					.min(1)
+					.max(20),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const userId = ctx.session.user.id;
+			const followed = await followedPuuids(
+				ctx.db,
+				userId,
+				input.entries.map((entry) => entry.puuid),
+			);
+			const values = input.entries
+				.filter((entry) => followed.has(entry.puuid))
+				.map((entry) =>
+					snapshotRow({
+						userId,
+						puuid: entry.puuid,
+						region: input.region,
+						matchId: input.matchId,
+						snapshot: entry.snapshot,
+					}),
+				);
+			if (values.length === 0) {
+				return { saved: 0 };
+			}
+			const inserted = await ctx.db
+				.insert(playerStatsCache)
+				.values(values)
+				.onConflictDoNothing({
+					target: [
+						playerStatsCache.userId,
+						playerStatsCache.puuid,
+						playerStatsCache.matchId,
+					],
+				})
+				.returning({ id: playerStatsCache.id });
+			return { saved: inserted.length };
 		}),
 
 	/**
@@ -173,7 +294,7 @@ export const playerRouter = router({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			const followed = await db
+			const followed = await ctx.db
 				.select({ id: trackedPlayer.id })
 				.from(trackedPlayer)
 				.where(
@@ -190,7 +311,7 @@ export const playerRouter = router({
 				});
 			}
 
-			return db
+			return ctx.db
 				.select()
 				.from(playerStatsCache)
 				.where(

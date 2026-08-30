@@ -7,12 +7,13 @@ import type { LobbyData } from "./use-lobby";
 
 /**
  * Persist a stats snapshot for followed players on each live refresh, building
- * the historical trend in `player_stats_cache`. Demo lobbies are ignored so
- * fake data never reaches the database.
+ * the historical trend in `player_stats_cache`.
  *
- * Dedupes per `(matchId, puuid)` so a token refresh, query rerender, or
- * follow-list invalidation can't insert duplicate rows for the same lobby
- * state and skew trend history.
+ * The whole lobby goes out in a single `saveCacheMany` call, keyed by
+ * `matchId`. Duplicates are rejected by the database (unique index on
+ * `user_id, puuid, match_id`), so a remount, token refresh or follow-list
+ * invalidation cannot skew trend history. The local ref only avoids redundant
+ * round trips: it re-sends when enrichment adds more players to the lobby.
  */
 export function useFollowedSnapshots(data: LobbyData | undefined): void {
 	const { data: session } = authClient.useSession();
@@ -20,8 +21,10 @@ export function useFollowedSnapshots(data: LobbyData | undefined): void {
 		...trpc.player.listFollowed.queryOptions(),
 		enabled: !!session,
 	});
-	const saveCache = useMutation(trpc.player.saveCache.mutationOptions());
-	const savedKeys = useRef<Set<string>>(new Set());
+	const saveCacheMany = useMutation(
+		trpc.player.saveCacheMany.mutationOptions(),
+	);
+	const sentCounts = useRef<Map<string, number>>(new Map());
 
 	useEffect(() => {
 		if (!data || !session) {
@@ -34,28 +37,26 @@ export function useFollowedSnapshots(data: LobbyData | undefined): void {
 			return;
 		}
 		const followedPuuids = new Set(followed.map((row) => row.puuid));
-		for (const player of data.players) {
-			if (
-				!followedPuuids.has(player.puuid) ||
-				(!player.rank && !player.stats)
-			) {
-				continue;
-			}
-			const key = `${matchId}:${player.puuid}`;
-			if (savedKeys.current.has(key)) {
-				continue;
-			}
-			savedKeys.current.add(key);
-			saveCache.mutate({
+		const entries = data.players
+			.filter(
+				(player) =>
+					followedPuuids.has(player.puuid) && (player.rank || player.stats),
+			)
+			.map((player) => ({
 				puuid: player.puuid,
-				region,
 				snapshot: {
 					riotId: player.riotId,
 					rank: player.rank,
 					level: player.level,
 					stats: player.stats,
 				},
-			});
+			}));
+
+		// Nothing new since the last send for this lobby.
+		if (entries.length <= (sentCounts.current.get(matchId) ?? 0)) {
+			return;
 		}
-	}, [data, session, followedQuery.data, saveCache]);
+		sentCounts.current.set(matchId, entries.length);
+		saveCacheMany.mutate({ region, matchId, entries });
+	}, [data, session, followedQuery.data, saveCacheMany]);
 }
