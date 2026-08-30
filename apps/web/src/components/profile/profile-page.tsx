@@ -26,8 +26,10 @@ import {
 import { useProfile } from "@/lib/valorant/use-profile";
 import { isAppError } from "@/lib/valorant-bridge";
 
+import { FriendsOnline } from "./friends-online";
 import { MainsRow } from "./mains-row";
 import { ProfileHero } from "./profile-hero";
+import { ProfileProgress } from "./profile-progress";
 import { RecentMatches } from "./recent-matches";
 import { StatTile } from "./stat-tile";
 
@@ -193,6 +195,10 @@ export function ProfilePage() {
 					<SectionHeading>{t("profile.topAgents")}</SectionHeading>
 					<MainsRow stats={stats} agentsById={agentsById} />
 				</section>
+
+				<ProfileProgress puuid={data.puuid} />
+
+				<FriendsOnline />
 
 				<section className="flex flex-col gap-3">
 					<SectionHeading>{t("profile.recentMatches")}</SectionHeading>
