@@ -4,13 +4,17 @@ import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import {
 	type CurrentMatch,
 	headersToRecord,
-	type RiotAuth,
 	type RiotRequest,
 	type RiotResponse,
 	type RiotShard,
 	type RiotTransport,
 	rateLimited,
 } from "@valotrak/valorant";
+
+import type { AppError } from "./valorant/bindings/AppError";
+import type { LocalTokens } from "./valorant/bindings/LocalTokens";
+import type { LockfileInfo } from "./valorant/bindings/LockfileInfo";
+import "./valorant/bindings-compat";
 
 /**
  * Frontend boundary to the Tauri (Rust) Valorant integration.
@@ -22,34 +26,21 @@ import {
  * - Lobby changes are pushed from the local websocket via a Tauri event.
  */
 
-/** Auth context returned by `get_local_tokens` (mirrors the Rust struct). */
-export interface LocalTokens extends RiotAuth {
-	puuid: string;
-	region: string;
-	shard: string;
-}
+/**
+ * Auth context returned by `get_local_tokens`, and the lockfile/error payloads:
+ * all three are generated from the Rust structs by ts-rs (`cargo test` in
+ * `src-tauri`), so a field renamed in Rust breaks this build instead of
+ * silently returning `undefined` at runtime.
+ */
+export type { LocalTokens } from "./valorant/bindings/LocalTokens";
+export type { LockfileInfo } from "./valorant/bindings/LockfileInfo";
 
-export interface LockfileInfo {
-	name: string;
-	pid: number;
-	port: number;
-	protocol: string;
-}
-
-/** Discriminated error payload thrown by the Rust commands. */
-export interface AppErrorPayload {
-	kind:
-		| "notAvailable"
-		| "needRegion"
-		| "notInMatch"
-		| "unauthorized"
-		| "http"
-		| "parse"
-		// Frontend-synthesized: no Riot session and the local client isn't
-		// running, so the user must sign in (see `use-riot-session`).
-		| "needLogin";
-	message: string;
-}
+/**
+ * Error payload thrown by the Rust commands, plus `needLogin`, which the
+ * frontend synthesizes when there is no Riot session and the local client is
+ * not running (see `use-riot-session`).
+ */
+export type AppErrorPayload = AppError | { kind: "needLogin"; message: string };
 
 export function isAppError(value: unknown): value is AppErrorPayload {
 	return (

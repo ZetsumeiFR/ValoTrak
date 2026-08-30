@@ -1,12 +1,14 @@
 use serde::Serialize;
+use ts_rs::TS;
 
 /// Error returned by the Valorant Tauri commands.
 ///
 /// Serializes to `{ "kind": "...", "message": "..." }` so the frontend can
 /// branch on `kind` (e.g. show the demo/offline state on `notAvailable`,
 /// prompt for a region on `needRegion`).
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, TS)]
 #[serde(tag = "kind", rename_all = "camelCase")]
+#[ts(export, export_to = "../../src/lib/valorant/bindings/")]
 pub enum AppError {
     /// Local API unreachable: not Windows, game not running, or lockfile missing.
     NotAvailable { message: String },
